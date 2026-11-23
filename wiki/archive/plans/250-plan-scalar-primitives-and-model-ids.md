@@ -61,17 +61,14 @@ type IFactoryArgs<OPTIONS> = {} extends OPTIONS
   ? [] | [options: OPTIONS]
   : [options: OPTIONS];
 
-type IProvidedOptions<ARGS> =
-  ARGS extends [infer OPTIONS] ? OPTIONS : {};
+type IProvidedOptions<ARGS> = ARGS extends [infer OPTIONS] ? OPTIONS : {};
 
 type IPrimitiveFactories = {
   [KIND in keyof IValueOptionsByKind]: <
-    const ARGS extends IFactoryArgs<
-      IValueOptionsByKind[KIND] & IColumnOptions
-    >,
-  >(...args: ARGS) => Readonly<
-    { kind: KIND } & IProvidedOptions<ARGS>
-  >;
+    const ARGS extends IFactoryArgs<IValueOptionsByKind[KIND] & IColumnOptions>,
+  >(
+    ...args: ARGS
+  ) => Readonly<{ kind: KIND } & IProvidedOptions<ARGS>>;
 };
 ```
 
@@ -101,23 +98,27 @@ type IModelRefOptions = IModelIdOptions & {
 
 declare function modelId<const PROPS extends IModelIdOptions>(
   props: PROPS,
-): Readonly<Omit<PROPS, 'model'> & {
-  kind: PrimitiveKind.Id;
-  abbreviation: PROPS['model']['abbreviation'];
-}>;
+): Readonly<
+  Omit<PROPS, 'model'> & {
+    kind: PrimitiveKind.Id;
+    abbreviation: PROPS['model']['abbreviation'];
+  }
+>;
 
 declare function modelRef<const PROPS extends IModelRefOptions>(
   props: PROPS,
-): Readonly<Omit<PROPS, 'model' | 'relation' | 'inverse'> & {
-  kind: PrimitiveKind.Id;
-  abbreviation: PROPS['model']['abbreviation'];
-  references: Readonly<{
-    tableName: PROPS['model']['name'];
-    columnName: 'id';
-    relation: PROPS['relation'];
-    inverse: PROPS['inverse'];
-  }>;
-}>;
+): Readonly<
+  Omit<PROPS, 'model' | 'relation' | 'inverse'> & {
+    kind: PrimitiveKind.Id;
+    abbreviation: PROPS['model']['abbreviation'];
+    references: Readonly<{
+      tableName: PROPS['model']['name'];
+      columnName: 'id';
+      relation: PROPS['relation'];
+      inverse: PROPS['inverse'];
+    }>;
+  }
+>;
 ```
 
 ```ts
@@ -156,24 +157,24 @@ payload: {
 2. `makeDbConfig`, `makeResourceDbConfig` and `makeActorContractReadDb` pass the authored tables directly to `bindDatabaseDefinition`. Keep registered logical-name lookup, sole-primary-key and scalar/prefix compatibility validation, duplicate identity/name/index/relation checks, physical-name overrides, cycle rejection and actor-visible CTE/selection authority. Registry keys may differ from logical table names; runtime and query-type lookup must both use the logical name.
 3. Build scalar SQL columns first, then apply allowed source primary/unique and foreign-key constraints. Keep immediate SQLite foreign keys and current NO ACTION behavior. A primary key counts as unique for inverse cardinality even when `unique` was omitted. Preserve synchronous resource-change/checkpoint/pending-delivery commit boundaries.
 
-| Delete | Current location | Replacement or retained responsibility |
-| --- | --- | --- |
-| `PrimitiveKind.PrimaryKey`, `.ForeignKey`, `.Ref` | `packages/shapes/src/primitiveKind.ts` | `.Id` plus source-column facts; retain the other kinds, including Cursor |
-| `primitives.primaryKey`, `.foreignKey`, `.ref`, `.self` and their overloads | `packages/shapes/src/primitives.ts` | Scalar factories, `id`, core `modelId`/`modelRef` |
-| `IPrimaryKeyDescriptor`, `IForeignKeyDescriptor`, `IRefDescriptor`, `IAnyRefDescriptor`, `INamedRefDescriptor` | `packages/shapes/src/types.ts` | One descriptor catalog and typed option intersections |
-| The remaining per-kind generic descriptor declarations (`IBooleanDescriptor`, `IIntegerDescriptor`, `INumberDescriptor`, `ITextDescriptor`, `IDateDescriptor`, `IEnumDescriptor`, `IJsonDescriptor`, `IAnyJsonDescriptor`, `ICursorDescriptor`) | `packages/shapes/src/types.ts` | Catalog-derived narrowing/actual factory return types; no compatibility aliases; Cursor itself remains supported |
-| Duplicate `IAnyPrimitiveDescriptor` and `IAnyShape` aliases | `packages/shapes/src/types.ts` and imports | Canonical `IPrimitiveDescriptor` and `IShape` |
-| `targetKind`, descriptor destination `table` pointers, top-level `targetTableName`/`targetColumnName`, self markers/placeholders | Shapes/core consumers | Source scalar and nested plain `references` |
-| Entire `resolveTableReferences.ts`, its index export, `resolveTableReferences`, `IPrimaryKeyColumn`, `IReferencedTable`, `IResolvedRef`, `INamedRefColumns`, `IResolvedTables`, `IReferenceError`, `IReferenceErrors`, `ICheckedTableReferences` | `packages/shapes/src/resolveTableReferences.ts` | Validation/query relation lookup directly over stable names; no rebound descriptor types |
-| Resolver calls and `IResolvedTables` return transformations | DB-config factories and `makeActorContractReadDb` | Direct graph binding over the unchanged authored shape |
-| `IPrimaryKeyColumns`, `IResolvedSelfShape`, self rewrite pass, graph-dependent deferred codec condition | `packages/shapes/src/makeTable.ts` | Complete scalar shape and immediate codec construction |
-| Recursive reference-to-destination key chasing | `packages/shapes/src/resolvePrimaryKey.ts` | Retain a local scan for `primaryKey: true` and one valid scalar key |
-| Ref-specific unresolved-state validation and scalar codec branches | `packages/shapes/src/compileDescriptor.ts` | Shared scalar compilation and ordinary option validation |
-| Ref's integer/plain-text/prefixed-ID SQL dispatch and separate primary/foreign-key scalar cases | `packages/shapes/src/primitiveMaps.ts` | Ordinary scalar compilation followed by source constraints |
-| Ref wire schema, `Omit<..., 'table'>` representation, pointer-stripping encoding branch, Ref/`targetKind` encoded-row codec branch | `encodeShape.ts`, `makeEncodedShapeRowCodec.ts` | Scalar wire descriptors plus plain relationship metadata; keep JSON/Date conversion |
-| `IRefPrimaryColumn`, PK/FK/Ref branches in decoded/encoded/Drizzle inference and obsolete per-kind lookup entries | `packages/shapes/src/types.ts` | Catalog-driven scalar inference and shared primary-key modifiers; do not collapse row/portable distinctions |
-| Model self-to-`primitives.self` conversion and upgrade-time `previous.table` rebinding | `packages/core/src/models/make/makeModelVersion.ts` | Stable immutable relationship names; primary-key checks inspect the flag |
-| `IsUnion` imports and shapes' `type-fest` dependency | Shapes primitives/resolver and manifest | Remove through package-manager dependency maintenance; no replacement use is planned |
+| Delete                                                                                                                                                                                                                                           | Current location                                    | Replacement or retained responsibility                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `PrimitiveKind.PrimaryKey`, `.ForeignKey`, `.Ref`                                                                                                                                                                                                | `packages/shapes/src/primitiveKind.ts`              | `.Id` plus source-column facts; retain the other kinds, including Cursor                                         |
+| `primitives.primaryKey`, `.foreignKey`, `.ref`, `.self` and their overloads                                                                                                                                                                      | `packages/shapes/src/primitives.ts`                 | Scalar factories, `id`, core `modelId`/`modelRef`                                                                |
+| `IPrimaryKeyDescriptor`, `IForeignKeyDescriptor`, `IRefDescriptor`, `IAnyRefDescriptor`, `INamedRefDescriptor`                                                                                                                                   | `packages/shapes/src/types.ts`                      | One descriptor catalog and typed option intersections                                                            |
+| The remaining per-kind generic descriptor declarations (`IBooleanDescriptor`, `IIntegerDescriptor`, `INumberDescriptor`, `ITextDescriptor`, `IDateDescriptor`, `IEnumDescriptor`, `IJsonDescriptor`, `IAnyJsonDescriptor`, `ICursorDescriptor`)  | `packages/shapes/src/types.ts`                      | Catalog-derived narrowing/actual factory return types; no compatibility aliases; Cursor itself remains supported |
+| Duplicate `IAnyPrimitiveDescriptor` and `IAnyShape` aliases                                                                                                                                                                                      | `packages/shapes/src/types.ts` and imports          | Canonical `IPrimitiveDescriptor` and `IShape`                                                                    |
+| `targetKind`, descriptor destination `table` pointers, top-level `targetTableName`/`targetColumnName`, self markers/placeholders                                                                                                                 | Shapes/core consumers                               | Source scalar and nested plain `references`                                                                      |
+| Entire `resolveTableReferences.ts`, its index export, `resolveTableReferences`, `IPrimaryKeyColumn`, `IReferencedTable`, `IResolvedRef`, `INamedRefColumns`, `IResolvedTables`, `IReferenceError`, `IReferenceErrors`, `ICheckedTableReferences` | `packages/shapes/src/resolveTableReferences.ts`     | Validation/query relation lookup directly over stable names; no rebound descriptor types                         |
+| Resolver calls and `IResolvedTables` return transformations                                                                                                                                                                                      | DB-config factories and `makeActorContractReadDb`   | Direct graph binding over the unchanged authored shape                                                           |
+| `IPrimaryKeyColumns`, `IResolvedSelfShape`, self rewrite pass, graph-dependent deferred codec condition                                                                                                                                          | `packages/shapes/src/makeTable.ts`                  | Complete scalar shape and immediate codec construction                                                           |
+| Recursive reference-to-destination key chasing                                                                                                                                                                                                   | `packages/shapes/src/resolvePrimaryKey.ts`          | Retain a local scan for `primaryKey: true` and one valid scalar key                                              |
+| Ref-specific unresolved-state validation and scalar codec branches                                                                                                                                                                               | `packages/shapes/src/compileDescriptor.ts`          | Shared scalar compilation and ordinary option validation                                                         |
+| Ref's integer/plain-text/prefixed-ID SQL dispatch and separate primary/foreign-key scalar cases                                                                                                                                                  | `packages/shapes/src/primitiveMaps.ts`              | Ordinary scalar compilation followed by source constraints                                                       |
+| Ref wire schema, `Omit<..., 'table'>` representation, pointer-stripping encoding branch, Ref/`targetKind` encoded-row codec branch                                                                                                               | `encodeShape.ts`, `makeEncodedShapeRowCodec.ts`     | Scalar wire descriptors plus plain relationship metadata; keep JSON/Date conversion                              |
+| `IRefPrimaryColumn`, PK/FK/Ref branches in decoded/encoded/Drizzle inference and obsolete per-kind lookup entries                                                                                                                                | `packages/shapes/src/types.ts`                      | Catalog-driven scalar inference and shared primary-key modifiers; do not collapse row/portable distinctions      |
+| Model self-to-`primitives.self` conversion and upgrade-time `previous.table` rebinding                                                                                                                                                           | `packages/core/src/models/make/makeModelVersion.ts` | Stable immutable relationship names; primary-key checks inspect the flag                                         |
+| `IsUnion` imports and shapes' `type-fest` dependency                                                                                                                                                                                             | Shapes primitives/resolver and manifest             | Remove through package-manager dependency maintenance; no replacement use is planned                             |
 
 Do not delete `resolvePrimaryKey`, graph validation, relation type lookup, `compileDescriptor`, immutable capture, Date/JSON compilation, `makeEncodedShapeRowCodec`, or the other public shape/table helpers merely because their implementations become smaller. Replace their obsolete branches in place. Do not leave the deleted design behind as renamed wrappers, aliases or a compatibility decoder.
 
@@ -264,12 +265,12 @@ qrk.sh/, stackshirts/, mentormailbox/, redropeparking/
 
 The initial consumer changes were committed on `codex/plan250-scalar-primitives` in their isolated worktrees under `/tmp/zerospin250-consumers/`. The original dirty checkouts were not reset, stashed, patched or committed by this task. Independent edits appeared in their original working trees during this work; those edits were left intact. A final audit checked all **86** direct dependency pins, installed package versions and framework lockfile snapshots: every version is exactly **21.0.0**.
 
-| Consumer | Commit | Verification |
-| --- | --- | --- |
-| QRK | `54c874025` (source/adoption), `84502289e` (current docs) | App client/SSR/prerender build; API Wrangler dry-run build; real config evaluation with 10 models and 41 contracts, opaque ID/local relationship metadata verified; 26 exact pins |
-| Stackshirts | `fcc680a9` | Backend and App existing-tsconfig types; Next production build including 10 prerendered pages; fresh backend accepted system spec on 22512; 13 exact pins |
-| Mentor Mailbox | `6d5a36282` | Existing typegen and five existing-tsconfig checks (backend/API/App/Hub/Admin); four Turbo builds; fresh backend accepted system spec on 19891; existing seed workflow passed with school, enrollment, assignment, direct-message and workspace commands; 25 exact pins |
-| Red Rope Parking | `65e796ee8` | Frozen pnpm install; backend/Admin types; Web/Admin Nx production builds and `/` prerender; fresh backend accepted system spec on 49332; all 18 admitted seed commands retained `outcome.result._tag: Success`, expected materialized rows/relationship joins and empty `PRAGMA foreign_key_check`; 22 exact pins |
+| Consumer         | Commit                                                    | Verification                                                                                                                                                                                                                                                                                                      |
+| ---------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QRK              | `54c874025` (source/adoption), `84502289e` (current docs) | App client/SSR/prerender build; API Wrangler dry-run build; real config evaluation with 10 models and 41 contracts, opaque ID/local relationship metadata verified; 26 exact pins                                                                                                                                 |
+| Stackshirts      | `fcc680a9`                                                | Backend and App existing-tsconfig types; Next production build including 10 prerendered pages; fresh backend accepted system spec on 22512; 13 exact pins                                                                                                                                                         |
+| Mentor Mailbox   | `6d5a36282`                                               | Existing typegen and five existing-tsconfig checks (backend/API/App/Hub/Admin); four Turbo builds; fresh backend accepted system spec on 19891; existing seed workflow passed with school, enrollment, assignment, direct-message and workspace commands; 25 exact pins                                           |
+| Red Rope Parking | `65e796ee8`                                               | Frozen pnpm install; backend/Admin types; Web/Admin Nx production builds and `/` prerender; fresh backend accepted system spec on 49332; all 18 admitted seed commands retained `outcome.result._tag: Success`, expected materialized rows/relationship joins and empty `PRAGMA foreign_key_check`; 22 exact pins |
 
 Necessary prior-package API cutovers were included rather than retaining aliases: removed schema helper callers use public `makeIdSchema`; older browser/React callers use current pure definitions, connection inputs, `createUI`, `Initializer`/`MockInitializer` and worker execution registrations. Stackshirts keeps public routes, both session owners and account selection mounted; readiness gates only design/payment readers. Existing stories were retained and migrated. Mentor's exact CLI deployment guard and current docs now say 21.0.0 after reviewing its six installed deployment helpers and stock orchestrator; no production deployment occurred. Verification backends were stopped and temporary copied environment bindings removed. Scoped diff checks and isolated worktree status checks passed.
 
@@ -283,20 +284,20 @@ Necessary prior-package API cutovers were included rather than retaining aliases
 
 The user requested reconciliation against the actual current consumer working trees and explicitly authorized committing everything in those sibling repositories first. No previous isolated adoption commit is being applied wholesale.
 
-| Consumer | Current-work baseline commit |
-| --- | --- |
-| QRK | `69f93b86a6eef1433a259df2521c53f1de1764a9` |
-| Stackshirts | `a407fa720dbbf76bf827b18fb770d380475957d4` |
-| Mentor Mailbox | `ca7aba5f12070fa5683d0830cad8a49801ac6992` |
+| Consumer         | Current-work baseline commit               |
+| ---------------- | ------------------------------------------ |
+| QRK              | `69f93b86a6eef1433a259df2521c53f1de1764a9` |
+| Stackshirts      | `a407fa720dbbf76bf827b18fb770d380475957d4` |
+| Mentor Mailbox   | `ca7aba5f12070fa5683d0830cad8a49801ac6992` |
 | Red Rope Parking | `346326cdf256430a3f0052f6da1107f4eef3a3a9` |
 
 Each baseline includes all existing tracked and nonignored untracked work. All four baselines were committed before reconciliation began. The earlier isolated commits were used only as reference: actual source/API state was inspected, existing migrations retained, and only missing Plan 250 changes applied on current `main`. Earlier build/runtime evidence above remains scoped to its named isolated branches; the following results establish the current-tree reconciliation.
 
-| Consumer | Current-main Plan 250 commit | Current-tree verification and preservation |
-| --- | --- | --- |
-| QRK | `61512d843921a5c4aaf34f72b98d07df4432c8f8` | 59 scoped files; current App client/SSR/prerender and API Wrangler dry-run builds passed. All 765 guarded source/environment/installed-metadata inputs were unchanged during the final run. Real current config evaluation includes user releases 3.0.0/4.0.0/5.0.0, each with 10 models and 41 contracts. Existing modelRef/createUI/Initializer wiring, newer V2 command lineages and placement/release/session changes were preserved. 48 remaining value descriptors and nine schema-helper callers migrated. |
-| Stackshirts | `2e22aca880433b98bed80e9ffd708205365a1084` | 45 explicit hash-guarded paths; current backend/App TypeScript checks and Next production build passed (10 prerendered pages). Exact commit accepted its system spec at 22522 in fresh temporary storage. Current 11002 connection, payment HTTP implementation, provider notification implementation and environment examples retained; every non-framework manifest value unchanged. Descriptor edits were applied at call/import boundaries, retaining unaffected function bodies and avoiding the earlier formatting churn. |
-| Mentor Mailbox | `bd6f72554c2c1e6d19714389e06a12eaf2944a42` | Current typegen, five existing-tsconfig checks and four Turbo builds passed. Exact current commit accepted its system spec at 19991 and passed the existing development seed workflow in fresh temporary state. Completed pure-session-declaration and all eight worker-entry migrations were skipped. Current host/browser factories, credentials, claims, layers, worker URLs, providers and ports retained; only the missing descriptor/identity and 21.0.0 UI caller changes added. |
+| Consumer         | Current-main Plan 250 commit               | Current-tree verification and preservation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QRK              | `61512d843921a5c4aaf34f72b98d07df4432c8f8` | 59 scoped files; current App client/SSR/prerender and API Wrangler dry-run builds passed. All 765 guarded source/environment/installed-metadata inputs were unchanged during the final run. Real current config evaluation includes user releases 3.0.0/4.0.0/5.0.0, each with 10 models and 41 contracts. Existing modelRef/createUI/Initializer wiring, newer V2 command lineages and placement/release/session changes were preserved. 48 remaining value descriptors and nine schema-helper callers migrated.                                                                                                         |
+| Stackshirts      | `2e22aca880433b98bed80e9ffd708205365a1084` | 45 explicit hash-guarded paths; current backend/App TypeScript checks and Next production build passed (10 prerendered pages). Exact commit accepted its system spec at 22522 in fresh temporary storage. Current 11002 connection, payment HTTP implementation, provider notification implementation and environment examples retained; every non-framework manifest value unchanged. Descriptor edits were applied at call/import boundaries, retaining unaffected function bodies and avoiding the earlier formatting churn.                                                                                           |
+| Mentor Mailbox   | `bd6f72554c2c1e6d19714389e06a12eaf2944a42` | Current typegen, five existing-tsconfig checks and four Turbo builds passed. Exact current commit accepted its system spec at 19991 and passed the existing development seed workflow in fresh temporary state. Completed pure-session-declaration and all eight worker-entry migrations were skipped. Current host/browser factories, credentials, claims, layers, worker URLs, providers and ports retained; only the missing descriptor/identity and 21.0.0 UI caller changes added.                                                                                                                                   |
 | Red Rope Parking | `6d09351cfade8e2e51f91cc5dac7bcbc6f4d2b73` | 85 explicit hash-guarded paths; current backend/Admin types, frozen install and Web/Admin Nx production builds with `/` prerender passed. Exact current commit accepted its spec at 49332 in fresh temporary state; 18 admitted seed commands retained finalized Success outcomes, expected rows/relationships materialized, and the foreign-key check was empty. Current 15002 scripts/ports, registry/authentication/provider code, SharedWorker wiring and all non-framework manifest values retained. Extra Web types still report the nine unchanged routing diagnostics listed above, with none in changed callers. |
 
 A final audit of the actual four sibling directories checked **86 direct framework dependency pins**, their installed packages and every framework lockfile entry: all are exactly **21.0.0**. Each current Plan 250 commit has its recorded baseline commit as its direct parent. No sibling commits were pushed.

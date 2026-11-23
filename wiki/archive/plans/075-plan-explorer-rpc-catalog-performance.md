@@ -57,12 +57,12 @@ explorer/
 
 Measured on 2026-10-08 with Node 24.13.1 and two workers. The source-copy benchmark uses the same five workspace package programs and installed dependencies, with a separate cache; it changes only a temporary copy of `SystemApi/healthcheck/healthcheck.ts`. RSS includes the analysis worker threads and is sampled every 100 ms. Catalog preparation excludes process launch and the 80 ms edit debounce.
 
-| Measurement | Preparation | Analysis jobs | Retained Projects reused | Peak RSS |
-| --- | ---: | ---: | ---: | ---: |
-| Cold source-copy catalog | 38.40 s | 5 | 0 | 4,212 MiB |
-| Shared source edit on the live pool | 37.88 s | 5 | 2 | 5,682 MiB |
-| Complete-cache read after disposal, same process | 0.51 s | 0 | 0 | See note below |
-| Fresh Explorer development launch with validated cache | 1.24 s | 0 | 0 | 305 MiB sampled by catalog metrics |
+| Measurement                                            | Preparation | Analysis jobs | Retained Projects reused |                           Peak RSS |
+| ------------------------------------------------------ | ----------: | ------------: | -----------------------: | ---------------------------------: |
+| Cold source-copy catalog                               |     38.40 s |             5 |                        0 |                          4,212 MiB |
+| Shared source edit on the live pool                    |     37.88 s |             5 |                        2 |                          5,682 MiB |
+| Complete-cache read after disposal, same process       |      0.51 s |             0 |                        0 |                     See note below |
+| Fresh Explorer development launch with validated cache |      1.24 s |             0 |                        0 | 305 MiB sampled by catalog metrics |
 
 The previous observed startup was 56.9 seconds. Cold catalog preparation is about 32.5% shorter than that baseline; the measurement boundaries differ because development startup now proceeds independently of analysis. The shared healthcheck file invalidates all five package programs, so its regeneration remains expensive despite reusing two Projects. Smaller fixture edits demonstrate reuse of unaffected package results. Warm acceptance is satisfied by zero analysis jobs. The same-process warm measurement retains allocator RSS from earlier analysis and is not a fresh-process memory measurement. No prior startup RSS was recorded for a memory comparison.
 

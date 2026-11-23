@@ -42,11 +42,12 @@ The earlier backend-owner/adapters requirement is superseded by that instruction
 ```ts
 // 1. UI records the intent synchronously.
 const result = stageAggregateSessionCommand({
-  session, contractName: "configureGithubProfile",
+  session,
+  contractName: 'configureGithubProfile',
   payload: { brickId, requestId: crypto.randomUUID(), url: normalizedInput },
 });
 // 2. Only successful local staging discards the unsaved input.
-if (result._tag === "Success") clearDraft();
+if (result._tag === 'Success') clearDraft();
 // 3. The session-owned executor reads the retained row and performs provider I/O.
 // 4. completeGithubProfile rechecks request identity and state revision before writing.
 ```

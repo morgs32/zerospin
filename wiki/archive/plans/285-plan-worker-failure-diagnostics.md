@@ -66,10 +66,16 @@ initializers consume `this.db` or `this.schema`:
 
 ```ts
 // 1. Finish the existing synchronous completion/cancellation policy first.
-const exit = runSynchronousExit(initialize({ ctx }), managedRuntime.runSyncExit);
+const exit = runSynchronousExit(
+  initialize({ ctx }),
+  managedRuntime.runSyncExit,
+);
 if (Exit.isFailure(exit)) {
   // 2. Print the full final Cause without replacing it if diagnostics fail.
-  reportWorkerFailure({ boundary: `${namespaceBinding}.initialize`, cause: exit.cause });
+  reportWorkerFailure({
+    boundary: `${namespaceBinding}.initialize`,
+    cause: exit.cause,
+  });
 }
 // 3. Preserve the original constructor value or throw.
 const { db, dbConfig, key, name, schema } = Effect.runSync(exit);

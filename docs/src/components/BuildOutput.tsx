@@ -6,7 +6,8 @@ export function BuildOutput() {
       <div>$ zerospin dev</div>
       <div className="terminal-output__muted">
         <div>
-          VITE+ <span className="terminal-output__blue">building for production</span>
+          VITE+{' '}
+          <span className="terminal-output__blue">building for production</span>
         </div>
         <div>
           <span className="terminal-output__success">✓</span> Transformed{' '}

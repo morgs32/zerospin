@@ -14,16 +14,18 @@ Status: Completed — 2026-10-10.
 
 ```ts
 // Ordinary batch API / direct execution, using the bound Chain's db and key.
-const commands = yield* prepareAggregateCommands({ db, key, commands: submitted });
-const admitted = yield* admitAggregateCommands({ db, commands });
+const commands =
+  yield * prepareAggregateCommands({ db, key, commands: submitted });
+const admitted = yield * admitAggregateCommands({ db, commands });
 
 // Staged delivery: validate trusted staging evidence, then ordinary preparation.
-const commands = yield* prepareStagedAggregateCommands({ db, key, commands: stages });
-const admitted = yield* admitAggregateCommands({ db, commands });
+const commands =
+  yield * prepareStagedAggregateCommands({ db, key, commands: stages });
+const admitted = yield * admitAggregateCommands({ db, commands });
 
 // Async delivery: verify retained provenance before continuation preparation.
-const commands = yield* prepareAsyncAggregateCommands({ db, key, rows });
-const admitted = yield* admitAggregateCommands({ db, commands });
+const commands = yield * prepareAsyncAggregateCommands({ db, key, rows });
+const admitted = yield * admitAggregateCommands({ db, commands });
 ```
 
 1. `db` is bound infrastructure, not submission data. Keep explicit procedure arguments rather than introducing a new session factory or service solely to achieve a literal single-argument signature.

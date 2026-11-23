@@ -16,7 +16,10 @@
   border-collapse: collapse;
   color: #111;
   background: #f4f4f4;
-  font: 14px/1.25 'Geist Mono Variable', ui-monospace, monospace;
+  font:
+    14px/1.25 'Geist Mono Variable',
+    ui-monospace,
+    monospace;
   font-synthesis: none;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;

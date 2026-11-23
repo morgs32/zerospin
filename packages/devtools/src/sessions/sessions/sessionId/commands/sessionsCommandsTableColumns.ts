@@ -1,8 +1,17 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 const COMMAND_COLUMN_IDS = [
-  'sessionIndex', 'id', 'commandName', 'payload', 'stagingOutcome',
-  'nodeId', 'nodeIndex', 'inverseOperations', 'aggregateIndex', 'serviceIndex', 'failure',
+  'sessionIndex',
+  'id',
+  'commandName',
+  'payload',
+  'stagingOutcome',
+  'nodeId',
+  'nodeIndex',
+  'inverseOperations',
+  'aggregateIndex',
+  'serviceIndex',
+  'failure',
 ] as const;
 
 type ICommandColumnId = (typeof COMMAND_COLUMN_IDS)[number];
@@ -46,7 +55,9 @@ export function isSessionsCommandsCopyCellColumn(columnId: string): boolean {
 export function makeSessionsCommandsTableColumns(
   service = false,
 ): ColumnDef<Record<string, unknown>>[] {
-  return COMMAND_COLUMN_IDS.filter(columnId => columnId !== (service ? 'aggregateIndex' : 'serviceIndex')).map(columnId => {
+  return COMMAND_COLUMN_IDS.filter(
+    columnId => columnId !== (service ? 'aggregateIndex' : 'serviceIndex'),
+  ).map(columnId => {
     const sizing = COLUMN_SIZES[columnId];
 
     return {

@@ -247,10 +247,7 @@
         {
           "id": "BR-X01",
           "priority": 1,
-          "plans": [
-            107,
-            117
-          ],
+          "plans": [107, 117],
           "finding": "Optimistic staging, rebasing and rehearsal cannot await a host read adapter inside their synchronous transaction/savepoint.",
           "resolution": "Plan107 observable behavior6 now explicitly requires synchronous original/stage/rebase/rehearsal and separates awaiting host transport/external production outside SQL.",
           "status": "resolved-in-plan",
@@ -260,9 +257,7 @@
         {
           "id": "BR-X02",
           "priority": 1,
-          "plans": [
-            110
-          ],
+          "plans": [110],
           "finding": "A postcommit publication call inside the rollback catch can issue ROLLBACK after successful COMMIT and falsely reject committed work.",
           "resolution": "Plan110 transaction shape now places commitCapture outside the rollback catch and explicitly isolates observer failures.",
           "status": "resolved-in-plan",
@@ -272,9 +267,7 @@
         {
           "id": "BR-X03",
           "priority": 2,
-          "plans": [
-            108
-          ],
+          "plans": [108],
           "finding": "Dynamically indexing operation codecs by a union discriminant loses body/inverse correlation and pressures forbidden casts.",
           "resolution": "Plan108 now names body procedures with exhaustive narrowing switches before the matching Schema codec; no arbitrary callback table or cast.",
           "status": "resolved-in-plan",
@@ -284,9 +277,7 @@
         {
           "id": "BR-X04",
           "priority": 2,
-          "plans": [
-            105
-          ],
+          "plans": [105],
           "finding": "The promise to reject forged authored declarations is not established by instanceof, an exported class, a public symbol brand or freezing. Current empty Model class accepts Object.create(Model.prototype)/new Model() before canonical finish.",
           "resolution": "Plan105 behavior7 now registers only fully constructed Model/Contract instances in private constructor-owned WeakSets and replaces touched prototype-only predicates with canonical membership guards; metadata immutability alone is explicitly insufficient.",
           "status": "resolved-in-plan",
@@ -301,19 +292,14 @@
           "resolution_evidence": [
             {
               "path": "wiki/plans/105-plan-immutable-authored-declarations.md",
-              "lines": [
-                19
-              ]
+              "lines": [19]
             }
           ]
         },
         {
           "id": "BR-X05",
           "priority": 2,
-          "plans": [
-            106,
-            123
-          ],
+          "plans": [106, 123],
           "finding": "Canonical lock projection API names/inputs differ across owning and consuming plans.106 sketches make*SessionLock(declaration),123 calls project*SessionLock(actor,sessionName,selection).",
           "resolution": "Plan106 decision2/procedure3 and Plan123 parent shapes now agree on existing canonical pure makeAggregateSessionLock/makeServiceSessionLock builders with selected typed authored declaration literals. No project* forwarding wrapper remains.",
           "status": "resolved-in-plan",
@@ -322,28 +308,18 @@
           "resolution_evidence": [
             {
               "path": "wiki/plans/106-plan-canonical-authored-manifest-projections.md",
-              "lines": [
-                8,
-                74
-              ]
+              "lines": [8, 74]
             },
             {
               "path": "wiki/plans/123-plan-session-lock-validation.md",
-              "lines": [
-                25,
-                43,
-                59
-              ]
+              "lines": [25, 43, 59]
             }
           ]
         },
         {
           "id": "BR-X06",
           "priority": 1,
-          "plans": [
-            119,
-            124
-          ],
+          "plans": [119, 124],
           "finding": "Local projection can advance after asynchronous catchup through a requested canonical boundary but before synchronous capture. Current mutable resource graph cannot reconstruct earlier requested resources merely by reporting its earlier cursor.",
           "resolution": "Plan119 snapshot contract and capture parent now treat the remote cursor as minimum, capture/report actual current local resources/source cursor/dispositionHash/private prefix in one transaction, and match Plan124. No delivery fence or stale resource labeling is proposed.",
           "status": "resolved-in-plan",
@@ -352,28 +328,18 @@
           "resolution_evidence": [
             {
               "path": "wiki/plans/119-plan-selected-view-owner.md",
-              "lines": [
-                27,
-                62,
-                81
-              ]
+              "lines": [27, 62, 81]
             },
             {
               "path": "wiki/plans/124-plan-session-snapshot.md",
-              "lines": [
-                9,
-                37
-              ]
+              "lines": [9, 37]
             }
           ]
         },
         {
           "id": "BR-X07",
           "priority": 1,
-          "plans": [
-            119,
-            120
-          ],
+          "plans": [119, 120],
           "finding": "Yielding broadcast after projection commit can reject the committed receiver response; an exact retry skips retained publications and cannot repair a still-live socket.",
           "resolution": "Plan119 explicitly isolates individual sends, closes failed sockets, returns unchanged committed acknowledgement and forbids broadcast throwing after commit; the parent calls broadcastAggregatePublicationsAndCloseFailedSockets then returns committed.acknowledgement. Durable replay repairs a closed socket.",
           "status": "resolved-in-plan",
@@ -382,25 +348,14 @@
           "resolution_evidence": [
             {
               "path": "wiki/plans/119-plan-selected-view-owner.md",
-              "lines": [
-                21,
-                39,
-                40,
-                81
-              ]
+              "lines": [21, 39, 40, 81]
             }
           ]
         },
         {
           "id": "BR-X08",
           "priority": 2,
-          "plans": [
-            118,
-            119,
-            120,
-            121,
-            122
-          ],
+          "plans": [118, 119, 120, 121, 122],
           "finding": "Server plans list inherited tsc:typecheck targets as validation without distinguishing real compiler targets from disabled echo targets; browser/system-worker were previously resolved with real lib/ts/lint gates. Shopping application-browser verification is forbidden by its AGENTS.",
           "resolution": "Plans118-122 now require meaningful core lib/lint/tsc:typecheck and browser/system-worker/dev-worker/production-worker lib/ts/lint, explicitly excluding disabled echo compiler tasks. Plan120 item5 and its cross-review note require permitted Shopping server/RPC/Workerd workflows, state its application-browser prohibition, and use Tic-tac-toe for browser/reconnect.",
           "status": "resolved-in-plan",
@@ -409,35 +364,23 @@
           "resolution_evidence": [
             {
               "path": "wiki/plans/118-plan-version-result-owner.md",
-              "lines": [
-                115
-              ]
+              "lines": [115]
             },
             {
               "path": "wiki/plans/119-plan-selected-view-owner.md",
-              "lines": [
-                117
-              ]
+              "lines": [117]
             },
             {
               "path": "wiki/plans/120-plan-service-socket-protocol.md",
-              "lines": [
-                113,
-                119,
-                133
-              ]
+              "lines": [113, 119, 133]
             },
             {
               "path": "wiki/plans/121-plan-admission-authority.md",
-              "lines": [
-                156
-              ]
+              "lines": [156]
             },
             {
               "path": "wiki/plans/122-plan-remove-unused-raw-sql.md",
-              "lines": [
-                52
-              ]
+              "lines": [52]
             }
           ]
         }
@@ -501,11 +444,7 @@
           "evidence": [
             {
               "path": "wiki/plans/102-plan-aggregate-command-admission-orchestration.md",
-              "lines": [
-                108,
-                109,
-                172
-              ]
+              "lines": [108, 109, 172]
             }
           ]
         },
@@ -619,21 +558,13 @@
       "resolvedCoordinations": [
         {
           "id": "CR-COMMAND-02",
-          "plans": [
-            "119",
-            "124"
-          ],
+          "plans": ["119", "124"],
           "resolution": "Requested snapshot boundary is minimum. Read actual local checkpoint/hash/resources/private prefix in one capture transaction; report captured actual position. Both published plans now agree.",
           "status": "Resolved in119 by command owner;124 already adopted same policy."
         },
         {
           "id": "CR-COMMAND-03",
-          "plans": [
-            "119",
-            "120",
-            "127",
-            "129"
-          ],
+          "plans": ["119", "120", "127", "129"],
           "resolution": "Postcommit socket send failure cannot reject canonical receive acknowledgement; close failed socket for durable replay.119parent fixed;120wire and127/129delivery responsibility remain separate.",
           "status": "Resolved in119; caller transport/retained occurrence semantics preserved."
         }

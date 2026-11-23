@@ -78,11 +78,11 @@ const spec = makeSystemSpec({ system }); // Complete frozen snapshot plus hash.
 ```ts
 // SystemRepo verifies content/hash correspondence, compares immutable facts
 // with earlier snapshots, and inserts { hash, spec } in one transaction.
-yield* acceptSystemSpec({ db, spec });
+yield * acceptSystemSpec({ db, spec });
 
 // Existing child construction/registration position, before child local SQL.
 const systemSpecHash = makeSystemSpec({ system }).hash;
-yield* registerWithSystem({ key, name, schema, systemSpecHash });
+yield * registerWithSystem({ key, name, schema, systemSpecHash });
 // SystemRepo requires this hash before its existing registration writes.
 ```
 
@@ -101,7 +101,7 @@ if (contract === undefined || contract.version !== command.contractVersion) {
 ```ts
 // Repo startup already required this finalized SystemSpec's accepted hash.
 // Existing replay resolution and decoding validate source/intermediate payloads.
-yield* execution.withPermits(1)(materializeCommandTx(/* existing inputs */));
+yield * execution.withPermits(1)(materializeCommandTx(/* existing inputs */));
 // Retained output restoration still bypasses adapters/programs and reapplies
 // recorded operations using the exact selected model codecs.
 ```

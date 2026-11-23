@@ -81,10 +81,7 @@ export const Interactive: IStory = {
             },
           }))}
         />
-        <output
-          aria-live="polite"
-          style={{ marginTop: 24, fontSize: 12 }}
-        >
+        <output aria-live="polite" style={{ marginTop: 24, fontSize: 12 }}>
           Last action: {action.label}. Invocations: {action.count}.
         </output>
       </div>
@@ -105,10 +102,7 @@ export const Controlled: IStory = {
         }}
       >
         <Dropdown {...args} open={open} onOpenChange={setOpen} />
-        <output
-          aria-live="polite"
-          style={{ marginTop: 24, fontSize: 12 }}
-        >
+        <output aria-live="polite" style={{ marginTop: 24, fontSize: 12 }}>
           Menu: {open ? 'open' : 'closed'}
         </output>
       </div>

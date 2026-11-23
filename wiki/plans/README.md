@@ -16,7 +16,7 @@ Workerd/acceptance commands remain historical.
 
 | Path                     | Contents                                                                                                    |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `wiki/plans/`            | Historical implementation plans and Linear backlinks                                                                |
+| `wiki/plans/`            | Historical implementation plans and Linear backlinks                                                        |
 | `wiki/adrs/`             | Decisions that are hard to reverse, surprising without context, and the result of a real trade-off          |
 | `wiki/handoffs/`         | New-thread handoffs (`XXX-handoff-<topic>.md` for numbered work, otherwise `YYYY-MM-DD-handoff-<topic>.md`) |
 | `wiki/diagrams/`         | Standalone development diagrams                                                                             |

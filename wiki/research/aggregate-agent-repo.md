@@ -6,7 +6,6 @@
 
 **Requested behavior:** React automatically to selected rows, with retries and delays. The user clarified this during research; explicit invocation alone does not meet the request.
 
-
 **Integer V1 cutover:** Shopping now registers only revision `1`; see the
 [current Node definition](../../examples/shopping/src/zerospin/agents/purchasesAgentNodeDefinitionV1.ts) and
 [current registry](../../examples/shopping/agents.ts). The earlier declaration

@@ -8,80 +8,81 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DeploymentsSystemNameRunIdRouteImport } from './routes/deployments.$systemName.$runId'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as DeploymentsSystemNameRunIdRouteImport } from './routes/deployments.$systemName.$runId';
+import { Route as IndexRouteImport } from './routes/index';
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DeploymentsSystemNameRunIdRoute =
   DeploymentsSystemNameRunIdRouteImport.update({
     id: '/deployments/$systemName/$runId',
     path: '/deployments/$systemName/$runId',
     getParentRoute: () => rootRouteImport,
-  } as any)
+  } as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/deployments/$systemName/$runId': typeof DeploymentsSystemNameRunIdRoute
+  '/': typeof IndexRoute;
+  '/deployments/$systemName/$runId': typeof DeploymentsSystemNameRunIdRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/deployments/$systemName/$runId': typeof DeploymentsSystemNameRunIdRoute
+  '/': typeof IndexRoute;
+  '/deployments/$systemName/$runId': typeof DeploymentsSystemNameRunIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/deployments/$systemName/$runId': typeof DeploymentsSystemNameRunIdRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/deployments/$systemName/$runId': typeof DeploymentsSystemNameRunIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/deployments/$systemName/$runId'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/deployments/$systemName/$runId'
-  id: '__root__' | '/' | '/deployments/$systemName/$runId'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/deployments/$systemName/$runId';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/deployments/$systemName/$runId';
+  id: '__root__' | '/' | '/deployments/$systemName/$runId';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DeploymentsSystemNameRunIdRoute: typeof DeploymentsSystemNameRunIdRoute
+  IndexRoute: typeof IndexRoute;
+  DeploymentsSystemNameRunIdRoute: typeof DeploymentsSystemNameRunIdRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/deployments/$systemName/$runId': {
-      id: '/deployments/$systemName/$runId'
-      path: '/deployments/$systemName/$runId'
-      fullPath: '/deployments/$systemName/$runId'
-      preLoaderRoute: typeof DeploymentsSystemNameRunIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/deployments/$systemName/$runId';
+      path: '/deployments/$systemName/$runId';
+      fullPath: '/deployments/$systemName/$runId';
+      preLoaderRoute: typeof DeploymentsSystemNameRunIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DeploymentsSystemNameRunIdRoute: DeploymentsSystemNameRunIdRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { createStart } from '@tanstack/react-start';
+
+import type { getRouter } from './router.tsx';
 declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }

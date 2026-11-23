@@ -703,8 +703,11 @@ it.each([
   async ({ fail, originalTag, replayTag, expected }) => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const command: IAdmittedAggregateCommand = {
       id: 'cmd_independent',
@@ -789,8 +792,11 @@ it.each(['original', 'replay'] as const)(
   async mode => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const repo = env.AGGREGATE_VERSION_REPO.getByName(
       'avr_sys_servicePublication/acc_time/account/2',

@@ -50,7 +50,7 @@
 
 # 49.0.0 (2026-11-20)
 
-### ⚠️  Breaking Changes
+### ⚠️ Breaking Changes
 
 - Ship a generic SystemWorker with release-owned histories and register ordinary continuation contracts (MOR-490)
 
@@ -170,7 +170,7 @@
 
 # 45.0.0 (2026-11-15)
 
-### ⚠️  Breaking Changes
+### ⚠️ Breaking Changes
 
 - Require explicit contract read projections
 
@@ -192,7 +192,7 @@
 
 # 44.0.0 (2026-11-12)
 
-### ⚠️  Breaking Changes
+### ⚠️ Breaking Changes
 
 - Acknowledge Aggregate publication after Archive persistence. The new AggregateVersionChain storage layout requires fresh storage, and deployment preflight rejects pre-adoption catalogs.
 

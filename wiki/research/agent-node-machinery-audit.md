@@ -34,7 +34,6 @@ Keep the current small epoch/lifetime check so a retained selection reader stays
 
 This section traces `fenceAgentNodeRead`, both Agent Node view lifecycles, the sole Studio selection consumer, authored selection execution and SQLite commit observation. It does not conclude that transaction-lifetime fencing or connection-generation guards elsewhere are unnecessary; those mechanisms protect different ownership intervals and must be judged against their own callers. Findings about the wider Agent implementation are added separately below.
 
-
 ## Other concrete removal and simplification candidates
 
 The wider scan covered the Agent browser stack, shared Node/SQLite runtime and Worker queue/subscriber helpers. Application behavior and Explorer were not verified. The following are current source findings, not implemented changes.

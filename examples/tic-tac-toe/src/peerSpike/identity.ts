@@ -19,7 +19,10 @@ function makePeerPrivateKey(seed: Uint8Array) {
 export function encodeBase64Url(bytes: Uint8Array): string {
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+  return btoa(binary)
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/, '');
 }
 
 export function decodeBase64Url(value: string): Uint8Array<ArrayBuffer> {
@@ -35,13 +38,9 @@ export async function unlockIdentity(
 ): Promise<IPeerIdentity> {
   const passkey = await getPasskeySecret(role, credentialId);
   const prf = passkey.secret;
-  const key = await crypto.subtle.importKey(
-    'raw',
-    prf,
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  ).finally(() => prf.fill(0));
+  const key = await crypto.subtle
+    .importKey('raw', prf, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+    .finally(() => prf.fill(0));
   const deriveSeed = async (purpose: string) =>
     new Uint8Array(
       await crypto.subtle.sign(

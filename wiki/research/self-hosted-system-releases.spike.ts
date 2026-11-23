@@ -14,10 +14,22 @@ async function installUser2(bundle, spec, executionConfig) {
   // A pending original resumes on that release with its existing ID and
   // position. A committed success or failure recovers its saved evaluation.
   // Record executable versions with deployments for inspection.
-  const release = await stable.reserveAggregateRelease("user", 2, digest(bundle, spec, executionConfig))
-  await provider.createOrVerifyPrivateWorker("shopping-user-r2", release, bundle, executionConfig)
-  await provider.configureServiceBindings("shopping", { USER_R1: "shopping-user-r1", USER_R2: "shopping-user-r2" })
-  await stable.makeRoutableAfterVerification(release, "USER_R2")
+  const release = await stable.reserveAggregateRelease(
+    'user',
+    2,
+    digest(bundle, spec, executionConfig),
+  );
+  await provider.createOrVerifyPrivateWorker(
+    'shopping-user-r2',
+    release,
+    bundle,
+    executionConfig,
+  );
+  await provider.configureServiceBindings('shopping', {
+    USER_R1: 'shopping-user-r1',
+    USER_R2: 'shopping-user-r2',
+  });
+  await stable.makeRoutableAfterVerification(release, 'USER_R2');
   // Keep the stable Chain namespaces. The release Worker hosts the
   // VersionRepos, VersionChains and archives served by that release, with
   // separate Repo instances for individual Aggregate IDs.
@@ -27,11 +39,16 @@ async function installUser2(bundle, spec, executionConfig) {
 // 2. Bind the owner and Actor releases when issuing the ticket. Persist the
 // addressed owner release with the original command before dispatch.
 async function openBrowser(request) {
-  const { aggregateName, aggregateVersion } = request.ownerAndActor
-  const worker = stable.bindingForAggregateRelease(aggregateName, aggregateVersion)
-  const scope = await worker.aggregate(request.ownerAndActor)
-    .admit(request.admission).authorize(request.sessionAndLock)
-  return stable.issueSocketTicket({ scope })
+  const { aggregateName, aggregateVersion } = request.ownerAndActor;
+  const worker = stable.bindingForAggregateRelease(
+    aggregateName,
+    aggregateVersion,
+  );
+  const scope = await worker
+    .aggregate(request.ownerAndActor)
+    .admit(request.admission)
+    .authorize(request.sessionAndLock);
+  return stable.issueSocketTicket({ scope });
   // Stable verifies the ticket on connect. For a Service session, the scope
   // carries the Service release and its Actor version. The socket reads the
   // scoped Actor projection from its cursor and follows Chain finalizations.
@@ -41,26 +58,46 @@ async function openBrowser(request) {
 }
 
 async function submitToAggregate(session, frozenCommand) {
-  const chain = stable.aggregateChain(session.systemId, session.aggregateName, session.aggregateId)
-  const retry = await chain.lookupProducerPosition(session, frozenCommand)
-  if (retry) return chain.resumeOrAcknowledgeStoredAssignment(retry)
-  const worker = stable.bindingForAggregateRelease(session.aggregateName, session.aggregateVersion)
-  const head = await chain.readFinalizedFrontier()
-  const repo = worker.aggregateVersionRepo(session.aggregateId, session.aggregateName, session.aggregateVersion)
+  const chain = stable.aggregateChain(
+    session.systemId,
+    session.aggregateName,
+    session.aggregateId,
+  );
+  const retry = await chain.lookupProducerPosition(session, frozenCommand);
+  if (retry) return chain.resumeOrAcknowledgeStoredAssignment(retry);
+  const worker = stable.bindingForAggregateRelease(
+    session.aggregateName,
+    session.aggregateVersion,
+  );
+  const head = await chain.readFinalizedFrontier();
+  const repo = worker.aggregateVersionRepo(
+    session.aggregateId,
+    session.aggregateName,
+    session.aggregateVersion,
+  );
   // Check any recorded predecessor checkpoint before replaying the remaining positions.
-  await repo.prepareThrough(head)
-  const validation = await worker.validateForAdmission(session, frozenCommand, head)
+  await repo.prepareThrough(head);
+  const validation = await worker.validateForAdmission(
+    session,
+    frozenCommand,
+    head,
+  );
   // Validate the exact command, scope, owner release and frontier.
   // Recheck these and the producer in one admission transaction.
   // Retry preparation if another command won the race.
-  const position = await chain.admitAtFrontier(head, session, frozenCommand, validation)
-  const result = await repo.executeOrReadOriginal(position, frozenCommand)
-  await chain.recordOriginalCommandOutcomeTx(position, result)
+  const position = await chain.admitAtFrontier(
+    head,
+    session,
+    frozenCommand,
+    validation,
+  );
+  const result = await repo.executeOrReadOriginal(position, frozenCommand);
+  await chain.recordOriginalCommandOutcomeTx(position, result);
   // Recover the addressed release, ID and position if the reply is lost.
   // A compatible patch of that Worker can resume the same pending original.
   // Before admission a preparation failure consumes no position. The
   // ServiceChain uses the System instance and Service name as its address.
-  return result.outcome
+  return result.outcome;
 }
 
 // 3. Carry forward saved results for one release. Opt into a predecessor
@@ -86,19 +123,22 @@ async function replayNext(repo, admitted) {
     // outcome and advance with zero model operations. Keep the original
     // outcome. Gaps, unavailable history and missing required adapters
     // pause replay. Apply the same rule to ServiceChain input.
-    return repo.replayAsParallelOwnerRelease(admitted)
+    return repo.replayAsParallelOwnerRelease(admitted);
   }
-  const source = stable.locateOriginalOutput(repo.owner, admitted.index)
+  const source = stable.locateOriginalOutput(repo.owner, admitted.index);
   // Finalization can precede publication. Look in the original Repo's durable
   // publication outbox, then its VersionChain or archive. A verified retained
   // copy can also serve the original.
-  const evaluated = await source.readOriginalEvaluatedCommand(repo.owner, admitted.index)
+  const evaluated = await source.readOriginalEvaluatedCommand(
+    repo.owner,
+    admitted.index,
+  );
   // See packages/system-worker/src/AggregateVersionRepo/readEvaluatedCommand/findEvaluatedCommand.ts.
   // Require the original record for this command and position, compatible model
   // declarations, and the same preceding model state. A disposition hash covers
   // command identity, order and outcome. Proof of model equality remains open.
-  await repo.checkRestorePreconditions(admitted, evaluated)
-  await repo.restoreEvaluatedCommandTx(evaluated) // Applies model operations only.
+  await repo.checkRestorePreconditions(admitted, evaluated);
+  await repo.restoreEvaluatedCommandTx(evaluated); // Applies model operations only.
   // See packages/system-worker/src/AggregateVersionRepo/replayCommands/replayCommand.ts
   // and packages/system-worker/src/AggregateVersionRepo/utils/restoreEvaluatedCommandTx.ts.
   // The ServiceVersionRepo has the same missing-original check and restore path.
@@ -110,7 +150,7 @@ async function sendAgentCommand(installation, outboxEntry) {
   // tables, callbacks, wake registries and outboxes. Each Agent binds an exact
   // owner release. The stable Chain consumes the frozen destination in the
   // outbox entry after verifying the installation and producer position.
-  return stable.submitAgentCommand(installation.identity, outboxEntry)
+  return stable.submitAgentCommand(installation.identity, outboxEntry);
   // A follow-on command binds its destination owner and release in its
   // recorded operation. A continuation returns to the recorded source
   // release. Replay applies model changes without sending old work again.

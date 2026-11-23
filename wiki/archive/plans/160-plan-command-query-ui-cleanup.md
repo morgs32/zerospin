@@ -14,32 +14,32 @@ The user clarified that this is a UI-ownership cleanup, not a requirement for ba
 
 ## Implemented children
 
-| Plan | Owner / instance | Outcome |
-| --- | --- | --- |
-| [161](161-plan-synchronous-staging-consumer-release.md) | Shared SDK | Verified and consumed synchronous staging in exact 11.3.2. |
-| [162](162-plan-studio-command-submission.md) | Studio | Removed command-acknowledgement submission gates; retained diagnostics. |
-| [163](163-plan-redrope-invitations-sync-command.md) | Red Rope invitations | Direct synchronous service staging. |
-| [164](164-plan-redrope-partners-sync-command.md) | Red Rope partners | Direct synchronous service staging. |
-| [165](165-plan-redrope-fleet-forms-sync-commands.md) | Red Rope fleet forms | Synchronous form callbacks and all callers. |
-| [166](166-plan-redrope-membership-command-query.md) | Red Rope membership | Revision-checked resolution and queried routing; backend authority retained. |
-| [167](167-plan-redrope-public-partner-intake.md) | Red Rope public intake | Restricted submission identity and private queried receipt. |
-| [168](168-plan-qrk-synchronous-brick-saves.md) | QRK brick saves | Synchronous saves and queried saved state; real measurement remains separate. |
-| [169](169-plan-qrk-instagram-command-query.md) | QRK Instagram | Module-owned local resolution and guarded completion. |
-| [170](170-plan-qrk-github-activity-command-query.md) | QRK GitHub activity | Module-owned local resolution and guarded completion. |
-| [171](171-plan-qrk-github-profile-command-query.md) | QRK GitHub profile | Module-owned local resolution and guarded completion. |
-| [172](172-plan-qrk-github-repository-command-query.md) | QRK GitHub repository | Module-owned local resolution and guarded completion. |
-| [173](173-plan-qrk-figma-thumbnail-command-query.md) | QRK Figma thumbnail | Provider resolution separated from real DOM measurement. |
-| [174](174-plan-qrk-link-command-query.md) | QRK link | Module-owned local metadata resolution and guarded completion. |
-| [175](175-plan-qrk-map-place-command-query.md) | QRK map place | Browser search retained; selected intent stages synchronously. |
-| [176](176-plan-qrk-swatch-icon-command-query.md) | QRK swatch/icon | Saves the SVG returned by search; redundant lookup removed. |
-| [177](177-plan-qrk-saved-spec-generation.md) | QRK saved specs | Synchronous intent, queried generation and revision-checked spec application. |
-| [178](178-plan-stackshirts-payment-query-state.md) | Stackshirts payment | Removed post-stage mirrors; retained Stripe browser prerequisites. |
-| [179](179-plan-stackshirts-immediate-design-staging.md) | Stackshirts drafts | Immediate staging replaces delayed batching and navigation flushes. |
-| [180](180-plan-mentormailbox-unused-async-ui.md) | Mentor Mailbox | Removed unreachable async controls/helpers. |
-| [181](181-plan-cloud-admin-system-creation.md) | Cloud Admin | One canonical native control-plane owner and synchronous creation. |
-| [182](182-plan-cloud-system-creation.md) | Cloud organization UI | Synchronous creation/navigation and session-backed list/detail/sidebar. |
-| [183](183-plan-cloud-key-provisioning.md) | Cloud keys | Queried provisioning, private issuance steps and authenticated credential reads. |
-| [184](184-plan-qrk-library-backend-ownership.md) | QRK Library ownership | Library remains standalone; provider work belongs to the editing session. |
+| Plan                                                    | Owner / instance       | Outcome                                                                          |
+| ------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
+| [161](161-plan-synchronous-staging-consumer-release.md) | Shared SDK             | Verified and consumed synchronous staging in exact 11.3.2.                       |
+| [162](162-plan-studio-command-submission.md)            | Studio                 | Removed command-acknowledgement submission gates; retained diagnostics.          |
+| [163](163-plan-redrope-invitations-sync-command.md)     | Red Rope invitations   | Direct synchronous service staging.                                              |
+| [164](164-plan-redrope-partners-sync-command.md)        | Red Rope partners      | Direct synchronous service staging.                                              |
+| [165](165-plan-redrope-fleet-forms-sync-commands.md)    | Red Rope fleet forms   | Synchronous form callbacks and all callers.                                      |
+| [166](166-plan-redrope-membership-command-query.md)     | Red Rope membership    | Revision-checked resolution and queried routing; backend authority retained.     |
+| [167](167-plan-redrope-public-partner-intake.md)        | Red Rope public intake | Restricted submission identity and private queried receipt.                      |
+| [168](168-plan-qrk-synchronous-brick-saves.md)          | QRK brick saves        | Synchronous saves and queried saved state; real measurement remains separate.    |
+| [169](169-plan-qrk-instagram-command-query.md)          | QRK Instagram          | Module-owned local resolution and guarded completion.                            |
+| [170](170-plan-qrk-github-activity-command-query.md)    | QRK GitHub activity    | Module-owned local resolution and guarded completion.                            |
+| [171](171-plan-qrk-github-profile-command-query.md)     | QRK GitHub profile     | Module-owned local resolution and guarded completion.                            |
+| [172](172-plan-qrk-github-repository-command-query.md)  | QRK GitHub repository  | Module-owned local resolution and guarded completion.                            |
+| [173](173-plan-qrk-figma-thumbnail-command-query.md)    | QRK Figma thumbnail    | Provider resolution separated from real DOM measurement.                         |
+| [174](174-plan-qrk-link-command-query.md)               | QRK link               | Module-owned local metadata resolution and guarded completion.                   |
+| [175](175-plan-qrk-map-place-command-query.md)          | QRK map place          | Browser search retained; selected intent stages synchronously.                   |
+| [176](176-plan-qrk-swatch-icon-command-query.md)        | QRK swatch/icon        | Saves the SVG returned by search; redundant lookup removed.                      |
+| [177](177-plan-qrk-saved-spec-generation.md)            | QRK saved specs        | Synchronous intent, queried generation and revision-checked spec application.    |
+| [178](178-plan-stackshirts-payment-query-state.md)      | Stackshirts payment    | Removed post-stage mirrors; retained Stripe browser prerequisites.               |
+| [179](179-plan-stackshirts-immediate-design-staging.md) | Stackshirts drafts     | Immediate staging replaces delayed batching and navigation flushes.              |
+| [180](180-plan-mentormailbox-unused-async-ui.md)        | Mentor Mailbox         | Removed unreachable async controls/helpers.                                      |
+| [181](181-plan-cloud-admin-system-creation.md)          | Cloud Admin            | One canonical native control-plane owner and synchronous creation.               |
+| [182](182-plan-cloud-system-creation.md)                | Cloud organization UI  | Synchronous creation/navigation and session-backed list/detail/sidebar.          |
+| [183](183-plan-cloud-key-provisioning.md)               | Cloud keys             | Queried provisioning, private issuance steps and authenticated credential reads. |
+| [184](184-plan-qrk-library-backend-ownership.md)        | QRK Library ownership  | Library remains standalone; provider work belongs to the editing session.        |
 
 ## Verification
 

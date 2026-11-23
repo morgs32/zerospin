@@ -1,6 +1,9 @@
 import { circuitRelayTransport } from '@libp2p/circuit-relay-v2';
 import { identify } from '@libp2p/identify';
-import type { PrivateKey as IPrivateKey, Stream as IStream } from '@libp2p/interface';
+import type {
+  PrivateKey as IPrivateKey,
+  Stream as IStream,
+} from '@libp2p/interface';
 import { noise } from '@libp2p/noise';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { webSockets } from '@libp2p/websockets';
@@ -14,7 +17,11 @@ const maxMessageLength = 512 * 1024;
 export interface IPeerConnectionOptions {
   identity: IPrivateKey;
   onIncoming: (peerId: string, streamId: string) => void;
-  onMessage: (peerId: string, message: string, streamId: string) => void | Promise<void>;
+  onMessage: (
+    peerId: string,
+    message: string,
+    streamId: string,
+  ) => void | Promise<void>;
   onDisconnect: (peerId: string, streamId: string) => void;
 }
 
@@ -77,13 +84,15 @@ export async function openPeerConnection(options: IPeerConnectionOptions) {
       try {
         for await (const chunk of stream) {
           pending += decoder.decode(chunk.subarray(), { stream: true });
-          if (pending.length > maxMessageLength) throw new Error('Peer message too large');
+          if (pending.length > maxMessageLength)
+            throw new Error('Peer message too large');
           let newline = pending.indexOf('\n');
           while (newline !== -1) {
             const text = pending.slice(0, newline);
             pending = pending.slice(newline + 1);
             const message: unknown = JSON.parse(text);
-            if (typeof message !== 'string') throw new Error('Invalid peer message');
+            if (typeof message !== 'string')
+              throw new Error('Invalid peer message');
             if (streams.get(peerId)?.id !== id) return;
             await options.onMessage(peerId, message, id);
             newline = pending.indexOf('\n');
@@ -91,7 +100,9 @@ export async function openPeerConnection(options: IPeerConnectionOptions) {
         }
         if (pending !== '') throw new Error('Incomplete peer message');
       } catch (error) {
-        stream.abort(error instanceof Error ? error : new Error('Peer stream failed'));
+        stream.abort(
+          error instanceof Error ? error : new Error('Peer stream failed'),
+        );
       } finally {
         if (streams.get(peerId)?.id === id) {
           streams.delete(peerId);
@@ -118,14 +129,18 @@ export async function openPeerConnection(options: IPeerConnectionOptions) {
     address: `${relayAddress}/p2p-circuit/p2p/${peerId}`,
     async dial(address: string, expectedPeerId: string) {
       if (address !== `${relayAddress}/p2p-circuit/p2p/${expectedPeerId}`) {
-        throw new Error('Peer address does not match the expected identity and relay');
+        throw new Error(
+          'Peer address does not match the expected identity and relay',
+        );
       }
       const connection = await node.dial(multiaddr(address));
       if (connection.remotePeer.toString() !== expectedPeerId) {
         await connection.close();
         throw new Error('Peer identity did not match');
       }
-      const stream = await connection.newStream(protocol, { runOnLimitedConnection: true });
+      const stream = await connection.newStream(protocol, {
+        runOnLimitedConnection: true,
+      });
       return attach(expectedPeerId, stream);
     },
     async send(remotePeerId: string, message: string, streamId: string) {
@@ -134,14 +149,16 @@ export async function openPeerConnection(options: IPeerConnectionOptions) {
         throw new Error('Peer stream is not current');
       }
       const bytes = new TextEncoder().encode(`${JSON.stringify(message)}\n`);
-      if (bytes.length > maxMessageLength) throw new Error('Peer message too large');
+      if (bytes.length > maxMessageLength)
+        throw new Error('Peer message too large');
       if (!attached.stream.send(bytes)) await attached.stream.onDrain();
     },
     isCurrent(remotePeerId: string, streamId: string) {
       return streams.get(remotePeerId)?.id === streamId;
     },
     async close() {
-      for (const { stream } of streams.values()) stream.abort(new Error('Peer connection closed'));
+      for (const { stream } of streams.values())
+        stream.abort(new Error('Peer connection closed'));
       streams.clear();
       await node.stop();
     },

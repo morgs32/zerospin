@@ -2,7 +2,6 @@
 
 **Date:** 2026-10-21. **Status:** Source research and interface recommendation for [Plan 249](../archive/plans/249-plan-aggregate-agent-backend-node.md). No implementation, dependency adoption, plan revision or runtime verification.
 
-
 **Integer V1 cutover:** Shopping now registers only revision `1`; see the
 [current Node definition](../../examples/shopping/src/zerospin/agents/reservationsAgentNodeDefinition.ts) and
 [current registry](../../examples/shopping/agents.ts). The earlier declaration
@@ -17,15 +16,15 @@ Zerospin already has `@zerospin/machine` with the same declaration concepts. The
 
 ## Source findings
 
-| Current source fact | Lesson for Agent Node definitions |
-| --- | --- |
-| `makeState({ stateName, input })` constructs a Struct schema with a tagged `stateName` and state-specific fields. | Give each behavior state exactly the data it needs. A waiting state owns its deadline; a finished state need not carry an optional deadline and unrelated pending flags. [Sibling State construction](../../../epluribus-machina/packages/core/src/makeState/makeState.ts#L60-L84), [local equivalent](../../packages/machine/src/makeState/makeState.ts#L58-L79). |
-| `makeMachine({ states, initial, routes })` declares sparse routes by origin state. Each route receives the exact narrowed origin and its schema-derived payload. Its successful value belongs to the registered state union. | Put due-time handling on the waiting state and owned-completion handling on the releasing state. Avoid asking every invocation to distinguish every possible event and state combination. [Sibling Machine shape](../../../epluribus-machina/packages/core/src/makeMachine/makeMachine.ts#L58-L83), [construction](../../../epluribus-machina/packages/core/src/makeMachine/makeMachine.ts#L103-L125). |
-| State descriptors own schemas; route placements own executable programs. Programs may return any registered state; there is no required second destination-map declaration. | Keep one source of transition behavior. A second chart or registry mirroring the route programs would add authoring work without establishing another invariant. Sparse routes can omit terminal states. [Declaration guidance](../../../epluribus-machina/wiki/patterns/machine/machine-routes-own-programs.ts). |
-| `invokeCommandProgram` checks the route payload and `validateProgramSuccess` checks the returned registered state and its schema before commit. | Preserve runtime validation of loaded state, event input and the next state even when TypeScript narrows authored programs. Invalid returned state is an implementation defect, not a business retry. [Invocation](../../../epluribus-machina/packages/core/src/makeActor/invokeCommandProgram.ts#L8-L37), [returned-state validation](../../../epluribus-machina/packages/core/src/makeActor/validateProgramSuccess.ts#L18-L69). |
-| The SQLite example accepts its loaded state as `initial` and constructs the Machine separately from the application runtime/storage. | A cold behavior declaration and its host's live state/storage are separate responsibilities. Retain one shared definition for browser/backend execution, with instance state loaded by the chosen host. [Example Machine](../../../epluribus-machina/examples/sqlite-counter/src/makeCounterMachine.ts#L7-L28), [example lifecycle](../../../epluribus-machina/examples/sqlite-counter/README.md#L3-L5). |
-| The current Actor has a save hook, runs it before publishing/installing the next activation, and treats a failed save as terminal. The SQLite example explicitly does not retry routes and acknowledges ambiguous completion after state commit but before the caller receives a result. | Persistence-before-publication is useful ordering, but a state-row save alone does not atomically retain a new command input before admission or make external effects safe to replay. [Sibling save/install](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L411-L460), [example limits](../../../epluribus-machina/examples/sqlite-counter/README.md#L29-L38), [local save/install](../../packages/machine/src/makeActor/commitActorTransition.ts#L25-L65). |
-| Handles capture an exact activation symbol; execution checks it before and after acquiring the permit. Late activation completion is ignored once another activation is current. Closing an activation closes its Scope and awaits its route Fiber. | Bind callbacks to their originating behavior revision/lifetime, refuse stale invocations and join owned work before release. A callback from an old row state must not stage a command for its replacement. [Handle identity](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L247-L285), [execution checks](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L532-L550), [late completion](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L464-L484), [scope cleanup](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L365-L387). |
+| Current source fact                                                                                                                                                                                                                                                                      | Lesson for Agent Node definitions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `makeState({ stateName, input })` constructs a Struct schema with a tagged `stateName` and state-specific fields.                                                                                                                                                                        | Give each behavior state exactly the data it needs. A waiting state owns its deadline; a finished state need not carry an optional deadline and unrelated pending flags. [Sibling State construction](../../../epluribus-machina/packages/core/src/makeState/makeState.ts#L60-L84), [local equivalent](../../packages/machine/src/makeState/makeState.ts#L58-L79).                                                                                                                                                                                                                                                 |
+| `makeMachine({ states, initial, routes })` declares sparse routes by origin state. Each route receives the exact narrowed origin and its schema-derived payload. Its successful value belongs to the registered state union.                                                             | Put due-time handling on the waiting state and owned-completion handling on the releasing state. Avoid asking every invocation to distinguish every possible event and state combination. [Sibling Machine shape](../../../epluribus-machina/packages/core/src/makeMachine/makeMachine.ts#L58-L83), [construction](../../../epluribus-machina/packages/core/src/makeMachine/makeMachine.ts#L103-L125).                                                                                                                                                                                                             |
+| State descriptors own schemas; route placements own executable programs. Programs may return any registered state; there is no required second destination-map declaration.                                                                                                              | Keep one source of transition behavior. A second chart or registry mirroring the route programs would add authoring work without establishing another invariant. Sparse routes can omit terminal states. [Declaration guidance](../../../epluribus-machina/wiki/patterns/machine/machine-routes-own-programs.ts).                                                                                                                                                                                                                                                                                                  |
+| `invokeCommandProgram` checks the route payload and `validateProgramSuccess` checks the returned registered state and its schema before commit.                                                                                                                                          | Preserve runtime validation of loaded state, event input and the next state even when TypeScript narrows authored programs. Invalid returned state is an implementation defect, not a business retry. [Invocation](../../../epluribus-machina/packages/core/src/makeActor/invokeCommandProgram.ts#L8-L37), [returned-state validation](../../../epluribus-machina/packages/core/src/makeActor/validateProgramSuccess.ts#L18-L69).                                                                                                                                                                                  |
+| The SQLite example accepts its loaded state as `initial` and constructs the Machine separately from the application runtime/storage.                                                                                                                                                     | A cold behavior declaration and its host's live state/storage are separate responsibilities. Retain one shared definition for browser/backend execution, with instance state loaded by the chosen host. [Example Machine](../../../epluribus-machina/examples/sqlite-counter/src/makeCounterMachine.ts#L7-L28), [example lifecycle](../../../epluribus-machina/examples/sqlite-counter/README.md#L3-L5).                                                                                                                                                                                                           |
+| The current Actor has a save hook, runs it before publishing/installing the next activation, and treats a failed save as terminal. The SQLite example explicitly does not retry routes and acknowledges ambiguous completion after state commit but before the caller receives a result. | Persistence-before-publication is useful ordering, but a state-row save alone does not atomically retain a new command input before admission or make external effects safe to replay. [Sibling save/install](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L411-L460), [example limits](../../../epluribus-machina/examples/sqlite-counter/README.md#L29-L38), [local save/install](../../packages/machine/src/makeActor/commitActorTransition.ts#L25-L65).                                                                                                                                 |
+| Handles capture an exact activation symbol; execution checks it before and after acquiring the permit. Late activation completion is ignored once another activation is current. Closing an activation closes its Scope and awaits its route Fiber.                                      | Bind callbacks to their originating behavior revision/lifetime, refuse stale invocations and join owned work before release. A callback from an old row state must not stage a command for its replacement. [Handle identity](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L247-L285), [execution checks](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L532-L550), [late completion](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L464-L484), [scope cleanup](../../../epluribus-machina/packages/core/src/makeActor/makeActor.ts#L365-L387). |
 
 ## Proposed interface direction
 
@@ -41,11 +40,11 @@ At the Node integration seam, behavior evaluation needs **a next state plus decl
 
 For the promotion-reservation prototype, a small state graph is enough:
 
-| Authored state | Data and legal decisions |
-| --- | --- |
+| Authored state     | Data and legal decisions                                                                                                                                                                                                                |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `WaitingForExpiry` | Retains the recorded absolute `expiresAt`. Row change can keep/reschedule it or finish when no longer eligible. A due event rechecks eligibility/time and either keeps waiting or emits the release intention and moves to `Releasing`. |
-| `Releasing` | Waits for the Node-correlated completion of its existing release command. Duplicate wakes do not emit another command. An owned success or `notReleasable` refusal finishes/reconciles the attempt. |
-| `Finished` | No due or command-completion route. It expresses the current terminal workflow state, not a retained attempt log. |
+| `Releasing`        | Waits for the Node-correlated completion of its existing release command. Duplicate wakes do not emit another command. An owned success or `notReleasable` refusal finishes/reconciles the attempt.                                     |
+| `Finished`         | No due or command-completion route. It expresses the current terminal workflow state, not a retained attempt log.                                                                                                                       |
 
 This is an illustrative recommendation. The Node separately owns the frozen command envelope, producer coordinates, current command correlation and admission retry responsibility. Do not duplicate `commandId`, transport flags or an independent pending-command lifecycle in authored state merely to reproduce facts the Node already owns. A business refusal may choose a new attempt only where the behavior explicitly permits one; an uncertain admission resends its existing envelope.
 
@@ -77,65 +76,72 @@ const WaitingForExpiry = makeState({
 const Releasing = makeState({ stateName: 'releasing', input: {} });
 const Finished = makeState({ stateName: 'finished', input: {} });
 
-export const reservationsAgentNodeDefinition =
-  makeServiceAgentNodeDefinition({
-    agent: reservationsAgentRelease,
-    behaviors: {
-      promotionReservation: {
-        initial: row => row.expiresAt === null
+export const reservationsAgentNodeDefinition = makeServiceAgentNodeDefinition({
+  agent: reservationsAgentRelease,
+  behaviors: {
+    promotionReservation: {
+      initial: row =>
+        row.expiresAt === null
           ? Finished.make({})
           : WaitingForExpiry.make({ expiresAt: row.expiresAt }),
-        wakeAt: state => state.stateName === 'waitingForExpiry'
-          ? state.expiresAt
-          : null,
-        events: {
-          rowChanged: 'check',
-          wake: 'check',
-          commandFinalized: 'settled',
-        },
-        createMachine: ({ initialState, readRow, now, commands }) =>
-          makeMachine({
-            states: {
-              waitingForExpiry: WaitingForExpiry,
-              releasing: Releasing,
-              finished: Finished,
-            },
-            initial: initialState,
-            routes: {
-              waitingForExpiry: {
-                actions: {
-                  check: {
-                    payload: Schema.Void,
-                    program: Effect.fn('reservation.check')(function* () {
-                      const row = readRow();
-                      if (!row || row.status !== 'reserved' ||
-                          row.purchaseId !== null || row.expiresAt === null) {
-                        return Finished.make({});
-                      }
-                      if (now() < row.expiresAt) {
-                        return WaitingForExpiry.make({ expiresAt: row.expiresAt });
-                      }
-                      yield* commands.releaseUncommittedReservation({ id: row.id });
-                      return Releasing.make({});
-                    }),
-                  },
-                },
-              },
-              releasing: {
-                actions: {
-                  settled: {
-                    payload: Schema.Void,
-                    program: Effect.fn('reservation.settled')(function* () {
-                      return Finished.make({});
-                    }),
-                  },
-                },
-              },
-            },
-          }),
+      wakeAt: state =>
+        state.stateName === 'waitingForExpiry' ? state.expiresAt : null,
+      events: {
+        rowChanged: 'check',
+        wake: 'check',
+        commandFinalized: 'settled',
       },
+      createMachine: ({ initialState, readRow, now, commands }) =>
+        makeMachine({
+          states: {
+            waitingForExpiry: WaitingForExpiry,
+            releasing: Releasing,
+            finished: Finished,
+          },
+          initial: initialState,
+          routes: {
+            waitingForExpiry: {
+              actions: {
+                check: {
+                  payload: Schema.Void,
+                  program: Effect.fn('reservation.check')(function* () {
+                    const row = readRow();
+                    if (
+                      !row ||
+                      row.status !== 'reserved' ||
+                      row.purchaseId !== null ||
+                      row.expiresAt === null
+                    ) {
+                      return Finished.make({});
+                    }
+                    if (now() < row.expiresAt) {
+                      return WaitingForExpiry.make({
+                        expiresAt: row.expiresAt,
+                      });
+                    }
+                    yield* commands.releaseUncommittedReservation({
+                      id: row.id,
+                    });
+                    return Releasing.make({});
+                  }),
+                },
+              },
+            },
+            releasing: {
+              actions: {
+                settled: {
+                  payload: Schema.Void,
+                  program: Effect.fn('reservation.settled')(function* () {
+                    return Finished.make({});
+                  }),
+                },
+              },
+            },
+          },
+        }),
     },
-  });
+  },
+});
 ```
 
 `readRow` and `now` read fresh invocation-scoped authoritative facts after the chosen host catches up through its published Service Agent checkpoint. `commands.releaseUncommittedReservation` synchronously collects an intention; it performs no RPC. The Node validates the returned state and commits that state with the frozen command input in one transaction, then delivers through its existing producer. The example's Machine returns only `WaitingForExpiry`, `Releasing` or `Finished` values, as the current Machine contract requires.

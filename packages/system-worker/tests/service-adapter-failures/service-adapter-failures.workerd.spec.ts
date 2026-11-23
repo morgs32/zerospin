@@ -39,8 +39,11 @@ it.each([
   async scenario => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const repo = env.SERVICE_VERSION_REPO.getByName(
       'svr_sys_servicePublication/reservations/2',
@@ -279,8 +282,11 @@ it.each(['guard', 'program'] as const)(
   async phase => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const repo = env.SERVICE_VERSION_REPO.getByName(
       'svr_sys_servicePublication/reservations/2',

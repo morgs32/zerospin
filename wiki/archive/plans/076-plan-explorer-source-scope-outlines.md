@@ -181,17 +181,17 @@ zerospin/
 
 Measured on 2026-10-09 with Node 24.13.1. Provider latency excludes Node startup, HTTP/rendering and the 80 ms background debounce. The outline/edit/semantic sequence copies authored workspace sources and configuration into a disposable workspace, shares installed dependencies and uses a separate empty cache; only the temporary healthcheck copy is edited. Bytes are uncompressed JSON response bytes. RSS includes worker threads, sampled every 100 ms; same-process restart rows retain allocator memory.
 
-| Request | Latency | File parses | Owner / call jobs | New Projects | JSON bytes | RSS |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Cold selected `accept` outline | 13.69 ms | 1 | 0 / 0 | 0 | 4,926 | 207 MiB |
-| Warm selected outline | 0.18 ms | 0 | 0 / 0 | 0 | 4,926 | 207 MiB |
-| Cold source index, selected file already cached | 138.18 ms | 50 | 0 / 0 | 0 | 208,526 | 221 MiB |
-| Warm index after provider restart | 66.97 ms | 0 | 0 / 0 | 0 | 208,526 | 268 MiB |
-| One shared-file outline after edit | 1.43 ms | 1 | 0 / 0 | 0 | 7,542 | 268 MiB |
-| Unchanged caller outline after that edit | 0.19 ms | 0 | 0 / 0 | 0 | 4,926 | 268 MiB |
-| First `this.#node.accept` semantic resolution | 1,590.42 ms | 1 | 0 / 1 | 1 | 1,140 | 558 MiB |
-| Warm resolution of that edge | 190.75 ms | 0 | 0 / 0 | 0 | 1,140 | 560 MiB |
-| Selected owner verification | 3,568.27 ms | 0 | 1 / 0 | 0 | 5,557 | 864 MiB |
+| Request                                         |     Latency | File parses | Owner / call jobs | New Projects | JSON bytes |     RSS |
+| ----------------------------------------------- | ----------: | ----------: | ----------------: | -----------: | ---------: | ------: |
+| Cold selected `accept` outline                  |    13.69 ms |           1 |             0 / 0 |            0 |      4,926 | 207 MiB |
+| Warm selected outline                           |     0.18 ms |           0 |             0 / 0 |            0 |      4,926 | 207 MiB |
+| Cold source index, selected file already cached |   138.18 ms |          50 |             0 / 0 |            0 |    208,526 | 221 MiB |
+| Warm index after provider restart               |    66.97 ms |           0 |             0 / 0 |            0 |    208,526 | 268 MiB |
+| One shared-file outline after edit              |     1.43 ms |           1 |             0 / 0 |            0 |      7,542 | 268 MiB |
+| Unchanged caller outline after that edit        |     0.19 ms |           0 |             0 / 0 |            0 |      4,926 | 268 MiB |
+| First `this.#node.accept` semantic resolution   | 1,590.42 ms |           1 |             0 / 1 |            1 |      1,140 | 558 MiB |
+| Warm resolution of that edge                    |   190.75 ms |           0 |             0 / 0 |            0 |      1,140 | 560 MiB |
+| Selected owner verification                     | 3,568.27 ms |           0 |             1 / 0 |            0 |      5,557 | 864 MiB |
 
 A separate fresh process with an entirely empty syntax cache reads the current checkout's full index in **152.86 ms**, parsing all 51 files and creating zero Projects or semantic jobs. Provider construction/inventory takes another 63.46 ms; its RSS sample is 220 MiB. The source-copy sequence's sampled peak is 863 MiB (864 MiB at request completion). Plan 075's cold/shared-edit complete graphs took 38.40/37.88 seconds and 4,212/5,682 MiB. Those older measurements materialized the full graph and therefore do not establish a like-for-like percentage speedup. They identify the eager work now removed from source-outline reads; cold complex semantic requests and complete static builds still perform semantic analysis.
 

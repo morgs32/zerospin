@@ -49,8 +49,11 @@ it('rejects a missing local Aggregate Node at socket resume before replay', asyn
   try {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     const key = {

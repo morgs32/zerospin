@@ -29,13 +29,13 @@ call to its actual command, query or provider API before recommending deletion.
 
 ## Ranked findings
 
-| Priority | Location | Conclusion |
-| --- | --- | --- |
-| 1 | Red Rope admin `Invitations` and `Partners` | Two forms reconstruct service acknowledgement with journal queries, subscriptions and race-repair state. Remove after consuming synchronous service staging. |
-| 2 | Studio `AgentPreview` | Another acknowledgement-derived command barrier. Remove the barrier; preserve diagnostic journal display. |
-| 3 | QRK module enrichment and saved spec generation | Browser owns durable backend workflows. Move intent/status/continuations into domain contracts; this requires model changes. |
-| 4 | QRK brick update hooks and optimistic shadows; Red Rope ordinary forms | Unnecessary Promise facades around synchronous writes, plus duplicate optimism. Keep genuine browser measurement prerequisites. |
-| 5 | Stackshirts payment form | Redundant post-stage `submitted`/command-ID mirror; keep Stripe tokenization and authentication challenges. |
+| Priority | Location                                                               | Conclusion                                                                                                                                                   |
+| -------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1        | Red Rope admin `Invitations` and `Partners`                            | Two forms reconstruct service acknowledgement with journal queries, subscriptions and race-repair state. Remove after consuming synchronous service staging. |
+| 2        | Studio `AgentPreview`                                                  | Another acknowledgement-derived command barrier. Remove the barrier; preserve diagnostic journal display.                                                    |
+| 3        | QRK module enrichment and saved spec generation                        | Browser owns durable backend workflows. Move intent/status/continuations into domain contracts; this requires model changes.                                 |
+| 4        | QRK brick update hooks and optimistic shadows; Red Rope ordinary forms | Unnecessary Promise facades around synchronous writes, plus duplicate optimism. Keep genuine browser measurement prerequisites.                              |
+| 5        | Stackshirts payment form                                               | Redundant post-stage `submitted`/command-ID mirror; keep Stripe tokenization and authentication challenges.                                                  |
 
 The evidence and migration prerequisites for each ranking follow. Conditional
 membership/provisioning/batching changes are separated below.
@@ -119,16 +119,16 @@ Each of these forms owns an `isSaving` flag, submission/controller bookkeeping,
 a metadata RPC, response decoding and a later awaited `onSave`. The brick does
 not receive the new intent until the metadata request has succeeded.
 
-| Form | Current browser sequence |
-| --- | --- |
-| [Instagram](../../../qrk.sh/apps/library/modules/instagram/InstagramForm.tsx#L62-L94) | Profile lookup → decode → save computed module state |
-| [GitHub activity](../../../qrk.sh/apps/library/modules/githubActivity/GitHubActivityForm.tsx#L63-L95) | Activity lookup → decode → save |
-| [GitHub profile](../../../qrk.sh/apps/library/modules/githubProfile/GitHubProfileForm.tsx#L63-L95) | Profile lookup → decode → save |
-| [GitHub repository](../../../qrk.sh/apps/library/modules/githubRepo/GitHubRepoForm.tsx#L68-L100) | Repository lookup → decode → save |
-| [Figma thumbnail](../../../qrk.sh/apps/library/modules/figmaThumbnail/FigmaThumbnailForm.tsx#L73-L105) | Thumbnail lookup → decode → save |
-| [Link](../../../qrk.sh/apps/library/modules/link/LinkForm.tsx#L49-L77) | Link metadata lookup → save |
-| [Map place](../../../qrk.sh/apps/library/modules/mapPlace/MapPlaceForm.tsx#L39-L67) | Place lookup → save |
-| [Swatch and icon](../../../qrk.sh/apps/library/modules/swatchAndIcon/SwatchAndIconForm.tsx#L38-L70) | Icon/color lookup → decode → save |
+| Form                                                                                                   | Current browser sequence                             |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| [Instagram](../../../qrk.sh/apps/library/modules/instagram/InstagramForm.tsx#L62-L94)                  | Profile lookup → decode → save computed module state |
+| [GitHub activity](../../../qrk.sh/apps/library/modules/githubActivity/GitHubActivityForm.tsx#L63-L95)  | Activity lookup → decode → save                      |
+| [GitHub profile](../../../qrk.sh/apps/library/modules/githubProfile/GitHubProfileForm.tsx#L63-L95)     | Profile lookup → decode → save                       |
+| [GitHub repository](../../../qrk.sh/apps/library/modules/githubRepo/GitHubRepoForm.tsx#L68-L100)       | Repository lookup → decode → save                    |
+| [Figma thumbnail](../../../qrk.sh/apps/library/modules/figmaThumbnail/FigmaThumbnailForm.tsx#L73-L105) | Thumbnail lookup → decode → save                     |
+| [Link](../../../qrk.sh/apps/library/modules/link/LinkForm.tsx#L49-L77)                                 | Link metadata lookup → save                          |
+| [Map place](../../../qrk.sh/apps/library/modules/mapPlace/MapPlaceForm.tsx#L39-L67)                    | Place lookup → save                                  |
+| [Swatch and icon](../../../qrk.sh/apps/library/modules/swatchAndIcon/SwatchAndIconForm.tsx#L38-L70)    | Icon/color lookup → decode → save                    |
 
 The backend RPC owns lookup/scraping, including a remote Apify operation for
 Instagram, while `updateBrick` accepts and persists already-computed state. The
@@ -193,12 +193,12 @@ synchronous aggregate staging. The modal props require a Promise and await it
 before closing. Remove the Promise-only signatures and async wrappers; retain
 unsaved inputs and validation. This is smaller syntactic bloat, not another
 network acknowledgement barrier.
-[Fleet create handlers](../../../redropeparking/apps/web/app/(user)/[username]/FleetDashboard.tsx#L81-L174),
-[car detail handlers](../../../redropeparking/apps/web/app/(user)/[username]/car/[id]/CarDetailPage.tsx#L93-L247),
-[garage detail handlers](../../../redropeparking/apps/web/app/(user)/[username]/garage/[id]/GarageDetailPage.tsx#L270-L393),
-[car modal Promise contract](../../../redropeparking/apps/web/app/(user)/[username]/_components/CarFormModal.tsx#L42-L49),
-[car modal submit](../../../redropeparking/apps/web/app/(user)/[username]/_components/CarFormModal.tsx#L80-L120),
-[garage modal submit](../../../redropeparking/apps/web/app/(user)/[username]/_components/GarageFormModal.tsx#L70-L94).
+[Fleet create handlers](<../../../redropeparking/apps/web/app/(user)/[username]/FleetDashboard.tsx#L81-L174>),
+[car detail handlers](<../../../redropeparking/apps/web/app/(user)/[username]/car/[id]/CarDetailPage.tsx#L93-L247>),
+[garage detail handlers](<../../../redropeparking/apps/web/app/(user)/[username]/garage/[id]/GarageDetailPage.tsx#L270-L393>),
+[car modal Promise contract](<../../../redropeparking/apps/web/app/(user)/[username]/_components/CarFormModal.tsx#L42-L49>),
+[car modal submit](<../../../redropeparking/apps/web/app/(user)/[username]/_components/CarFormModal.tsx#L80-L120>),
+[garage modal submit](<../../../redropeparking/apps/web/app/(user)/[username]/_components/GarageFormModal.tsx#L70-L94>).
 
 ### Stackshirts payment form: remove post-stage completion bookkeeping
 
@@ -233,7 +233,7 @@ authentication, not checkout submission completion.
    bridge only after retaining membership-resolution progress and moving the
    privileged workflow behind a backend continuation exposed to the restricted
    intake actor's query.
-   [UI journal and orchestration](../../../redropeparking/apps/web/app/(user)/signed-up/SignedUpHandoff.tsx#L30-L160),
+   [UI journal and orchestration](<../../../redropeparking/apps/web/app/(user)/signed-up/SignedUpHandoff.tsx#L30-L160>),
    [HTTP hook](../../../redropeparking/apps/web/components/useMembershipStatus.ts#L13-L59),
    [resolver invitation work](../../../redropeparking/apps/zerospin/src/membership/resolveMembership.ts#L98-L192),
    [optimistic intake attributes](../../../redropeparking/apps/zerospin/src/contracts/submitIntake.ts#L111-L130),
@@ -242,7 +242,7 @@ authentication, not checkout submission completion.
    whose privileged command explicitly requires system-only claims. Removing it
    requires a restricted public submission actor/model/query and identity and
    idempotency decisions; the existing admin actor admits admins only.
-   [UI](../../../redropeparking/apps/web/app/(visitor)/partner/intake/contact-info/page.tsx#L31-L66),
+   [UI](<../../../redropeparking/apps/web/app/(visitor)/partner/intake/contact-info/page.tsx#L31-L66>),
    [HTTP owner](../../../redropeparking/apps/web/app/api/partner-intake/route.ts#L56-L102),
    [system-only guard](../../../redropeparking/apps/zerospin/src/contracts/createPartnerFromIntake.ts#L37-L43),
    [admin admission](../../../redropeparking/apps/zerospin/src/admin/actors/adminActor.ts#L24-L28).
@@ -286,9 +286,9 @@ violation was found in the scoped app/mentor/admin search. Representative UI
 stages star/unstar, create and calendar update synchronously, while querying
 projects and handling failures through the session notification layer.
 [Star/unstar](../../../mentormailbox/apps/app/src/containers/ListView/Project.tsx#L37-L49),
-[project query](../../../mentormailbox/apps/app/src/app/(private)/planner/personal/page.tsx#L35-L50),
-[create and immediate input clear](../../../mentormailbox/apps/app/src/app/(private)/planner/personal/page.tsx#L84-L105),
-[calendar update](../../../mentormailbox/apps/app/src/app/(private)/planner/PlannerCalendar.tsx#L161-L168),
+[project query](<../../../mentormailbox/apps/app/src/app/(private)/planner/personal/page.tsx#L35-L50>),
+[create and immediate input clear](<../../../mentormailbox/apps/app/src/app/(private)/planner/personal/page.tsx#L84-L105>),
+[calendar update](<../../../mentormailbox/apps/app/src/app/(private)/planner/PlannerCalendar.tsx#L161-L168>),
 [session notifications](../../../mentormailbox/apps/app/src/zerospin/studentSession.ts#L55-L60).
 
 Unused residue is a separate cleanup category: `LoadingButton` accepts a Promise
@@ -342,16 +342,16 @@ their current APIs do not expose local session staging. Treat them as candidates
 for a deliberate command/domain-model migration, not as places where deleting
 `await` completes the fix.
 
-| Candidate | Present UI ownership | Actual owner and prerequisite |
-| --- | --- | --- |
-| Admin `CreateSystemDialog` | Await creation, disable through `form.isSubmitting`, refresh server data after success. | `AdminApi.createSystemRecord` is a server RPC. A synchronous creation design first needs a session-owned request/model and locally allocated identity. |
-| Cloud `NewSystemDialog` | Await creation, use returned system ID to navigate, then refresh. | `CloudApi.createSystemRecord` allocates the ID server-side and writes `CloudRepo`; there is no local staged system row. |
-| Shared `ZerospinKeysCard` | Await `onCreateKeys` inside a transition; show request-local progress/error, then refresh server data. | Key generation calls Clerk and persists a key pair. A command/query design needs a retained provisioning state and backend external work, while preserving the private credential boundary. |
+| Candidate                  | Present UI ownership                                                                                   | Actual owner and prerequisite                                                                                                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Admin `CreateSystemDialog` | Await creation, disable through `form.isSubmitting`, refresh server data after success.                | `AdminApi.createSystemRecord` is a server RPC. A synchronous creation design first needs a session-owned request/model and locally allocated identity.                                      |
+| Cloud `NewSystemDialog`    | Await creation, use returned system ID to navigate, then refresh.                                      | `CloudApi.createSystemRecord` allocates the ID server-side and writes `CloudRepo`; there is no local staged system row.                                                                     |
+| Shared `ZerospinKeysCard`  | Await `onCreateKeys` inside a transition; show request-local progress/error, then refresh server data. | Key generation calls Clerk and persists a key pair. A command/query design needs a retained provisioning state and backend external work, while preserving the private credential boundary. |
 
 Sources:
 [Admin creation UI](../../../zerospin-cloud/admin/src/components/dashboard/CreateSystemDialog.tsx#L39-L63),
 [Admin pending presentation](../../../zerospin-cloud/admin/src/components/dashboard/CreateSystemDialog.tsx#L124-L141),
-[Cloud creation UI](../../../zerospin-cloud/cloud/app/(authed)/NewSystemDialog.tsx#L40-L68),
+[Cloud creation UI](<../../../zerospin-cloud/cloud/app/(authed)/NewSystemDialog.tsx#L40-L68>),
 [Cloud creation owner](../../../zerospin-cloud/apis/src/CloudApi/CloudApi.ts#L49-L82),
 [CloudRepo write](../../../zerospin-cloud/apis/src/CloudRepo/CloudRepo.ts#L75-L113),
 [keys UI](../../../zerospin-cloud/ui/src/components/ZerospinKeysCard.tsx#L156-L180),
@@ -364,8 +364,8 @@ would not create synchronous local semantics. Clerk organization creation and
 active-organization selection are also genuine external authentication work;
 clipboard writes and syntax highlighting are presentation/browser work.
 [Cloud RPC helper](../../../zerospin-cloud/cloud/lib/useCloudApi.ts#L18-L43),
-[organization creation](../../../zerospin-cloud/cloud/app/(authed)/NewOrganizationDialog.tsx#L25-L44),
-[organization activation](../../../zerospin-cloud/cloud/app/(authed)/OrganizationSwitcherPopover.tsx#L32-L38),
+[organization creation](<../../../zerospin-cloud/cloud/app/(authed)/NewOrganizationDialog.tsx#L25-L44>),
+[organization activation](<../../../zerospin-cloud/cloud/app/(authed)/OrganizationSwitcherPopover.tsx#L32-L38>),
 [clipboard and highlighting](../../../zerospin-cloud/ui/src/components/ZerospinKeysCard.tsx#L38-L73),
 [clipboard feedback](../../../zerospin-cloud/ui/src/components/ZerospinKeysCard.tsx#L110-L126).
 
@@ -391,7 +391,7 @@ async and declares creation and addition separately. It demonstrates the same
 ownership issue but is not an independent active-product priority. Its Git
 common directory was unavailable during inventory, so its provenance should not
 be treated as an active managed worktree.
-[Historical product button](../../../zerospin-shared-worker/examples/shopping/src/app/(authed)/ProductCard.tsx#L65-L94),
+[Historical product button](<../../../zerospin-shared-worker/examples/shopping/src/app/(authed)/ProductCard.tsx#L65-L94>),
 [historical browser API](../../../zerospin-shared-worker/packages/react/src/makeBrowserSession.ts#L27-L28),
 [historical cart contracts](../../../zerospin-shared-worker/examples/shopping/src/zerospin/contracts.ts#L74-L111).
 

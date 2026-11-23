@@ -313,7 +313,8 @@ export class SystemRepo extends SystemRepoBase {
     spec: ISystemSpec;
     ownerReleases?: readonly IOwnerReleaseIdentity[];
   }) {
-    if (this.env.ZEROSPIN_DEPLOYMENT_BOOTSTRAP === true) await this.awaitStartup();
+    if (this.env.ZEROSPIN_DEPLOYMENT_BOOTSTRAP === true)
+      await this.awaitStartup();
     const { spec, ownerReleases = [] } = props;
     return runWorkerPromise(
       registerSystemSpec({
@@ -519,7 +520,8 @@ export class SystemRepo extends SystemRepoBase {
   /** Attest the serving catalog's ordinary-continuation command history layout. */
   async hasOrdinaryContinuationStorage(): Promise<boolean> {
     // Cloudflare can route candidate acceptance into the serving bootstrap Repo.
-    if (this.env.ZEROSPIN_DEPLOYMENT_BOOTSTRAP === true) await this.awaitStartup();
+    if (this.env.ZEROSPIN_DEPLOYMENT_BOOTSTRAP === true)
+      await this.awaitStartup();
     return this.ctx.storage.kv.get(ORDINARY_CONTINUATION_STORAGE_KEY) === true;
   }
 

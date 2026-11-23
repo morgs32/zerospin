@@ -201,8 +201,11 @@ it.each(['original', 'replay'] as const)(
   async mode => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     const repo = env.SERVICE_VERSION_REPO.getByName(

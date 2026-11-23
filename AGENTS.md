@@ -60,7 +60,6 @@ See the central [parallel-models skill](packages/sdk/skills/zerospin-parallel-mo
 
 - ADRs exist for context and documentation, not as immutable design constraints. Reconsider their decisions from first principles when examining the architecture, and update or supersede them when the agreed design changes. Never preserve a design solely because an old ADR describes it.
 
-
 - In testing, always prefer concision over comprehensiveness: use the smallest set of meaningful tests that proves the required behavior and failure paths, rather than exhaustive coverage.
 
 - Method profiles (`*.profiles.ts`) contain exactly one representative success profile and one representative rejection profile when those outcomes exist. Keep canonical declarations, seed rows, and lazy setup returning the invocation in that file. Capture with `profileUtils.capture` and put outcome/span-tree inline snapshots in the sibling `*.profiles.spec.ts`. Captures retain the native Exit and Effect failure stacks; successful spans do not promise authored source fields. Use `--mode profile` for bounded, redacted argument/result snapshots. Do not catalogue every error code or input permutation.

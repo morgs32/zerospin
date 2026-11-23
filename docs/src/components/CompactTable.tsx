@@ -13,7 +13,7 @@ type ICompactTableProps = {
 };
 
 export function CompactTable({ caption, rows }: ICompactTableProps) {
-  const hasAssignees = rows.some((row) => row.assignee !== undefined);
+  const hasAssignees = rows.some(row => row.assignee !== undefined);
   return (
     <table className="compact-table">
       <caption>{caption}</caption>
@@ -25,7 +25,7 @@ export function CompactTable({ caption, rows }: ICompactTableProps) {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
+        {rows.map(row => (
           <tr key={row.id}>
             <th scope="row">{row.label}</th>
             {hasAssignees && <td>{row.assignee}</td>}

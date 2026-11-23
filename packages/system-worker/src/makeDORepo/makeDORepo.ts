@@ -35,11 +35,11 @@ import type {
 import { registerRepoWithSystem } from '../SystemRepo/registerRepo/registerRepoWithSystem.js';
 import { validateRepoSystemId } from '../SystemRepo/registerRepo/validateRepoSystemId.js';
 
+import { awaitStartup } from './awaitStartup/awaitStartup.js';
 import { bindRepoNamespace } from './bindRepoNamespace.js';
 import { getRepoTableRows } from './getRepoTableRows/getRepoTableRows.js';
 import { makeDurableDb } from './makeDurableDb.js';
 import type { IRepoNameUtils } from './makeRepoNameUtils.js';
-import { awaitStartup } from './awaitStartup/awaitStartup.js';
 import type { IDORepoConfig } from './types.js';
 
 /** Repo factories and consumers augment their own namespace bindings. */

@@ -7,14 +7,9 @@
     "allowImportingTsExtensions": true,
     "rootDir": "../..",
     "noEmit": true,
-    "types": [
-      "node",
-      "vite/client"
-    ]
+    "types": ["node", "vite/client"]
   },
-  "include": [
-    "tsup.config.ts"
-  ],
+  "include": ["tsup.config.ts"],
   "references": [
     {
       "path": "./tsconfig.json"

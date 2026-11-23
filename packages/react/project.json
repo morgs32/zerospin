@@ -3,15 +3,8 @@
   "name": "@zerospin/react",
   "targets": {
     "lib": {
-      "inputs": [
-        "default",
-        "^default",
-        "{projectRoot}/tsconfig.json"
-      ],
-      "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/tsconfig.tsbuildinfo"
-      ],
+      "inputs": ["default", "^default", "{projectRoot}/tsconfig.json"],
+      "outputs": ["{projectRoot}/dist", "{projectRoot}/tsconfig.tsbuildinfo"],
       "dependsOn": [
         {
           "target": "lib",

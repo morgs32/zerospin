@@ -9,5 +9,7 @@ export function hasServiceNodeCheckpoint(
   serviceIndex: number;
   dispositionChainHash: string;
 } {
-  return metadata.serviceIndex !== null && metadata.dispositionChainHash !== null;
+  return (
+    metadata.serviceIndex !== null && metadata.dispositionChainHash !== null
+  );
 }

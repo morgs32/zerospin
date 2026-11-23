@@ -78,17 +78,17 @@ Application tests assume the Zerospin framework works. The former mixed matrix
 is satisfied at the app seams below, with generic platform/provider verification
 tracked separately rather than required again for application closure.
 
-| Area | Application evidence / separate owner |
-| --- | --- |
-| Identity/privacy | Read-only Actor/session declarations and verified-identity selection binding reviewed; generic enforcement belongs to Plans 218/221, Clerk integration to Plan 151. |
-| Capacity | 100 allocations, duplicate-Cart denial, released/expired capacity reuse, terminal IDs and lifetime redemption accounting pass through real commands; concurrent serialization is a framework guarantee. |
-| Refresh/observation | Source review confirms exact retained Cart/Purchase reservation IDs, missing-decision rendering and no query-driven commands; no browser verification is claimed. |
-| Cancellation | Release before queued reserve creates a terminal row; delayed reserve/commit cannot revive it. |
-| Stale decisions/selection | Another Purchase's valid commitment decision refuses without payment; a changed nullable selection refuses before Purchase creation. |
-| Commitment | Expired/wrong-Purchase decisions refuse without payment and release using the exact Purchase binding; quote-only refusal leaves the hold reusable. |
-| Payment/later checkout | Paid clears matching items; decline retains them and releases; uncertainty preserves lock/commitment past expiry; old release cannot affect a later checkout. |
-| Money | Zero-price creation remains covered; odd-cent discount/provider totals and stable payment keys match; unsafe arithmetic refuses before commitment/payment. |
-| Time/replay | Holds remain reserved at 599 seconds and release at 600; committed allocations do not expire. Historical reconstruction/frozen replay Clock belongs to Plan 214. |
+| Area                      | Application evidence / separate owner                                                                                                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identity/privacy          | Read-only Actor/session declarations and verified-identity selection binding reviewed; generic enforcement belongs to Plans 218/221, Clerk integration to Plan 151.                                     |
+| Capacity                  | 100 allocations, duplicate-Cart denial, released/expired capacity reuse, terminal IDs and lifetime redemption accounting pass through real commands; concurrent serialization is a framework guarantee. |
+| Refresh/observation       | Source review confirms exact retained Cart/Purchase reservation IDs, missing-decision rendering and no query-driven commands; no browser verification is claimed.                                       |
+| Cancellation              | Release before queued reserve creates a terminal row; delayed reserve/commit cannot revive it.                                                                                                          |
+| Stale decisions/selection | Another Purchase's valid commitment decision refuses without payment; a changed nullable selection refuses before Purchase creation.                                                                    |
+| Commitment                | Expired/wrong-Purchase decisions refuse without payment and release using the exact Purchase binding; quote-only refusal leaves the hold reusable.                                                      |
+| Payment/later checkout    | Paid clears matching items; decline retains them and releases; uncertainty preserves lock/commitment past expiry; old release cannot affect a later checkout.                                           |
+| Money                     | Zero-price creation remains covered; odd-cent discount/provider totals and stable payment keys match; unsafe arithmetic refuses before commitment/payment.                                              |
+| Time/replay               | Holds remain reserved at 599 seconds and release at 600; committed allocations do not expire. Historical reconstruction/frozen replay Clock belongs to Plan 214.                                        |
 
 1. Keep tests explicit and concise using the public System harness, SDK commands,
    typed selections and existing provider/API Layer seams. No browser, Clerk

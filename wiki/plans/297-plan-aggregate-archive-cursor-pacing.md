@@ -19,11 +19,11 @@
 Proposed transaction excerpt (illustrative, inside the existing transaction):
 
 ```ts
-const commandContext = yield* readAggregateCommandTx(tx, row, key, mode);
+const commandContext = yield * readAggregateCommandTx(tx, row, key, mode);
 if (commandContext === undefined) return; // Already materialized; caller recovers the result.
 if (row.aggregateIndex - archivedThrough > 128) {
   // Leave resource rows, the materialization head and the outbox unchanged.
-  return yield* makeZerospinError('aggregate-archive-progress-required');
+  return yield * makeZerospinError('aggregate-archive-progress-required');
 }
 // Only now restore the retained result or evaluate and retain a new result.
 ```

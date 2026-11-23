@@ -137,12 +137,12 @@ therefore has value independent of optional diagnostic delivery.
 
 ## Alternatives and tradeoffs
 
-| Alternative | What it improves | Cost or limitation |
-| --- | --- | --- |
-| Keep the adapter at unknown-input boundaries | Keeps concise `catch:` callbacks and one bounded diagnostic formatter. | Does not solve indiscriminate relabeling. Every use still needs a legitimate operation code and an explicit preservation policy. |
-| Let `makeZerospinError` accept an unknown cause and normalize it | Removes the separate curried API and duplicated message-default selection while retaining one constructor. | The constructor must distinguish omitted/null cause from a supplied value. This is an API change; accepting unknown input must not accidentally change retained cause into arbitrary objects. |
-| Preserve typed failures internally; translate only at the owner/API boundary | Retains actionable distinctions for recovery and makes unexpected inputs visible. | Requires a real boundary decision. Preserving every `ZerospinError` automatically can also be wrong when scope or declared business-error validation matters. |
-| Retain a native/raw runtime cause and format only for output | Preserves object identity, nested native causes, structured Effect reasons, and richer diagnostics until formatting. | Changes the runtime error model and diagnostic codec. Arbitrary causes need explicit serialization, redaction, retention, and telemetry decisions. This is larger than removing a helper. |
+| Alternative                                                                  | What it improves                                                                                                     | Cost or limitation                                                                                                                                                                            |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Keep the adapter at unknown-input boundaries                                 | Keeps concise `catch:` callbacks and one bounded diagnostic formatter.                                               | Does not solve indiscriminate relabeling. Every use still needs a legitimate operation code and an explicit preservation policy.                                                              |
+| Let `makeZerospinError` accept an unknown cause and normalize it             | Removes the separate curried API and duplicated message-default selection while retaining one constructor.           | The constructor must distinguish omitted/null cause from a supplied value. This is an API change; accepting unknown input must not accidentally change retained cause into arbitrary objects. |
+| Preserve typed failures internally; translate only at the owner/API boundary | Retains actionable distinctions for recovery and makes unexpected inputs visible.                                    | Requires a real boundary decision. Preserving every `ZerospinError` automatically can also be wrong when scope or declared business-error validation matters.                                 |
+| Retain a native/raw runtime cause and format only for output                 | Preserves object identity, nested native causes, structured Effect reasons, and richer diagnostics until formatting. | Changes the runtime error model and diagnostic codec. Arbitrary causes need explicit serialization, redaction, retention, and telemetry decisions. This is larger than removing a helper.     |
 
 The first two alternatives concern construction ergonomics. The third concerns
 error ownership. The fourth concerns diagnostic fidelity. They can be evaluated
@@ -278,7 +278,10 @@ APIs and does not require changing the constructor.
 program.pipe(
   Effect.catchIf(
     error => !isZerospinError(error),
-    error => Effect.fail(catchZerospinError({ code: 'checkpoint-read-failed' })(error)),
+    error =>
+      Effect.fail(
+        catchZerospinError({ code: 'checkpoint-read-failed' })(error),
+      ),
   ),
 );
 ```

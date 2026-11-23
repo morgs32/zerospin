@@ -26,14 +26,14 @@ The installed relational-query implementation does not pass table metadata into 
 
 Inline probes against those installed classes produced:
 
-| Query shape | SQL dependency set | Available Drizzle metadata |
-| --- | --- | --- |
+| Query shape                                      | SQL dependency set             | Available Drizzle metadata                     |
+| ------------------------------------------------ | ------------------------------ | ---------------------------------------------- |
 | Relational cart with items and checkout purchase | `cart`, `cartItem`, `purchase` | `getUsedTables` absent; SQL `usedTables` empty |
-| Direct join | Both joined tables | Both tables |
-| `WHERE … IN (SELECT …)` | Outer and nested tables | Outer table only |
-| CTE | Underlying table | Empty |
-| `UNION` | Tables from both arms | First arm only |
-| Raw SQL `FROM` | Referenced table | Empty |
+| Direct join                                      | Both joined tables             | Both tables                                    |
+| `WHERE … IN (SELECT …)`                          | Outer and nested tables        | Outer table only                               |
+| CTE                                              | Underlying table               | Empty                                          |
+| `UNION`                                          | Tables from both arms          | First arm only                                 |
+| Raw SQL `FROM`                                   | Referenced table               | Empty                                          |
 
 Reading a private Drizzle field or walking only the root relational table would therefore miss changes and leave stale results. The database compiler already resolves the SQL that actually reaches the connection.
 
@@ -47,17 +47,17 @@ The installed `@livestore/wa-sqlite` implements `set_authorizer` in `src/sqlite-
 
 Inline probes loaded the installed synchronous WASM build, which reports SQLite `3.47.0`. Queries ran against fresh in-memory tables. Read notifications occurred during preparation even when the query returned no rows.
 
-| Query shape | Observed read dependencies |
-| --- | --- |
-| Checkout-shaped parent plus nested relation subqueries, empty database | `cart`, `cartItem`, `purchase` |
-| Ordinary select with no matching row | Referenced table |
-| `COUNT(*)` / `EXISTS` | Referenced table, including an empty column name |
-| Join | Both physical tables |
-| Nested select | Outer and nested tables |
-| CTE | Underlying physical table |
-| SQL view | Base tables and the view name |
-| `SELECT 1` | Empty set |
-| Referenced table behind `WHERE 0` | Referenced table still reported |
+| Query shape                                                            | Observed read dependencies                       |
+| ---------------------------------------------------------------------- | ------------------------------------------------ |
+| Checkout-shaped parent plus nested relation subqueries, empty database | `cart`, `cartItem`, `purchase`                   |
+| Ordinary select with no matching row                                   | Referenced table                                 |
+| `COUNT(*)` / `EXISTS`                                                  | Referenced table, including an empty column name |
+| Join                                                                   | Both physical tables                             |
+| Nested select                                                          | Outer and nested tables                          |
+| CTE                                                                    | Underlying physical table                        |
+| SQL view                                                               | Base tables and the view name                    |
+| `SELECT 1`                                                             | Empty set                                        |
+| Referenced table behind `WHERE 0`                                      | Referenced table still reported                  |
 
 Two details matter:
 
@@ -86,13 +86,13 @@ Keep responsibilities at the existing boundaries:
 
 ## Alternatives and first-party precedents
 
-| Approach | Evidence | Assessment for Zerospin |
-| --- | --- | --- |
-| SQLite authorizer | Stable C API; installed browser API and inline probes confirmed | Recommended; observes the normal compiler path and works across browser/native without a new SQL parser |
-| `tables_used(sql)` | SQLite extension; current LiveStore uses it | Credible alternative, available in the installed WASM build; native availability must be established |
-| `EXPLAIN` opcode inspection | Current PowerSync implementation | Works for PowerSync's supported engine assumptions; adds bytecode and schema-mapping coupling |
-| Parse `EXPLAIN QUERY PLAN` descriptions | SQLite documents the output as debugging-only | Avoid; applications are explicitly warned not to depend on that output format |
-| Traverse Drizzle objects or SQL text | Installed metadata probes above | Incomplete without rebuilding SQLite's resolution rules for nested queries, views, aliases and raw SQL |
+| Approach                                | Evidence                                                        | Assessment for Zerospin                                                                                 |
+| --------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| SQLite authorizer                       | Stable C API; installed browser API and inline probes confirmed | Recommended; observes the normal compiler path and works across browser/native without a new SQL parser |
+| `tables_used(sql)`                      | SQLite extension; current LiveStore uses it                     | Credible alternative, available in the installed WASM build; native availability must be established    |
+| `EXPLAIN` opcode inspection             | Current PowerSync implementation                                | Works for PowerSync's supported engine assumptions; adds bytecode and schema-mapping coupling           |
+| Parse `EXPLAIN QUERY PLAN` descriptions | SQLite documents the output as debugging-only                   | Avoid; applications are explicitly warned not to depend on that output format                           |
+| Traverse Drizzle objects or SQL text    | Installed metadata probes above                                 | Incomplete without rebuilding SQLite's resolution rules for nested queries, views, aliases and raw SQL  |
 
 SQLite's `tables_used` reports persistent table/index btrees and distinguishes read/write access. It requires `SQLITE_ENABLE_BYTECODE_VTAB`. The installed WASM build returned `1` for `sqlite_compileoption_used('ENABLE_BYTECODE_VTAB')`, and `tables_used('SELECT 1')` executed successfully. [SQLite extension documentation](https://www.sqlite.org/bytecodevtab.html).
 

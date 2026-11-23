@@ -175,10 +175,10 @@ qrk.sh/
 
    ```ts
    // 1. The page already holds zerospin:worker-client:${clientId}.
-   port.postMessage({ type: "zerospin-client", clientId });
+   port.postMessage({ type: 'zerospin-client', clientId });
    // 2. The host validates the frame and queues a watcher for that held lock.
    // 3. After any prior owner closes, it installs this owner's RPC handler.
-   port.postMessage({ type: "zerospin-client-accepted", clientId });
+   port.postMessage({ type: 'zerospin-client-accepted', clientId });
    // 4. Only then does the page construct CapnWeb and call the existing ready().
    ```
 

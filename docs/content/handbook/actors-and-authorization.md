@@ -21,8 +21,13 @@ An authenticated browser session provides `getCredentials: () => Effect<Credenti
 At the Gateway, the browser calls the selected Aggregate Actor in two steps:
 
 ```ts
-const authenticatedActor = await gateway.aggregate(selection).authenticate({ aggregateId, credentials });
-const session = await authenticatedActor.openSession({ sessionName, aggregateSessionLock });
+const authenticatedActor = await gateway
+  .aggregate(selection)
+  .authenticate({ aggregateId, credentials });
+const session = await authenticatedActor.openSession({
+  sessionName,
+  aggregateSessionLock,
+});
 ```
 
 Opening the session checks the session definition against the running Aggregate release and invokes the authored Actor's `authorize` policy. The returned session handle can read the shopper's snapshot.

@@ -1148,8 +1148,11 @@ it.each([
   async scenario => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const repo = env.AGGREGATE_VERSION_REPO.getByName(
       'avr_sys_servicePublication/acc_replay/account/2',
@@ -1389,8 +1392,11 @@ it.each(['accept', 'refuse'] as const)(
   async admission => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const repo = env.AGGREGATE_VERSION_REPO.getByName(
       'avr_sys_servicePublication/acc_external/account/1',
@@ -1484,8 +1490,11 @@ it.each(['guard', 'program'] as const)(
   async phase => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     const repo = env.AGGREGATE_VERSION_REPO.getByName(
       'avr_sys_servicePublication/acc_refused/account/2',
@@ -1873,8 +1882,11 @@ describe('Aggregate external operation outbox', () => {
     await reset();
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     source = env.AGGREGATE_CHAIN.getByName(

@@ -260,8 +260,11 @@ it.each([
   async ({ expiresAt, expected, commandName, fields, mapperFailureCode }) => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     const source = env.SERVICE_CHAIN.getByName(
@@ -533,8 +536,11 @@ it.each([
   async ({ reservationId, failureCode }) => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     const source = env.AGGREGATE_CHAIN.getByName(
@@ -1005,8 +1011,11 @@ it.each(['ServiceChain', 'AggregateChain'] as const)(
   async sourceName => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     const serviceSource = env.SERVICE_CHAIN.getByName(
@@ -1246,8 +1255,11 @@ it.each(['ServiceChain', 'AggregateChain'] as const)(
   async sourceName => {
     const systemRepo = env.SYSTEM_REPO.getByName('sys_servicePublication');
     expect(
-      (await systemRepo.registerSystemSpec({ spec: makeSystemSpec({ system }) }))
-        .result._tag,
+      (
+        await systemRepo.registerSystemSpec({
+          spec: makeSystemSpec({ system }),
+        })
+      ).result._tag,
     ).toBe('Success');
     expect((await systemRepo.initialize()).result._tag).toBe('Success');
     const serviceSource = env.SERVICE_CHAIN.getByName(

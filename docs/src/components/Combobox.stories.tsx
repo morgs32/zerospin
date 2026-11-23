@@ -69,9 +69,7 @@ export const Controlled: IStory = {
     return (
       <div>
         <Combobox {...args} value={value} onValueChange={setValue} />
-        <p style={{ fontSize: 12 }}>
-          Selected value: {value ?? 'None'}
-        </p>
+        <p style={{ fontSize: 12 }}>Selected value: {value ?? 'None'}</p>
       </div>
     );
   },

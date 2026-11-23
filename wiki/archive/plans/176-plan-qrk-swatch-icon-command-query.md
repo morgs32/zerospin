@@ -29,11 +29,14 @@
 // 1. A transient search choice retains all data needed to save.
 onChange({ hash: icon.hash, name: icon.name, svg: icon.svg });
 // 2. Save builds state from the local draft and validates it.
-const state = decodeSwatchState({ payload: { hash, color }, data: { name, svg } });
+const state = decodeSwatchState({
+  payload: { hash, color },
+  data: { name, svg },
+});
 // 3. Existing ordinary command staging returns its real local result.
 const result = onSave(state);
 // 4. Only successful staging clears the draft; saved UI reads the brick query.
-if (result._tag === "Success") clearDraft();
+if (result._tag === 'Success') clearDraft();
 ```
 
 ## Verification

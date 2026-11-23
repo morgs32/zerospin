@@ -90,12 +90,12 @@ zerospin/
 3. Before the maintainer's verification waiver, all 18 existing library targets in the fixed group passed; server-only has no library build. All 24 scoped React/Shopping/Tic-tac-toe/Fragment type/lint/dependency tasks passed. Fragment production build passed and prerendered 35 pages. Scoped TypeScript formatting and whitespace checks passed. Nx Cloud was unavailable; these were local results. A raw Node import of the browser-oriented barrel encountered its existing extensionless Browser imports; existing bundler application builds passed. Mounted browser and authenticated lifecycle behavior were not exercised for this rename.
 4. Four isolated consumer adoption commits pin all 86 direct dependencies to exact **22.0.0**, update live factory declarations and current guidance, and retain each repository's package manager. Stackshirts' release-age exemptions and Mentor's exact CLI deployment guard moved with that version. The six CLI deployment helpers and `deployWranglerFn.js` compared byte-identically between 21.0.0 and 22.0.0. Consumer source edits replace the factory name only. Unrelated dependency selections were restored in Mentor and Red Rope Parking's generated lockfiles.
 
-   | Consumer | Commit | Completed checks before waiver |
-   | --- | --- | --- |
-   | QRK | `42350f817` | App client/SSR/prerender build; API Wrangler dry-run |
-   | Stackshirts | `f25fe8bf3` | Next production build, TypeScript and 10 prerendered pages; backend TypeScript |
-   | Mentor Mailbox | `a02a1a230` | App/Hub/Admin/API builds; backend typegen; five existing-tsconfig checks |
-   | Red Rope Parking | `00dabfa2c` | Web/Admin production builds; backend/Admin existing-tsconfig checks |
+   | Consumer         | Commit      | Completed checks before waiver                                                 |
+   | ---------------- | ----------- | ------------------------------------------------------------------------------ |
+   | QRK              | `42350f817` | App client/SSR/prerender build; API Wrangler dry-run                           |
+   | Stackshirts      | `f25fe8bf3` | Next production build, TypeScript and 10 prerendered pages; backend TypeScript |
+   | Mentor Mailbox   | `a02a1a230` | App/Hub/Admin/API builds; backend typegen; five existing-tsconfig checks       |
+   | Red Rope Parking | `00dabfa2c` | Web/Admin production builds; backend/Admin existing-tsconfig checks            |
 
 5. Consumer commits remain on `codex/plan251-make-react-ui` in their isolated adoption worktrees under `/tmp/zerospin251-consumers/`. Original consumer checkouts and unrelated work were preserved. These commits descend from the committed Plan 250 adoption branches; they do not claim reconciliation with later unrelated sibling work.
 6. Main advanced independently through the contract inheritance release `c0b58b6054` (**22.0.1**). The final merge preserves its contract changes, version metadata, shipped skill metadata and changelog while integrating this factory rename. The separately published 22.0.1 artifacts predate this integration; this plan's published rename artifacts and exact consumer adoptions are 22.0.0. No additional publication was performed after the merge.

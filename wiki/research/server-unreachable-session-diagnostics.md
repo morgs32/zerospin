@@ -118,10 +118,10 @@ serialization, and formatter described in findings 1–4 below.
    **Predicted diagnostic examples, not observed runtime output:** an anchored
    fetch `TypeError` is classified by `getApi` as `rpc-invocation-failed` with a
    message such as `RPC getSnapshot at http://127.0.0.1:8788 failed before a usable
-   result was available.` The actual method and sanitized endpoint come from the
+result was available.` The actual method and sanitized endpoint come from the
    failed invocation; the example endpoint is illustrative. A deadline instead
    yields `node-network-unavailable: The backend could not be reached within the
-   Node's connection deadline.` Both fetch paths invoke `getSnapshot`. These
+Node's connection deadline.` Both fetch paths invoke `getSnapshot`. These
    messages establish failed reachability, not that a server process is stopped;
    neither resolver's fallback predicate consults `navigator.onLine`. Sources:
    [RPC classifier and message](../../packages/core/src/utils/getApi/getApi.ts#L104-L124),

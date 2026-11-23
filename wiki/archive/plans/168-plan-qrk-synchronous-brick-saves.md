@@ -37,7 +37,7 @@
 // 1. Stage an ordinary save in the local transaction.
 const result = updateBrick(parsedDraft);
 // 2. A refusal keeps the unsaved draft.
-if (result._tag === "Failure") showInputFailure(result.failure);
+if (result._tag === 'Failure') showInputFailure(result.failure);
 // 3. Successful staging discards only the unsaved input.
 else clearDraft();
 // 4. Saved presentation is the queried brick, including optimistic rollback.

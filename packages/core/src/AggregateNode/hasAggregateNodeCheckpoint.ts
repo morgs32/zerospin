@@ -9,5 +9,7 @@ export function hasAggregateNodeCheckpoint(
   aggregateIndex: number;
   dispositionChainHash: string;
 } {
-  return metadata.aggregateIndex !== null && metadata.dispositionChainHash !== null;
+  return (
+    metadata.aggregateIndex !== null && metadata.dispositionChainHash !== null
+  );
 }

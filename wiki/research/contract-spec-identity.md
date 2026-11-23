@@ -35,13 +35,14 @@ const catalogueKey = [
 ];
 
 // Proposed replay comparison: the retired source release is unnecessary.
-yield* systemRepo.requireAcceptedContractSpecs({
-  aggregateContracts: path.map(contract => ({
-    aggregateName: key.aggregateName,
-    spec: contract.spec,
-  })),
-  serviceContracts: [],
-});
+yield *
+  systemRepo.requireAcceptedContractSpecs({
+    aggregateContracts: path.map(contract => ({
+      aggregateName: key.aggregateName,
+      spec: contract.spec,
+    })),
+    serviceContracts: [],
+  });
 ```
 
 The snippets describe proposed behavior, not current exported functions. The grouped request is already the proposed replay interface in Plan 266: Aggregate/Service family comes from its group, owner name from the item, and command name/version from its spec. A separate identity object is unnecessary at this caller. Explicit Aggregate/Service methods could also supply that context, but splitting the current proposal is not required for this conclusion. SystemRepo may keep a small private envelope if its heterogeneous acceptance transaction benefits from it, or work directly with validated encoded keys. That is an internal implementation choice; it should not leak back to contract authors or release registration. The existing source already demonstrates deriving a typed identity inside the SystemRepo adapter. [Current derivation](../../packages/system-worker/src/SystemRepo/registerRepo/requireAcceptedRepoSpecs.ts#L14).

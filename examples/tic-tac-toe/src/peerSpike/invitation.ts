@@ -11,11 +11,16 @@ export interface IPeerInvitation {
 function isInvitation(value: unknown): value is IPeerInvitation {
   if (typeof value !== 'object' || value === null) return false;
   return (
-    'hostPeerId' in value && typeof value.hostPeerId === 'string' &&
-    'hostAddress' in value && typeof value.hostAddress === 'string' &&
-    'guestPeerId' in value && typeof value.guestPeerId === 'string' &&
-    'credentialId' in value && typeof value.credentialId === 'string' &&
-    'token' in value && typeof value.token === 'string'
+    'hostPeerId' in value &&
+    typeof value.hostPeerId === 'string' &&
+    'hostAddress' in value &&
+    typeof value.hostAddress === 'string' &&
+    'guestPeerId' in value &&
+    typeof value.guestPeerId === 'string' &&
+    'credentialId' in value &&
+    typeof value.credentialId === 'string' &&
+    'token' in value &&
+    typeof value.token === 'string'
   );
 }
 
@@ -45,14 +50,21 @@ export async function openInvitation(
       ciphertext,
       sodium.base64_variants.URLSAFE_NO_PADDING,
     );
-    const plaintext = sodium.crypto_box_seal_open(encrypted, publicKey, privateKey);
+    const plaintext = sodium.crypto_box_seal_open(
+      encrypted,
+      publicKey,
+      privateKey,
+    );
     const value: unknown = JSON.parse(sodium.to_string(plaintext));
     if (!isInvitation(value)) throw new Error('Invalid invitation');
     invitation = value;
   } catch {
     throw new Error('The invitation could not be opened with this identity.');
   }
-  if (invitation.guestPeerId !== guestPeerId || invitation.credentialId !== credentialId) {
+  if (
+    invitation.guestPeerId !== guestPeerId ||
+    invitation.credentialId !== credentialId
+  ) {
     throw new Error('This invitation belongs to another guest.');
   }
   return invitation;

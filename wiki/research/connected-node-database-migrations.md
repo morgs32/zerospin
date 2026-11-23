@@ -45,15 +45,17 @@ A framework developer edits the current Drizzle table and appends its migration 
 // payload: text('encodedPayload')
 export const aggregateNodeDatabase = makeMigratableNodeDatabase({
   tables: [aggregateNodeMetadata, aggregateNodeCommands],
-  migrations: [{
-    id: 1,
-    name: 'rename-command-payload',
-    sql: ['ALTER TABLE commands RENAME COLUMN payload TO encodedPayload'],
-  }],
-})
+  migrations: [
+    {
+      id: 1,
+      name: 'rename-command-payload',
+      sql: ['ALTER TABLE commands RENAME COLUMN payload TO encodedPayload'],
+    },
+  ],
+});
 
 // Inside connected Node initialization, with the existing leased connection.
-await aggregateNodeDatabase.initializeSchema(db)
+await aggregateNodeDatabase.initializeSchema(db);
 ```
 
 `initializeSchema` names the work performed on an already-open SQLite connection. On a fresh database, schema and ledger provisioning belong in the existing transaction that initializes the producer metadata. On an existing database it would verify ownership and supported source storage with the Node, apply outstanding migrations, validate the resulting schema and record progress atomically with the SQL. Retrying picks up from the last committed step. Skipping worker releases applies any missing steps on the next open. The current Node readers then operate on current tables. The example requires no code change in Mentor Mailbox’s worker entry. [Existing Node initialization](https://github.com/morgs32/zerospin/blob/41b548a019ff1e08f65f60c9459e0908a80c64f5/packages/core/src/AggregateNode/AggregateNode.ts#L211) · [Current ledger](https://github.com/morgs32/zerospin/blob/41b548a019ff1e08f65f60c9459e0908a80c64f5/packages/core/src/Node/nodeMigrationLedger.ts#L23) · [SQLite transactions](https://www.sqlite.org/lang_transaction.html)

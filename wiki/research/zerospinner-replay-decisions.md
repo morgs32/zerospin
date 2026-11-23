@@ -69,12 +69,15 @@ The inspected Core checkout exports `makeAggregateRelease`, `updateAggregateActo
 The proposed calls for an individual customer could look like this.
 
 ```ts
-const source = stable.resolveAggregateRepo(aggregateId, userV1)
-const snapshot = await source.captureModelRowsAndHead()
-await stable.verifyFinalizedSnapshot(source, snapshot)
-await userV2History.copyEvaluatedPrefix(source.history, snapshot.aggregateIndex)
-await userV2Repo.installSnapshotTx(snapshot)
-await userV2Repo.catchUpThrough(await aggregateChain.readFinalizedFrontier())
+const source = stable.resolveAggregateRepo(aggregateId, userV1);
+const snapshot = await source.captureModelRowsAndHead();
+await stable.verifyFinalizedSnapshot(source, snapshot);
+await userV2History.copyEvaluatedPrefix(
+  source.history,
+  snapshot.aggregateIndex,
+);
+await userV2Repo.installSnapshotTx(snapshot);
+await userV2Repo.catchUpThrough(await aggregateChain.readFinalizedFrontier());
 ```
 
 The smallest test of the inheritance rule can restore the predecessor's exact evaluated commands through 41, reusing the current restore transaction with explicit predecessor lookup. A full snapshot install would then save applying the old writes again. The bootstrap contract, exact captured snapshot evidence and cross-release continuation have not been implemented or tested.
