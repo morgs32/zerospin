@@ -1,0 +1,75 @@
+{
+  "name": "@zerospin/cli",
+  "version": "1.0.0-alpha.11",
+  "private": false,
+  "bin": {
+    "zerospin": "./dist/cli.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lib": "pnpm run clean && tsc -b tsconfig.json",
+    "ts": "tsc -p tsconfig.etc.json --noEmit",
+    "watch": "tsc -b tsconfig.json --watch",
+    "prepublishOnly": "pnpm run lib",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint --deny-warnings"
+  },
+  "dependencies": {
+    "@effect/platform-node-shared": "4.0.2",
+    "@inkjs/ui": "^2.0.0",
+    "@zerospin/agent-worker": "workspace:*",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/dev-worker": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/logger": "workspace:*",
+    "@zerospin/native": "workspace:*",
+    "@zerospin/owner-release-worker": "workspace:*",
+    "@zerospin/production-worker": "workspace:*",
+    "@zerospin/sdk": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "@zerospin/studio": "workspace:*",
+    "@zerospin/system-worker": "workspace:*",
+    "cfonts": "^2.10.1",
+    "dotenv": "^17.4.2",
+    "es-toolkit": "^1.52.0",
+    "esbuild": "^0.28.2",
+    "ink": "^7.0.2",
+    "ink-gradient": "^3.0.0",
+    "jiti": "^2.7.0",
+    "nanoid": "^5.1.11",
+    "pastel": "^4.0.1",
+    "react": "19.2.7",
+    "wrangler": "4.152.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@effect/language-service": "^0.87.2",
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.2.14",
+    "effect": "4.0.2",
+    "oxlint": "^1.63.0",
+    "rimraf": "^6.1.3"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "nx": {
+    "targets": {
+      "lint": {
+        "dependsOn": [
+          "lib"
+        ]
+      }
+    }
+  }
+}

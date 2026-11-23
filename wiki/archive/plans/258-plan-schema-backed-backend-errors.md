@@ -1,0 +1,79 @@
+# Schema-backed framework errors and useful backend failures
+
+**Date:** 2026-10-23
+
+**Status:** Complete and archived on 2026-10-27. Producer implementation, consumed-artifact correspondence, scoped QRK worker repair/build/typecheck and responsive, timeout, unreachable-fetch and retained-offline browser acceptance pass. Online recovery preserves the same Node, checkpoint and retained user values. The subsequently authorized App typing follow-up below resolves the seven unrelated errors and passes the full App typecheck and production build. Source baseline: `0579a08926`.
+
+**Scope:** Schema-backed framework failures, independent authentication/network deadlines and verified QRK consumption. This completion record requires no further framework implementation or repository-wide error migration.
+
+## Decision review — 2026-10-27
+
+The decisions still solve a concrete problem: a session must distinguish missing credentials, stalled local preparation and a stalled or unreachable backend so that QRK can show the right failure and recover correctly. None of the later session or command-history changes supersedes those distinctions.
+
+1. **Keep schema-owned framework failures.** [ZerospinError.schema](../../../packages/error/src/ScopedError.ts) owns literal codes, messages, diagnostic schemas, construction and public serialization. [NodeErrors](../../../packages/browser/src/Node/NodeErrors.ts) declares the five concrete failures and composes their union at the Node transport boundary. This follows the local rule that the declaration owns validation; no global registry or duplicate consumer classifier is needed. Authored business failures remain declared inline at their own contract/Actor/Aggregate use sites, following [explicit failures](../../patterns/contracts/explicit-failures-at-use-site.ts).
+2. **Keep independent deadlines.** [makeNodeAuthentication](../../../packages/browser/src/Node/makeNodeAuthentication.ts) gives each credential provider five seconds, clears its timer before verification, retains pending calls until settlement and prevents retired results from starting verification. Aggregate/Service preparation in [makeAggregateWorkerRuntime](../../../packages/browser/src/AggregateNode/makeAggregateWorkerRuntime.ts) and [makeServiceWorkerRuntime](../../../packages/browser/src/ServiceNode/makeServiceWorkerRuntime.ts), plus [Native preparation](../../../packages/native/src/openAggregateNativeNodeOwner.ts), has its own five-second deadline. [nodeNetworkProgram](../../../packages/browser/src/Node/runNodeNetwork.ts) owns the ten-second backend deadline. One overall authentication deadline would incorrectly hide a concrete backend failure or interrupt otherwise valid verification.
+3. **Keep precise transport recognition.** [encodeError](../../../packages/error/src/encodeError.ts), [publicRpcError/restoreRpcError](../../../packages/browser/src/Node/publicRpcError.ts) and [nodeRpcErrorFor](../../../packages/browser/src/Node/nodeRpcErrorFor.ts) preserve public diagnostics and validate known failures at receiving interfaces. A matching code alone does not prove its diagnostic shape. Keep private cause/stack out of the public envelope, reject malformed known payloads and preserve the existing unknown-failure path. This follows [public RPC failure rules](../../patterns/rpc/result-envelopes.ts); it does not require a second schema system.
+4. **Keep the implementation small.** Only the recognized `rpc-invocation-failed` transport marker with `extra.networkUnavailable === true` becomes backend-unreachable. Local failures, server refusals and defects retain their own meanings. QRK should display the provided message/details through its existing presentation path. Add no retry loop, diagnostic phase field or additional lifecycle owner. Completed [Plan 276](276-plan-session-lifetimes-and-node-commands.md) owns session lifetime cleanup; do not restore its removed supervisor machinery here.
+5. **Remove obsolete delivery instructions.** PR 59 is already merged as `6326095f0d`, an ancestor of the reviewed HEAD. QRK's current `apps/app`, `apps/api` and `apps/zerospin` manifests and `pnpm-lock.yaml` pin Zerospin `36.0.0`; the producer currently declares `37.0.0`. Therefore neither “merge PR 59” nor “publish and upgrade QRK” is unconditional remaining work. A manifest or lockfile alone does not prove installed contents or browser behavior. The artifact correspondence below now confirms this implementation is consumed; another release is unnecessary for this plan.
+
+These boundaries make the code easier to read: each error declaration explains one failure, each operation owns its own deadline, and transport decoding supplies typed diagnostics to ordinary presentation code. Closing this plan required no new framework design.
+
+## Behavior to preserve
+
+- `node-credentials-timeout`: **Could not obtain your sign-in credentials.** Diagnostics: `{ timeoutMs }`.
+- `node-local-preparation-timeout`: **Local session preparation did not complete.** Diagnostics: `{ timeoutMs }`.
+- `node-backend-timeout`: **Backend is not responding. Try again shortly.** Diagnostics: `{ endpoint, operation, timeoutMs }`.
+- `node-backend-unreachable`: **Cannot reach the backend.** Diagnostics: `{ endpoint, operation }`.
+- `node-authentication-unavailable`: **No attached session is available to verify your sign-in.** Diagnostics: `null`.
+
+Timeout diagnostics are positive finite integer milliseconds. Endpoints contain only origin and pathname, excluding credentials, query and fragment. Operations name `getSnapshot` or `createWebSocketTicket`. Framework errors have no business `scope`. Existing scoped business errors, credential refusals, malformed responses, cancellation and identity checks keep their current policies.
+
+## Producer evidence
+
+[PR 59](https://github.com/morgs32/zerospin/pull/59), merged as `6326095f0d`, implemented the schema API, five Node failures, typed encoding/recognition, independent deadlines, Native propagation and existing offline classifications. Its recorded checks passed full test-program compilation, ten regression tests in three files and the affected 17-task error/browser/Native graph. Rebased checks on `b490a35aaf`, formatting and whitespace also passed. These are historical producer results, not a new whole-producer run.
+
+The existing [framework error tests](../../../packages/error/tests/framework-errors.spec.ts), [authentication tests](../../../packages/browser/tests/node-authentication.spec.ts) and [network tests](../../../packages/browser/tests/node-network-errors.spec.ts) retain the relevant coverage. [Fragment failure guidance](../../../docs/content/handbook/failures-and-recovery.md) already documents the five codes. No producer defect or documentation mismatch requiring another implementation was established.
+
+## Consumed artifact correspondence — 2026-10-27
+
+QRK's actual `@zerospin/error@36.0.0` and `@zerospin/browser@36.0.0` copies resolve inside its pnpm store, not the producer checkout. Every regular file in the retained published archives matches the installed bytes: error **50/50**, browser **743/743**, zero differences. The archives also match QRK's lockfile SHA-512 values:
+
+- Error: `sha512-A8Qz6tk0sR2AxVpy9PemfFMJLZ6GwtjHXcBTXyA3fqajqxT/MaF3FHTgsfU3aIMmCfhdwSSUUwqKM1bFxZ2cpA==`.
+- Browser: `sha512-1AWh1hjQOAEmV6W/hKDJQECegv0asajSDeBfb+bvcgIt+Y6hmcKZm3l39xqQUG9cgcMtjnxF4exFeDXzvNkigw==`.
+
+Archives reside under the producer's `tmp/local-registry/storage/@zerospin/{error,browser}/`. Direct archive verification required no registry restart. Installed NodeErrors, makeNodeAuthentication, runNodeNetwork, publicRpcError and nodeRpcErrorFor source matches the producer. The schema API, five declared failures, five-second credential/local deadlines and ten-second network deadline are present. Installed Intent and relevant consumer/session guidance load. No publication, dependency change or install is needed.
+
+## QRK repair and validation
+
+1. **Authorized local hard cutover.** Normal startup exposed incompatible stored accepted-definition data and refused whole-SystemSpec acceptance. The maintainer explicitly replied **JUST RESET /yolo**. Ran the existing `corepack pnpm --filter @qrk.sh/zerospin dev:app --clean`; its reset scope was exactly `/Users/morgs32/GitHub/qrk.sh/apps/zerospin/.wrangler/zerospin/dev-worker/sys_qrk_sh_1`, without backup or translation. The backend now reports `Ready on http://127.0.0.1:8788/ (system spec accepted)`. Only the stale `zerospin.qrk.localhost` Portless alias was replaced with the responding backend. Browser storage, production and other projects were not reset.
+2. **Mandatory caller repair.** The installed worker API requires one `sessionDefinition`. QRK's existing `apps/app/zerospin/node.worker.ts` still supplied the removed `aggregateSessions` array and could not connect. Replaced that property with `sessionDefinition: userSessionDefinition`. No wrapper, compatibility field or framework change was added.
+3. **Bounded passing checks.** `NX_NO_CLOUD=true corepack pnpm nx run @qrk.sh/app:build` passes. The changed worker and its declaration imports also pass the existing TypeScript compiler with the App's strict ES2017/bundler/React/Vite options, no emit and no incremental cache. Logs: `/private/tmp/plan258-qrk-app-build.log` and `/private/tmp/plan258-qrk-worker-ts.log`. No test, fixture, runner or configuration file was created.
+4. **Original full-App typecheck limitation.** The first full App typecheck reported seven errors outside the repaired worker: six string-versus-branded-site-ID errors in the module route, BrickDetail and Modules files, and a missing `failSave` property in `ArticleForm.stories.tsx`. Only the worker closure passed at Plan 258 acceptance. The separately authorized follow-up below resolves those errors. Original log: `/private/tmp/plan258-qrk-app-ts.log`.
+
+## Browser acceptance — 2026-10-27
+
+The user-owned connected Chrome profile is `Person 1`. Normal authenticated routing through Web's `/replace` reaches `https://app.qrk.localhost/morgs32`; no new browser profile or authentication policy was introduced.
+
+1. **Responsive backend: passed.** The dashboard renders. Existing Zerospin DevTools shows initialized `true`, `aggregateIndex: 1`, local availability `available`, authentication `verified`, synchronization `online`, blocked work `false`, admission rejection `null` and failure `null`. This verifies the consumed App/Node path, not just CLI startup. Capture: `/private/tmp/plan258-qrk-responsive.png`.
+2. **Stalled request: passed.** Paused only the QRK backend process group created for this task, with an automatic 55-second resume safeguard. QRK displayed `node-backend-timeout`, `Backend is not responding. Try again shortly.`, and `{ endpoint: 'https://zerospin.qrk.localhost', operation: 'getSnapshot', timeoutMs: 10000 }`. Retained content can appear before background verification reports the failure; total page startup time is not asserted to equal ten seconds. The group was resumed and the existing `Reload application` control restored the dashboard. Capture: `/private/tmp/plan258-qrk-timeout.png`.
+3. **Unreachable fetch: passed.** After the user opened the QRK SharedWorker console through the required browser-policy handoff, a temporary override rejected exactly two matching backend snapshot POSTs without retaining bodies, headers or credentials. The actual failure was `node-backend-unreachable`, `Cannot reach the backend.`, with safe diagnostics `{ endpoint: 'https://zerospin.qrk.localhost', operation: 'getSnapshot' }`. Original fetch was restored, and the normal dashboard recovered. A separate stopped-backend attempt produced a proxy timeout and is not counted as unreachable evidence.
+4. **Retained offline opening: passed.** Restricted the temporary worker fetch override to QRK snapshot POSTs, set the worker's online observation false and installed one exact backend-request blocking rule in DevTools that persisted across reload. Stopped only the verified task-owned QRK backend process group, then reloaded a second tab with backend requests blocked and the page's online observation false before focus. A new session opened the actual retained dashboard with initialized `true`, local availability `available`, authentication `unavailable`, synchronization `offline`, blocked work `false`, admission rejection `null` and typed `node-backend-unreachable` diagnostics for the safe backend endpoint and `getSnapshot`. It retained Node `node_9Om5faHE79NhkZGzBu2Cx` at `aggregateIndex: 1`; user row `usr_hr2aYPAFqvQGYg-Q_mqnK`, including timestamp `2026-10-27T20:31:15.019Z`, remained readable. Capture: `/private/tmp/plan258-qrk-offline.png`.
+5. **Offline cleanup and online restoration: passed.** Restarted the same backend without `--clean`; whole-SystemSpec acceptance returned. Removed only the temporary backend blocking rule and disabled its toggle, restored the worker's original fetch and online observation, and removed the page's own online override. Worker restoration checks were true/true; the page had no own online property and reported online. The controlled offline phase intercepted 50 snapshot attempts from the existing three-second retry, not a new retry mechanism. The same reopened session naturally returned to initialized `true`, local availability `available`, authentication `verified`, synchronization `online`, blocked work `false`, admission rejection `null` and failure `null`, with the same Node and aggregate index. All normalized user-table values before and after were exactly equal. Final recovery capture: `/private/tmp/plan258-qrk-recovered.png`.
+
+The backend, App and Web are restored and running. Backend restarts after the authorized reset did **not** use `--clean`; no second reset occurred. The temporary fetch, online-observation and request-blocking overrides were restored or removed. Logs: `/private/tmp/plan258-qrk-backend-dev.log`, `/private/tmp/plan258-qrk-app-dev.log` and `/private/tmp/plan258-qrk-web-dev.log`.
+
+Plan 258 changed only QRK's worker-entry source; the separate App typing follow-up is recorded below. Existing research-file WIP and unrelated Zerospin plans remain preserved. No package publication, Explorer verification, authentication-policy change, extra consumer or generic retry mechanism is part of this work.
+
+## Proof limits
+
+The offline case reopens a session over a known warm retained Node; it does not prove a cold browser-process restart or whole-device disconnection. Local assets and Clerk remained reachable while QRK backend requests were blocked. The earlier cold-profile `node-offline-identity-missing` case is a separate observation. Timeout and unreachable checks exercise their actual transport boundaries; they do not prove every authentication/local-preparation timing path or canonical command execution and retained `outcome`.
+
+## App TypeScript follow-up — 2026-10-27
+
+The maintainer subsequently authorized fixing the seven App errors. BrickDetail and Modules now validate `siteId` with the existing Site model's ID schema. ModuleRoute validates that ID before passing it to its query component, preserving its existing module/page rejection behavior. ArticleForm's Storybook metadata explicitly carries its `failSave` argument type into both stories. No casts, new abstractions or test files were added.
+
+The full App check, `corepack pnpm --filter @qrk.sh/app exec tsc --noEmit --incremental false`, passes with zero diagnostics. `NX_NO_CLOUD=true corepack pnpm nx run @qrk.sh/app:build` also passes. Logs: `/private/tmp/qrk-app-types-fixed.log` and `/private/tmp/qrk-app-types-build.log`. Existing worker-entry and research changes remain preserved.
+
+## Remaining work
+
+None. Plan 258 and the separately authorized App typing follow-up are complete. No further reset, package release or consumer upgrade is required.

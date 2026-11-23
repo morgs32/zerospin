@@ -1,0 +1,54 @@
+{
+  "name": "docs",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "scripts": {
+    "dev": "PORTLESS_PORT=443 PORTLESS_HTTPS=1 PORTLESS_WILDCARD=1 portless",
+    "dev:app": "next dev --port $PORT",
+    "build": "next build",
+    "preview": "next start --port ${PORT:-12014}",
+    "ts": "next typegen && tsc --noEmit",
+    "lint": "oxlint src --format stylish",
+    "storybook": "storybook dev --port ${PORT:-12020} --no-open",
+    "build-storybook": "storybook build"
+  },
+  "portless": {
+    "name": "docs.zerospin",
+    "script": "dev:app",
+    "proxy": true
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "framer-motion": "^13.4.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zustand": "^5.0.13",
+    "next": "16.4.5",
+    "server-only": "^0.0.1",
+    "gray-matter": "^4.0.3",
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-rehype": "^11.1.2",
+    "rehype-slug": "^6.0.0",
+    "rehype-react": "^8.0.0",
+    "@shikijs/rehype": "^4.5.0",
+    "unist-util-visit": "^5.1.0",
+    "hast-util-to-text": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.0",
+    "storybook": "10.6.1",
+    "@storybook/nextjs-vite": "10.6.1",
+    "@types/hast": "^3.0.4",
+    "@types/mdast": "^4.0.4"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "zerospin-swift",
+  "private": true,
+  "scripts": {
+    "build": "swift build"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          {
+            "projects": ["@zerospin/native"],
+            "target": "build"
+          }
+        ],
+        "outputs": [
+          "{projectRoot}/.build"
+        ],
+        "cache": false
+      }
+    }
+  }
+}

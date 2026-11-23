@@ -1,0 +1,142 @@
+# iOS storage and downloaded Zerospin Systems
+
+Research reviewed 2026-11-13. This note explores an iPhone app that persists Zerospin data locally and installs a System selected from GitHub after the app is installed. The agreed first slice uses a trusted JavaScript package from a public GitHub Release, one Aggregate with System-granted commands, and private iCloud backup. iOS Data Protection and Apple Account recovery replace the earlier proposal for a separate Zerospin recovery key. CloudKit backup and recovery were verified between two signed iOS simulators and from CloudKit to a physical iPhone; that evidence does not establish Apple App Review approval.
+
+## Findings
+
+1. **The iPhone can own local durable storage, subject to its lifecycle.** An app stores private files in its sandbox, with Application Support intended for app-managed data and separate locations for discardable caches. Apple advises excluding files that can be recreated or downloaded from backup. Store authoritative data as app support data rather than treating it as a disposable cache. Phone loss, deletion, storage exhaustion, inaccessible keys, and interrupted work remain recovery and availability questions; a recovery key alone cannot recreate missing database contents. [Apple file system overview](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html), [Apple file storage guidance](https://developer.apple.com/documentation/foundation/using-the-file-system-effectively), [Zerospin iOS recovery research](ios-recovery-codes-and-encrypted-sqlite.md).
+2. **The Swift host now installs a constrained System package.** `StandaloneSession` remains an Aggregate session host, while `SystemRuntime` inspects and executes a bundled authored System. `createNativeSystem` supports one Aggregate definition and System-granted ordinary commands, retaining admission, materialization, outcomes and history in local SQLite. The iOS app downloads a package from a selected GitHub Release. This does not establish support for arbitrary System releases, remote command delivery, upgrades, or App Store approval. [StandaloneSession](../../packages/swift/Sources/Zerospin/StandaloneSession.swift), [SystemRuntime](../../packages/swift/Sources/Zerospin/SystemRuntime.swift), [native System runtime](../../packages/native/src/createNativeSystem.ts), [JavaScriptExecutor](../../packages/swift/Sources/Zerospin/JavaScriptExecutor.swift), [SQLiteHost](../../packages/swift/Sources/Zerospin/SQLiteHost.swift).
+3. **A `SystemSpec` is not an executable System package.** `makeSystemSpec` projects owner releases, model and contract facts, actors and agent declarations into portable metadata and hashes it; `makeContractSpec` projects payload, result and operation descriptions rather than the authored executable callbacks. A `SystemSpec` can describe and compare declarations, but cannot by itself reconstruct arbitrary contract execution logic. An artifact that actually runs those callbacks needs a separate representation of that logic or a runtime with equivalent behavior already bundled. This is a distinction in the current implementation, not a decision to use downloaded JavaScript. [makeSystemSpec](../../packages/core/src/system/make/makeSystemSpec.ts), [makeContractSpec](../../packages/core/src/declaration/makeContractSpec.ts), [hashSystemSpec](../../packages/core/src/system/hashSystemSpec.ts).
+4. **App Store policy is the main unresolved constraint on downloaded behavior.** App Review guideline 2.5.2 prohibits downloading, installing, or executing code that introduces or changes app features or functionality, subject to a narrow educational exception. The current Developer Program License Agreement §3.3.1(B) permits some downloaded interpreted code if it respects stated purpose, security and storefront restrictions, while §3.3.1(C) separately restricts distributing additional functionality outside the designated channels. Both the agreement and review guidelines matter. Whether a downloaded Zerospin System, new contract or release candidate is permitted cannot be decided from the JavaScript engine alone; provide Apple a concrete description and representative artifact for a determination. [App Review Guidelines §2.5.2](https://developer.apple.com/app-store/review/guidelines/), [Apple Developer Program License Agreement §3.3.1](https://developer.apple.com/support/terms/apple-developer-program-license-agreement/), [App Review submission information](https://developer.apple.com/help/app-review/before-submitting-for-review/complete-review).
+5. **Apple has a separate rule for certain software offered inside apps.** Guideline 4.7 names HTML5 and JavaScript mini apps, mini games, chatbots and plug-ins, and imposes additional requirements. For example, §4.7.2 requires prior Apple permission to expose native APIs or technologies to that software, and §§4.7.3–4.7.5 impose consent, index, link and age-rating requirements. It is unresolved whether the proposed System would be categorized as software offered under 4.7, and 4.7 is not blanket approval for a host exposing SQLite, networking or other native capabilities to arbitrary downloaded code. [App Review Guidelines §§4.7–4.7.5](https://developer.apple.com/app-store/review/guidelines/).
+6. **The transport and representation do not settle the policy question.** Apple documents that JavaScriptCore evaluates JavaScript inside native apps, making a JS bundle technically plausible; actual dependencies and host APIs still need testing. Apple's agreement generally prohibits downloading and installing executable code, so a downloaded native binary is not a normal App Store solution. WebAssembly is a binary instruction format, but calling something Wasm or interpreting it does not establish how Apple will classify or approve the proposed behavior; no conclusion about a particular iOS Wasm engine is established here. A declarative data artifact interpreted by capabilities shipped in the app may narrow the surface, but its actual semantics and Apple's review still matter. None is currently selected. [JavaScriptCore](https://developer.apple.com/documentation/javascriptcore), [Apple agreement §3.3.1](https://developer.apple.com/support/terms/apple-developer-program-license-agreement/), [WebAssembly core specification](https://www.w3.org/TR/wasm-core-2/).
+7. **A GitHub release is a distribution container, not automatically a Zerospin release.** GitHub's REST API lists repository releases and their assets; an asset can be downloaded through its asset URL with `Accept: application/octet-stream`, handling either a direct response or a redirect. Public assets can be fetched without authentication, while private repository access requires appropriate authorization and read permissions. GitHub's latest release excludes drafts and prereleases, so selecting release candidates requires explicit release listing and selection rather than assuming `latest`. The contents, System identity, version compatibility and upgrade meaning of the asset must be defined by Zerospin separately. [GitHub release API](https://docs.github.com/en/rest/releases/releases), [GitHub release asset API](https://docs.github.com/en/rest/releases/assets).
+8. **Artifact identity and trust are separate from choosing a repository.** GitHub supports artifact attestations that establish claimed build provenance. GitHub says the signatures and signer identity must actually be verified, and that an attestation does not prove an artifact is safe. A digest from the same untrusted source identifies bytes but does not by itself establish an authorized publisher. What a user trusts, how that trust is enrolled, and whether untrusted System code can access existing data or host capabilities remain product decisions. [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations), [GitHub attestation verification requirements](https://docs.github.com/en/rest/repos/attestations).
+9. **Background processing and data protection must agree.** A background push may be delayed, coalesced or dropped, and the app has up to 30 seconds after delivery; if force-quit by the user, the app is not automatically launched until the user relaunches it or restarts the device. Recovery must not depend on one notification or one uninterrupted execution. A Keychain item using `AfterFirstUnlockThisDeviceOnly` is available after the first post-restart unlock even when the device is subsequently locked, and is not migrated to another device; file protection settings independently control whether database files can be read. A key that requires user presence or an inaccessible database prevents unattended processing. [Apple background notifications](https://developer.apple.com/documentation/usernotifications/pushing-background-updates-to-your-app), [Apple remote notification handler](https://developer.apple.com/documentation/UIKit/UIApplicationDelegate/application%28_%3AdidReceiveRemoteNotification%3AfetchCompletionHandler%3A%29), [Apple Keychain accessibility](https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlockthisdeviceonly), [Apple file protection](https://developer.apple.com/documentation/foundation/fileprotectiontype/completeuntilfirstuserauthentication).
+10. **A future upgrade needs an explicit durable-state contract.** Downloading a new artifact does not itself define which old release bindings or command history remain executable, whether stored schema is compatible, or how an interrupted activation recovers. Zerospin's repository policy requires read-only deployment compatibility preflight before durable changes and preserves retained identities, bindings, progress and history for supported Node storage upgrades. Storage resets require explicit authorization. These requirements constrain the eventual design; they do not establish that the existing iOS host supports such an upgrade. [Repository policy](../../AGENTS.md), [deployment preflight pattern](../patterns/system-worker/repo-lifecycle.md#check-deployment-compatibility-before-writes).
+
+## Recovering a replacement iPhone with iCloud
+
+**Feasible, provided the original iPhone successfully uploaded a recoverable snapshot and the replacement iPhone can access it.** The agreed first slice relies on the user's Apple Account and private CloudKit storage, rather than adding a separate Zerospin recovery key. If the last upload did not finish before the original iPhone was lost, recovery reaches only the last complete uploaded snapshot. [Zerospin recovery research](ios-recovery-codes-and-encrypted-sqlite.md), [CloudKit private database account requirements](https://developer.apple.com/documentation/cloudkit/ckdatabase).
+
+There are three distinct options:
+
+1. **CloudKit private database.** The app captures a consistent snapshot of the Zerospin data and installed package, and uploads it as a `CKAsset` referenced by a record in the user's private database. On the replacement iPhone, the app retrieves and validates the snapshot using the user's Apple Account. A signed simulator uploaded the installed System and an executed command; a second signed simulator restored the exact item and original timestamps from provisioned CloudKit. CloudKit private data consumes the user's iCloud quota and requires an active iCloud account. Offline conditions, full quota, account changes and incomplete uploads need visible handling. Apple encrypts third-party CloudKit assets in transit and on its servers; optional Advanced Data Protection provides end-to-end encryption for them. CloudKit also uses iCloud Keychain-related key material; Apple says loss or reset of that keychain can make prior encrypted CloudKit data permanently inaccessible. [CloudKit private database](https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase), [CloudKit encrypted data and asset keys](https://developer.apple.com/documentation/cloudkit/encrypting-user-data), [iCloud data security](https://support.apple.com/en-us/102651).
+2. **iCloud Drive and Files.** The app can export an encrypted backup file to a location the user selects, including iCloud Drive. The replacement iPhone can retrieve the file through Files and decrypt it with the recovery key. App-managed iCloud documents are another possibility, but metadata can arrive before the document content and the app may need to request download. An exported file is a snapshot; saving to iCloud Drive does not establish that future changes automatically update that particular file. [Apple document picker](https://developer.apple.com/documentation/uikit/providing-access-to-directories), [Apple iCloud document synchronization](https://developer.apple.com/documentation/uikit/synchronizing-documents-in-the-icloud-environment), [Zerospin recovery research](ios-recovery-codes-and-encrypted-sqlite.md).
+3. **iCloud device Backup.** Apple includes eligible third-party app data in periodic iCloud device backups when enabled, and the user can exclude an app. This is an iPhone-level restore mechanism, not an app-owned upload or a guarantee that reinstalling the app and entering a recovery key will retrieve an individual backup. Files stored in iCloud Drive are synced separately, rather than included again in iCloud Backup. A device-only Keychain key does not migrate to a different device, so recoverable app data also needs a deliberate key-recovery design. [Apple iCloud Backup](https://support.apple.com/en-us/108770), [Apple Keychain accessibility](https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlockthisdeviceonly).
+
+### CloudKit accounts, containers, zones, and records
+
+**Private CloudKit databases already isolate Apple Accounts.** A CloudKit container is an app's CloudKit namespace and schema, not a single private database shared by all its users. Each account has its own private database in that container. Account B cannot read Account A's private records simply by knowing the container, zone, or record names. Apple explicitly allows the same record ID to be reused in different private databases. [Apple CloudKit database design](https://developer.apple.com/documentation/cloudkit/designing-and-creating-a-cloudkit-database), [Apple record IDs](https://developer.apple.com/documentation/cloudkit/ckrecord/id), [Apple private database](https://developer.apple.com/documentation/cloudkit/ckcontainer/privateclouddatabase).
+
+CloudKit also supports **intentional sharing**: an owner creates a `CKShare` for a record hierarchy or a custom zone, and participants who accept can access the shared records through their shared database according to the share's permissions. A public share can permit access to anyone with its URL; a private share requires the owner to add participants. Zerospin's current `SystemBackupStore` uses `privateCloudDatabase`; it does not create a `CKShare` or access `sharedCloudDatabase`. [Apple `CKShare`](https://developer.apple.com/documentation/cloudkit/ckshare), [Apple share participants](https://developer.apple.com/documentation/cloudkit/ckshare/participant), [Zerospin `SystemBackupStore`](../../ios/Zerospin/SystemBackup.swift).
+
+A **zone** groups related records within one database. Each private database has a default zone and may contain named custom zones. Custom zones can support atomic updates of multiple records; the default zone does not have that capability. A zone ID combines its zone name and the owner's user-record name. A record ID combines a record name and zone ID, and is unique within its database rather than across all accounts. [Apple zones](https://developer.apple.com/documentation/cloudkit/ckrecordzone), [Apple default zone](<https://developer.apple.com/documentation/cloudkit/ckrecordzone/default()>), [Apple zone IDs](https://developer.apple.com/documentation/cloudkit/ckrecordzone/id), [Apple record IDs](https://developer.apple.com/documentation/cloudkit/ckrecord/id).
+
+In the current multi-System source, the app's container is `iCloud.com.zerospin.ios`. Within the signed-in account's private database, a custom zone is named `SystemBackups`; its catalog record is `system-backup-catalog`, and each System's snapshot record is named `system-<systemId>`. Each snapshot record references the uploaded package and data snapshot as a `CKAsset`; CloudKit stores an asset separately but associates it with its record. These names identify records within the selected database; they do not grant another account access. [Zerospin entitlements](../../ios/Zerospin/Zerospin.entitlements), [Zerospin `SystemBackupStore`](../../ios/Zerospin/SystemBackup.swift), [Apple `CKAsset`](https://developer.apple.com/documentation/cloudkit/ckasset).
+
+The account-switch concern is **not Account B reading Account A's existing CloudKit database**. It is whether `SystemBackupStore` could send a snapshot already held in the app's local storage to Account B's separate private database if the device changes accounts between the checks and an asynchronous save. This failure scenario was inferred from the earlier current-user-addressed implementation and the documented API; it was not an observed cross-account write or a documented CloudKit guarantee that such a write will occur. `CKCurrentUserDefaultName` denotes the current user's default name; Apple documents an account-change notification and asynchronous account-status checking but does not specify an atomic association between separate identity checks and an in-flight asset save. [Zerospin `SystemBackupStore`](../../ios/Zerospin/SystemBackup.swift), [Apple current-user default name](https://developer.apple.com/documentation/cloudkit/ckcurrentuserdefaultname), [Apple account-change notification](https://developer.apple.com/documentation/cloudkit/ckaccountchangednotification), [Apple account status](<https://developer.apple.com/documentation/cloudkit/ckcontainer/accountstatus(completionhandler:)>).
+
+`SystemBackupStore` addresses discovery, revision, zone, catalog, and snapshot operations with the bound account's explicit zone-owner ID. Each operation derives its own IDs and checks returned record identities; an empty account ID or the current-user alias is rejected. This addresses the expected account in each record request; it is not needed to make Account A's private database private. The isolated fake-owner observations below support this approach but do not prove behavior during a real account switch. Apple says CloudKit encrypts each asset chunk and stores its asset key on the corresponding record; it documents periodic cleanup when an asset is orphaned by clearing a field, but does not establish the behavior or cleanup timing for an asset in a rejected, account-switching upload. [Zerospin `SystemBackupStore`](../../ios/Zerospin/SystemBackup.swift), [Apple zone IDs](https://developer.apple.com/documentation/cloudkit/ckrecordzone/id), [Apple asset encryption](https://developer.apple.com/documentation/cloudkit/encrypting-user-data), [Apple `CKAsset`](https://developer.apple.com/documentation/cloudkit/ckasset).
+
+Automatic snapshot creation and transfer must record completion separately from local database commits; iOS background time and push delivery are opportunistic. For several SQLite files, a usable snapshot needs a consistent cut that includes required retained history and pending commands. Never treat independent live-file copies as a proven consistent snapshot. iOS Data Protection encrypts local files, and its protection class must allow the intended locked-device access. The former iOS note used a manually exported encrypted file; its earlier CloudKit attempt could not provision iCloud with the available Personal Team. An enrolled developer team has since provisioned the iCloud container, and the signed System app completed the CloudKit backup and restore round trip on two simulators and a physical iPhone. Account-switch fencing and other failure conditions remain unverified. [Apple Data Protection](https://support.apple.com/en-euro/guide/security/sec1a976c067/web), [Apple background notifications](https://developer.apple.com/documentation/usernotifications/pushing-background-updates-to-your-app), [SQLite WAL](https://sqlite.org/wal.html), [earlier iOS recovery outcome](../archive/plans/295-plan-ios-note-files-recovery.md), [Apple capability provisioning](https://developer.apple.com/help/account/capabilities/capabilities-overview).
+
+The CloudKit backup checks its bound opaque account identity before and after operations and puts that identity in the requested zone owner. The owner-bound IDs are separate from the conditional save: `.ifServerRecordUnchanged` compares record change tags and prevents replacing a changed record. The owner-bound IDs are intended to prevent the backup and catalog records from committing to another account; an actual account-switch upload has not established that outcome, nor has the handling of any in-flight asset bytes been established. [SystemBackup](../../ios/Zerospin/SystemBackup.swift), [Apple zone IDs](https://developer.apple.com/documentation/cloudkit/ckrecordzone/id), [CloudKit conditional save](https://developer.apple.com/documentation/cloudkit/ckmodifyrecordsoperation/recordsavepolicy/ifserverrecordunchanged), [CloudKit account-change notification](https://developer.apple.com/documentation/cloudkit/ckaccountchangednotification).
+
+On 2026-11-13, a signed physical iPhone restored the System and its original
+`lit_cloudkit` item from iCloud. While the iPhone was offline,
+`addListItem@1` on `lst_cloudkit` retained a Success `outcome` and added
+`lit_offline` with text “Offline command”; the app reported its backup pending.
+After reconnection, Retry backup reported a completed backup. The read-only
+CloudKit Console showed the Development private `installed-system` record at
+sequence 10, modified at 19:23:07 UTC, with a snapshot asset. An isolated
+simulator clone subsequently restored that singleton snapshot using the actual
+`SystemStore.restore()` method into a separate local directory. The restored
+storage contained both items and their two admitted `addListItem` commands,
+each with a Success `outcome`; all four SQLite databases passed
+`integrity_check`. The System identity matched and the installed package's
+SHA-256 was `990e4a4d51f552e8b2e60cc7d0eb365b96e3cea3b684e95a4491f0b0abcb9135`.
+The clone initiated the normal post-restore upload at local sequence 11; its
+server acknowledgement was not independently checked. Its build selected the
+original CloudKit container and a separate local directory, and invoked the
+existing restore method automatically.
+
+An approved temporary harness exercised the then-current multi-System
+`SystemBackupStore` and `SystemStore` code against a disposable CloudKit
+Development zone and isolated local storage. The code rejected lower-sequence
+and divergent equal-sequence snapshots and stale expected revisions; CloudKit
+also rejected a stale change tag, leaving the newer revision intact. A valid
+System restored, while a second System with missing storage failed staging;
+the first System's files remained byte-identical and its item was usable after
+reopening. `SystemBackup.swift` had SHA-256
+`c255587882d1a245a72c9d834cd8078ccf4c8bc5623698ccad84e2223735e871` and
+`SystemStore.swift` had SHA-256
+`a439e9e0c88f9c21796567cb619f8cad23cbc36318617a327bcbc2d7c68c826d` during
+those checks. The disposable zone and its records were deleted afterward; no
+real backup record was changed.
+
+A signed temporary macOS harness subsequently exercised the owner-bound
+implementation against CloudKit Development. The harness used the production
+`SystemBackup.swift` at SHA-256
+`0132dae2a77390864aba23cdf2dcb14a44f62ba2f4f039817d94a8bea8c98348`, with
+only a unique test-zone name, and `SystemStore.swift` at SHA-256
+`e4a5050ac9c79cfa8e4bb40a467d30d0a259669f9251ac93634046051cbeb477`, with
+only a temporary storage root. The real upload created an explicit-owner zone
+and saved an asset that was read back through discovery and revision checks.
+The current-user alias, fake owner, lower and divergent equal sequences, and
+stale baseline were rejected; CloudKit also rejected a stale change tag. The
+latest snapshot remained intact. A missing-storage restore failed staging,
+while another local System remained byte-identical and reopened successfully.
+The disposable zone and temporary root were removed. Signed iPhone and
+simulator builds passed. These checks did not exercise a real A-to-B account
+switch or establish what happens to asset bytes before a rejected record save.
+
+In the same account and isolated zone, CloudKit rejected a child record whose
+parent was absent and saved a child whose parent existed. This confirms those
+record operations in the exercised environment; it does not demonstrate a
+cross-account fence or establish what happens to asset bytes before a rejected
+record save. These observations do not establish whether the owner-bound
+implementation rejects an actual account switch.
+
+Further disposable CloudKit Development probes in the default and a custom
+private zone accepted the actual account's explicit record-zone owner ID;
+fetched record IDs retained that explicit owner. A fake owner was rejected
+with `CKError` code 12. The returned record creator was the current-owner
+sentinel rather than the account's stable ID. These same-account observations
+suggest an explicit owner may help fence a record commit, but they do not test
+an actual account switch or prove how CloudKit handles asset bytes before
+record validation.
+
+In the isolated custom zone, a dummy `CKAsset` record addressed with the
+actual explicit owner saved and read back byte-identical. The equivalent save
+using a fake owner failed with `CKError` code 12, and a lookup using the default
+owner found no record. The disposable zone was deleted. This did not exercise
+an actual account switch or observe transient asset bytes.
+
+## Later work and unresolved questions
+
+1. The agreed first slice installs one trusted JavaScript System and executes System-granted commands for one Aggregate definition. Initial installation requires a successful iCloud account and backup check; an installed System can continue executing commands offline. A future design must address arbitrary third-party Systems and stronger isolation if they are required.
+2. A replacement iPhone restores the most recent completed iCloud snapshot. Multi-device command writers and history reconciliation are outside the first slice.
+3. Upgrades that introduce new declarations and executable behavior are intended later, but their compatibility and storage contracts remain to be designed.
+4. Remote command delivery remains later work. Its durable owner must distinguish admission, execution, outcome retention, and acknowledgement.
+5. Apple has not determined whether the downloaded System and native host bridge qualify for App Store distribution.
+
+## App Review description to prepare
+
+The Zerospin iPhone app lets a person select a public GitHub Release containing
+an authored System package. The package includes JavaScript code, a
+`SystemSpec`, and a manifest; the app checks its identity and evaluates its
+declarations in an isolated context before installation. The selected code is
+trusted. The app's JavaScriptCore host provides native SQLite, cryptography,
+timers, and networking through a bridge; the first System execution scope is
+limited to ordinary Aggregate commands explicitly granted to the System.
+The app stores command history and model data on the iPhone and uploads a
+snapshot, including the installed package, to the person's private CloudKit
+database. This backup uses Apple Account recovery, with no separate Zerospin
+recovery key. The user sees backup status and can restore a replacement iPhone.
+
+This description is a draft for a concrete review discussion, not evidence of
+Apple's approval. In particular, ask Apple how guidelines 2.5.2 and 4.7 apply
+to downloading authored System code and exposing the native host bridge, and
+whether a later System release that changes executable contract behavior is
+permitted. [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/), [Developer Program License Agreement](https://developer.apple.com/support/terms/apple-developer-program-license-agreement/).

@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@zerospin/system-worker",
+  "targets": {
+    "lib": {
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": [
+        {
+          "target": "lib",
+          "projects": [
+            "@zerospin/core",
+            "@zerospin/error",
+            "@zerospin/logger",
+            "@zerospin/shapes"
+          ]
+        }
+      ]
+    },
+    "dev": {
+      "continuous": true
+    }
+  }
+}

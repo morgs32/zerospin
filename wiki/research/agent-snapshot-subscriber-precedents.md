@@ -1,0 +1,19 @@
+# Agent snapshot and subscriber precedents
+
+**Date:** 2026-11-18  
+**Evidence:** Zerospin `main` at `7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03`. Source inspection.
+
+## Two boundaries
+
+- **Install from a consistent snapshot.** `AggregateAgentNodeRepo` calls `AggregateAgentVersionRepo.synchronizeSelectedHistory()`, then `getSnapshot()`. The projection applies a captured prefix of its selected owner release's evaluated-command history and publishes exposed commands through the materialized index. `getSnapshot()` captures resources and their checkpoint and ensures publication through that captured position. Browser `SystemApi.openAggregateAgentSession` calls `getSnapshot()` directly. [Node snapshot](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/AggregateAgentNodeRepo/AggregateAgentNodeRepo.ts#L108-L128) · [Projection RPCs](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/AggregateAgentVersionRepo/AggregateAgentVersionRepo.ts#L122-L157) · [Browser entry](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/SystemApi/openAggregateAgentSession/openAggregateAgentSession.ts#L28-L43)
+- **Bring the installed view forward before checking due wakes.** On the first pass the Node calls `synchronizeSelectedHistory()` and then `nodeFanoutSubscriber(...).subscribe(through)`. On subsequent passes it makes the same projection call and uses `catchup(through)`. The Agent runtime checks `dueWakes` after that pass. Service uses the same order. [Aggregate Node calls](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/AggregateAgentNodeRepo/AggregateAgentNodeRepo.ts#L150-L172) · [Service Node calls](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/ServiceAgentNodeRepo/ServiceAgentNodeRepo.ts#L143-L163) · [Wake ordering](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/agentNodeRepo/makeAgentNodeRuntime.ts#L276-L291)
+
+## Closest precedent
+
+`AggregateActorVersionRepo` subscribes directly to its owner VersionChain at activation. The shared fanout procedure pulls through a fixed position and enrolls from the committed cursor. An Agent Node instead pulls from the **Agent** VersionChain. Asking that chain for its latest published position cannot advance the upstream Agent projection. [Actor activation](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/AggregateActorVersionRepo/AggregateActorVersionRepo.ts#L73-L87) · [Fixed pull bound](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/makeFanoutSubscriber/runFanoutCatchup.ts#L42-L85) · [Enrollment](https://github.com/morgs32/zerospin/blob/7e840aca0f9a04ca5ce1f287bc5d3d9b1f6ced03/packages/system-worker/src/makeFanoutSubscriber/subscribe.ts#L32-L57)
+
+For example, an Agent Node installs snapshot 40 with a due wake. The owner VersionChain publishes command 41, which clears the deadline. If the Agent VersionChain is still at 40, a plain Node subscription can enroll at 40 and proceed to the due wake. Refresh the projection and apply the resulting prefix before checking due wakes. A cancellation that arrives beyond the captured prefix is still possible, so execution should validate occurrence and eligibility when required.
+
+## Recommendation
+
+Keep the pre-wake synchronization. The existing [Agent execution architecture page](../architecture/server/AgentExecution.md#firing-a-wake) already promises a captured owner-history position before firing. Use that page for a short explanation of the two hops and why subscription alone cannot replace the projection refresh.

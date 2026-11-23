@@ -1,0 +1,59 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/system-worker"
+    },
+    {
+      "path": "./packages/sdk"
+    },
+    {
+      "path": "./packages/devtools"
+    },
+    {
+      "path": "./packages/error"
+    },
+    {
+      "path": "./packages/browser"
+    },
+    {
+      "path": "./packages/react"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/cli"
+    },
+    {
+      "path": "./packages/studio"
+    },
+    {
+      "path": "./packages/dev-worker"
+    },
+    {
+      "path": "./packages/production-worker"
+    },
+    {
+      "path": "./packages/live-query"
+    },
+    {
+      "path": "./packages/logger"
+    },
+    {
+      "path": "./packages/shapes"
+    },
+    {
+      "path": "./packages/zod"
+    },
+    {
+      "path": "./packages/error-boundary"
+    },
+    {
+      "path": "./packages/agent-worker"
+    },
+    {
+      "path": "./packages/owner-release-worker"
+    }
+  ]
+}

@@ -1,0 +1,1004 @@
+import type { AggregateNode } from '@zerospin/core/AggregateNode/AggregateNode';
+import { hasAggregateNodeCheckpoint } from '@zerospin/core/AggregateNode/hasAggregateNodeCheckpoint';
+import type { IAggregateNodeCommand } from '@zerospin/core/AggregateNode/types';
+import { AggregateSocketServerMessageSchema } from '@zerospin/core/aggregateSession/AggregateSocketProtocolSchema';
+import {
+  isZerospinError,
+  makeZerospinError,
+  type IFrameworkError,
+} from '@zerospin/error';
+import type { makeTelemetryLayer } from '@zerospin/logger';
+import * as Cause from 'effect/Cause';
+import * as Context from 'effect/Context';
+import * as Effect from 'effect/Effect';
+import * as Exit from 'effect/Exit';
+import * as Logger from 'effect/Logger';
+import * as Option from 'effect/Option';
+import * as Schema from 'effect/Schema';
+import * as Tracer from 'effect/Tracer';
+
+import { awaitConnectionStep } from '../Node/awaitConnectionStep.ts';
+import { BrowserRpc } from '../Node/BrowserRpc.ts';
+import { isBrowserOffline } from '../Node/isBrowserOffline.ts';
+import { isNodeAdmissionBackpressure } from '../Node/isNodeAdmissionBackpressure.ts';
+import { isNodeAdmissionRejected } from '../Node/isNodeAdmissionRejected.ts';
+import { makeSocketAttempt } from '../Node/makeSocketAttempt.ts';
+import {
+  nodeRpcErrorFor,
+  snapshotFailureCodes,
+} from '../Node/nodeRpcErrorFor.ts';
+import { shouldResetConnectedNode } from '../Node/shouldResetConnectedNode.ts';
+import { isDevelopmentSystemStarting } from '../Node/waitForDevelopmentSystem.ts';
+
+import { aggregateNodeNetwork } from './aggregateNodeNetwork.ts';
+import type { IAggregateNodeRequest } from './aggregateNodeRequest.ts';
+import type {
+  IAggregateNodeAuthentication,
+  IVerifiedAggregateAdmission,
+} from './verifiedAggregateAdmission.ts';
+type ITicketError = Effect.Error<
+  ReturnType<ReturnType<typeof aggregateNodeNetwork>['ticketProgram']>
+>;
+const connectionFailure = nodeRpcErrorFor([
+  'node-signed-out',
+  'node-synchronization-blocked',
+  'node-authentication-rejected',
+  'node-authentication-unavailable',
+  'node-credentials-timeout',
+  'node-local-preparation-timeout',
+  'node-backend-timeout',
+  'node-backend-unreachable',
+  'node-authentication-cancelled',
+  'node-authentication-identity-mismatch',
+  'node-subscription-timeout',
+  'node-subscription-closed',
+  'node-subscription-message-invalid',
+  'node-checkpoint-conflict',
+  'node-state-required',
+  'node-baseline-checkpoint-invalid',
+  'node-reset-attachment-unsupported',
+  'node-reset-attachment-timeout',
+  'node-admission-reply-mismatch',
+  'node-admission-result-invalid',
+  'node-admission-conflict',
+  'node-development-history-replaced',
+  'node-development-system-starting',
+  'node-development-history-mismatch',
+  'node-producer-not-registered',
+  'node-replay-incomplete',
+  'node-execution-checkpoint-invalid',
+  'node-execution-gap',
+  'node-outcome-conflict',
+  'node-command-final-missing',
+  'node-index-invalid',
+  ...snapshotFailureCodes,
+]);
+type IConnectionError =
+  | ReturnType<typeof connectionFailure>
+  | ITicketError
+  | IFrameworkError;
+const pushFailure = nodeRpcErrorFor([
+  'node-offline',
+  'node-admission-uncertain',
+  'node-signed-out',
+  'node-push-blocked',
+  'node-development-history-replaced',
+  'node-development-history-mismatch',
+  'node-producer-not-registered',
+  'node-state-required',
+  'node-checkpoint-conflict',
+  'node-metadata-missing',
+  'node-command-input-missing',
+]);
+type IPushError = IConnectionError | ReturnType<typeof pushFailure>;
+
+/** Network calls never hold Node's SQLite transaction boundary. */
+export class AggregateNodeSynchronization {
+  private socket: WebSocket | null = null;
+  private attempt: ReturnType<typeof makeSocketAttempt> | null = null;
+  private stopping: Promise<void> | null = null;
+  private pushController: AbortController | null = null;
+  private connecting: Promise<Exit.Exit<void, IConnectionError>> | null = null;
+  private pending: {
+    command: Extract<IAggregateNodeCommand, { nodeId: string }>;
+    resolve(): void;
+    reject(error: unknown): void;
+  } | null = null;
+  private pushing: Promise<
+    Exit.Exit<{ status: 'empty' | 'pushed' }, IPushError>
+  > | null = null;
+  private stopped = false;
+  private verifiedLocalHistory = false;
+  private retry: ReturnType<typeof setTimeout> | null = null;
+  private generation = 0;
+  private connectingNodeId: string | undefined;
+
+  constructor(
+    readonly node: Pick<
+      AggregateNode,
+      | 'authenticated'
+      | 'rejectAuthentication'
+      | 'connectionState'
+      | 'status'
+      | 'snapshot'
+      | 'nextPush'
+      | 'admitted'
+      | 'reconcileAdmission'
+      | 'admissionRejected'
+      | 'receiveCommand'
+    >,
+    readonly request: IAggregateNodeRequest,
+    readonly authentication: IAggregateNodeAuthentication,
+    readonly recover?: (failure: unknown, nodeId?: string) => Promise<boolean>,
+    readonly telemetry?: {
+      enabled(): boolean;
+      layer: ReturnType<typeof makeTelemetryLayer>;
+    },
+    readonly checkHistory?: (
+      verified: IVerifiedAggregateAdmission,
+    ) => Promise<void>,
+  ) {}
+
+  async enable() {
+    await this.stopping;
+    this.stopping = null;
+    this.stopped = false;
+  }
+
+  resume(verified?: IVerifiedAggregateAdmission): Promise<void> {
+    return BrowserRpc.run(this.resumeProgram(verified));
+  }
+
+  resumeProgram(
+    verified?: IVerifiedAggregateAdmission,
+  ): Effect.Effect<void, IConnectionError> {
+    return Effect.contextWith((context: Context.Context<never>) => {
+      const callerSpan = Context.getOption(context, Tracer.ParentSpan);
+      if (this.stopped) {
+        return Effect.fail(makeZerospinError('node-signed-out'));
+      }
+      const state = this.node.status();
+      if (state.admissionRejection !== null) return Effect.void;
+      if (state.blockedWork) {
+        const failure =
+          state.failure === null
+            ? makeZerospinError('node-synchronization-blocked')
+            : makeZerospinError(state.failure);
+        if (
+          this.recover !== undefined &&
+          shouldResetConnectedNode({ failure, attempted: false })
+        ) {
+          return Effect.tryPromise({
+            try: async () => {
+              if (!(await this.recover!(failure))) throw failure;
+            },
+            catch: connectionFailure,
+          });
+        }
+        return Effect.fail(makeZerospinError('node-synchronization-blocked'));
+      }
+      if (isBrowserOffline()) {
+        this.socket?.close();
+        this.node.connectionState('offline');
+        this.scheduleRetry();
+        return Effect.void;
+      }
+      if (this.connecting !== null) {
+        const connecting = this.connecting;
+        return Effect.promise(() => connecting).pipe(
+          Effect.flatMap(exit =>
+            Exit.isFailure(exit) ? Effect.failCause(exit.cause) : Effect.void,
+          ),
+        );
+      }
+      if (this.socket?.readyState === WebSocket.OPEN) {
+        return Effect.void;
+      }
+      const generation = ++this.generation;
+      const previous = this.attempt;
+      const attempt = makeSocketAttempt(
+        () => generation === this.generation && !this.stopped,
+      );
+      this.attempt = attempt;
+      const telemetry = this.telemetry?.enabled() ? this.telemetry : undefined;
+      const program = Effect.promise(async () => {
+        await previous?.stop();
+      }).pipe(
+        Effect.flatMap(() =>
+          this.connect(attempt, verified, telemetry !== undefined),
+        ),
+      );
+      const connecting = Effect.runPromiseExitWith(context)(
+        telemetry === undefined
+          ? program
+          : program.pipe(
+              Effect.withSpan('node.synchronization', {
+                root: true,
+                attributes: { connectionGeneration: generation },
+                links: Option.isSome(callerSpan)
+                  ? [
+                      {
+                        span: callerSpan.value,
+                        attributes: { kind: 'causedBy' },
+                      },
+                    ]
+                  : [],
+              }),
+              Effect.provide(telemetry.layer),
+              Effect.provide(Logger.layer([], { mergeWithExisting: false })),
+            ),
+        {
+          signal: attempt.signal,
+        },
+      ).then<Exit.Exit<void, IConnectionError>>(async exit => {
+        if (Exit.isSuccess(exit)) {
+          return exit;
+        }
+        // The failed connect and delivery queue settle before runtime recovery stops the driver.
+        const failure = Cause.squash(exit.cause);
+        if (
+          !this.stopped &&
+          generation === this.generation &&
+          shouldResetConnectedNode({ failure, attempted: false }) &&
+          this.recover !== undefined
+        ) {
+          await attempt.stop();
+          this.connecting = null;
+          try {
+            if (await this.recover(failure, this.connectingNodeId)) {
+              return Exit.succeed(undefined);
+            }
+          } catch (error) {
+            this.node.connectionState('blocked', error);
+            return Effect.runPromiseExit(
+              Effect.try({
+                try: () => {
+                  throw error;
+                },
+                catch: cause => {
+                  if (isZerospinError(cause) && !('scope' in cause)) {
+                    return cause;
+                  }
+                  throw cause;
+                },
+              }),
+            );
+          }
+        }
+        return Effect.runPromiseExit(
+          Effect.failCause(exit.cause).pipe(
+            Effect.tapCause(cause =>
+              Effect.gen({ self: this }, function* () {
+                if (this.stopped || generation !== this.generation) {
+                  return;
+                }
+                const error = Cause.squash(cause);
+                const code =
+                  error instanceof Error && 'code' in error
+                    ? String(error.code)
+                    : null;
+                if (
+                  code === 'node-authentication-rejected' ||
+                  isNodeAdmissionRejected(error)
+                ) {
+                  yield* Effect.promise(() => this.node.rejectAuthentication());
+                  this.node.connectionState('blocked', error);
+                  return;
+                }
+                const retryable =
+                  isNodeAdmissionBackpressure(error) ||
+                  [
+                    'node-authentication-unavailable',
+                    'node-subscription-timeout',
+                    'node-subscription-closed',
+                    'node-admission-uncertain',
+                    'node-offline',
+                  ].includes(String(code));
+                if (
+                  Cause.hasInterruptsOnly(cause) ||
+                  code === 'node-authentication-cancelled'
+                ) {
+                  return;
+                }
+                if (
+                  !Cause.hasDies(cause) &&
+                  (isDevelopmentSystemStarting(this.request.apiUrl, error) ||
+                    code === 'node-credentials-timeout' ||
+                    code === 'node-authentication-unavailable' ||
+                    (this.verifiedLocalHistory &&
+                      (code === 'node-backend-timeout' ||
+                        code === 'node-backend-unreachable' ||
+                        code === 'node-subscription-timeout' ||
+                        code === 'node-subscription-closed')) ||
+                    (isBrowserOffline() &&
+                      (retryable ||
+                        code === 'node-backend-timeout' ||
+                        code === 'node-backend-unreachable' ||
+                        code === 'rpc-invocation-failed' ||
+                        code === 'user-authentication-transport-failed')))
+                ) {
+                  this.node.connectionState('offline', error);
+                  this.scheduleRetry();
+                  return;
+                }
+                this.node.connectionState('blocked', error);
+              }),
+            ),
+            Effect.ensuring(Effect.promise(() => attempt.stop())),
+          ),
+        );
+      });
+      this.connecting = connecting;
+      void connecting
+        .finally(() => {
+          if (this.connecting === connecting) this.connecting = null;
+        })
+        .catch(() => undefined);
+      return Effect.promise(() => connecting).pipe(
+        Effect.flatMap(exit =>
+          Exit.isFailure(exit) ? Effect.failCause(exit.cause) : Effect.void,
+        ),
+      );
+    });
+  }
+
+  private connect(
+    attempt: ReturnType<typeof makeSocketAttempt>,
+    admitted?: IVerifiedAggregateAdmission,
+    diagnostics = false,
+  ): Effect.Effect<void, IConnectionError> {
+    return Effect.gen({ self: this }, function* () {
+      this.node.connectionState('authenticating');
+      const verified =
+        admitted ??
+        (yield* Effect.tryPromise({
+          try: () => attempt.wait(this.authentication.authenticate()),
+          catch: connectionFailure,
+        }));
+      if (this.checkHistory) {
+        yield* Effect.tryPromise({
+          try: () => attempt.wait(this.checkHistory!(verified)),
+          catch: connectionFailure,
+        });
+      }
+      this.verifiedLocalHistory = verified.developmentHistory !== undefined;
+      if (!attempt.active()) return;
+      yield* Effect.tryPromise({
+        try: () => this.node.authenticated(verified.identity, attempt.active),
+        catch: connectionFailure,
+      });
+      if (!attempt.active()) return;
+      const before = yield* Effect.tryPromise({
+        try: () => this.node.snapshot({ authoritative: true }),
+        catch: connectionFailure,
+      });
+      this.connectingNodeId = before.metadata.nodeId;
+      const admission = yield* Effect.tryPromise({
+        try: () => attempt.wait(verified.getAdmission()),
+        catch: connectionFailure,
+      });
+      const registration = yield* Effect.tryPromise({
+        try: () =>
+          attempt.wait(
+            aggregateNodeNetwork(this.request, admission).register(
+              before.metadata.nodeId,
+              false,
+              verified.developmentHistory?.id,
+            ),
+          ),
+        catch: connectionFailure,
+      });
+      if (registration === 'missing') {
+        return yield* makeZerospinError('node-producer-not-registered');
+      }
+      const ticketProgram = aggregateNodeNetwork(
+        this.request,
+        admission,
+      ).ticketProgram();
+      const ticket = yield* diagnostics
+        ? ticketProgram.pipe(Effect.withSpan('node.websocket.ticket'))
+        : ticketProgram;
+      if (!attempt.active()) return;
+      const span = diagnostics
+        ? yield* Effect.currentSpan.pipe(Effect.orDie)
+        : undefined;
+      const context = yield* Effect.context<never>();
+      const socketProgram = Effect.tryPromise({
+        try: () =>
+          this.openSocket(
+            attempt,
+            before,
+            ticket.ticket,
+            span === undefined
+              ? undefined
+              : (phase, startedAt, outcome, errorCode) => {
+                  try {
+                    Effect.runSyncWith(context)(
+                      Effect.logInfo('Node startup phase').pipe(
+                        Effect.annotateLogs({
+                          phase,
+                          durationMs: performance.now() - startedAt,
+                          outcome,
+                          ...(errorCode === undefined ? {} : { errorCode }),
+                        }),
+                        Effect.withParentSpan(span),
+                      ),
+                    );
+                  } catch {
+                    /* Diagnostics never change socket readiness. */
+                  }
+                },
+          ),
+        catch: connectionFailure,
+      });
+      yield* diagnostics
+        ? socketProgram.pipe(Effect.withSpan('node.websocket.replay'))
+        : socketProgram;
+    });
+  }
+
+  private scheduleRetry() {
+    if (!this.stopped && this.retry === null) {
+      this.retry = setTimeout(() => {
+        this.retry = null;
+        void this.resume().catch(() => undefined);
+      }, 3000);
+    }
+  }
+
+  private async openSocket(
+    attempt: ReturnType<typeof makeSocketAttempt>,
+    before: Awaited<ReturnType<AggregateNode['snapshot']>>,
+    ticket: string,
+    recordStartup?: (
+      phase: string,
+      startedAt: number,
+      outcome: 'ready' | 'failed' | 'cancelled',
+      errorCode?: string,
+    ) => void,
+  ) {
+    const checkpoint = before.metadata;
+    if (!hasAggregateNodeCheckpoint(checkpoint)) {
+      throw makeZerospinError('node-execution-checkpoint-invalid');
+    }
+    const generation = this.generation;
+    const url = new URL(this.request.apiUrl);
+    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    url.pathname = `${url.pathname.replace(/\/$/, '')}/ws-aggregate-session-commands`;
+    url.search = '';
+    const endpoint = `${url.origin}${url.pathname}`;
+    url.searchParams.set('ticket', ticket);
+    const socketStartedAt = performance.now();
+    let replayStartedAt = socketStartedAt;
+    const socket = new WebSocket(url);
+    this.socket = socket;
+    attempt.own(() => {
+      if (this.socket === socket) this.socket = null;
+      socket.close();
+    });
+    const listen = <K extends keyof WebSocketEventMap>(
+      kind: K,
+      listener: (event: WebSocketEventMap[K]) => void,
+    ) => {
+      socket.addEventListener(kind, listener);
+      attempt.own(() => socket.removeEventListener(kind, listener));
+    };
+    const retainCommand = async (
+      command: Parameters<AggregateNode['receiveCommand']>[0],
+    ) => {
+      if (!attempt.active()) return;
+      await attempt.wait(this.node.receiveCommand(command));
+      if (
+        generation !== this.generation ||
+        this.socket !== socket ||
+        this.stopped
+      ) {
+        return;
+      }
+      const pending = this.pending;
+      if (pending !== null && pending.command.id === command.id) {
+        this.pending = null;
+        pending.resolve();
+      }
+      if (this.node.status().synchronization === 'online') {
+        const currentPush = this.pushing;
+        void (currentPush === null ? Promise.resolve() : currentPush)
+          .then(() => this.push())
+          .catch(() => undefined);
+      }
+    };
+    await new Promise<void>((resolve, reject) => {
+      let opened = false;
+      let live = false;
+      let failed = false;
+      const fail = (error: unknown) => {
+        if (failed || !attempt.active()) return;
+        failed = true;
+        if (!live) {
+          recordStartup?.(
+            opened ? 'node.replay.complete' : 'node.websocket.open',
+            opened ? replayStartedAt : socketStartedAt,
+            'failed',
+            isZerospinError(error) ? error.code : undefined,
+          );
+        }
+        clearTimeout(timeout);
+        socket.close();
+        this.pending?.reject(
+          makeZerospinError({ code: 'node-admission-uncertain' }),
+        );
+        this.pending = null;
+        reject(error);
+        // A live socket has already resolved its startup promise; notify the outer owner too.
+        if (live) {
+          void (async () => {
+            await attempt.stop();
+            if (this.stopped || generation !== this.generation) return;
+            try {
+              if (
+                shouldResetConnectedNode({
+                  failure: error,
+                  attempted: false,
+                }) &&
+                (await this.recover?.(error, before.metadata.nodeId))
+              ) {
+                return;
+              }
+            } catch (recoveryFailure) {
+              error = recoveryFailure;
+            }
+            this.node.connectionState('blocked', error);
+          })().catch(failure => this.node.connectionState('blocked', failure));
+        }
+      };
+      const timeout = setTimeout(() => {
+        fail(makeZerospinError({ code: 'node-subscription-timeout' }));
+      }, 15000);
+      attempt.own(() => {
+        clearTimeout(timeout);
+        if (!live && !failed) {
+          recordStartup?.(
+            opened ? 'node.replay.complete' : 'node.websocket.open',
+            opened ? replayStartedAt : socketStartedAt,
+            'cancelled',
+            'node-authentication-cancelled',
+          );
+        }
+        reject(makeZerospinError('node-authentication-cancelled'));
+      });
+      listen('open', () => {
+        if (!attempt.active()) return;
+        opened = true;
+        recordStartup?.('node.websocket.open', socketStartedAt, 'ready');
+        replayStartedAt = performance.now();
+        socket.send(
+          JSON.stringify({
+            type: 'resume',
+            nodeId: before.metadata.nodeId,
+            outcomeIndex: before.outcomeIndex,
+            aggregateIndex: checkpoint.aggregateIndex,
+            dispositionChainHash: checkpoint.dispositionChainHash,
+          }),
+        );
+      });
+      listen('message', event => {
+        void attempt
+          .enqueue(async () => {
+            if (
+              failed ||
+              generation !== this.generation ||
+              this.socket !== socket ||
+              this.stopped
+            ) {
+              return;
+            }
+            try {
+              const message = Schema.decodeUnknownSync(
+                Schema.fromJsonString(AggregateSocketServerMessageSchema),
+              )(event.data, { onExcessProperty: 'error' });
+              if (message.type === 'commands') {
+                for (const command of message.commands) {
+                  await retainCommand(command);
+                }
+                return;
+              }
+              if (message.type === 'state-required') {
+                if (message.reason === 'node-producer-not-registered') {
+                  const verified = await attempt.wait(
+                    this.authentication.authenticate(),
+                  );
+                  const admission = await attempt.wait(verified.getAdmission());
+                  const registration = await attempt.wait(
+                    aggregateNodeNetwork(this.request, admission).register(
+                      before.metadata.nodeId,
+                      false,
+                      verified.developmentHistory?.id,
+                    ),
+                  );
+                  if (registration === 'missing') {
+                    throw makeZerospinError('node-producer-not-registered');
+                  }
+                }
+                const { type: _type, ...details } = message;
+                throw makeZerospinError({
+                  code:
+                    message.reason === 'checkpoint-conflict'
+                      ? 'node-checkpoint-conflict'
+                      : 'node-state-required',
+                  ...(message.reason === 'checkpoint-conflict'
+                    ? {}
+                    : {
+                        message:
+                          message.reason === 'node-identity-mismatch'
+                            ? 'The socket ticket belongs to a different node identity.'
+                            : message.reason === 'connection-state-invalid'
+                              ? 'The server no longer has the admitted connection state for this node.'
+                              : 'The server failed while resuming this node. See the backend diagnostics.',
+                      }),
+                  extra: details,
+                });
+              }
+              if (message.type === 'aggregateCommandAdmissionFailed') {
+                const receipt = message;
+                const pending = this.pending;
+                if (pending === null || receipt.id !== pending.command.id) {
+                  throw makeZerospinError({
+                    code: 'node-admission-reply-mismatch',
+                  });
+                }
+                if (isNodeAdmissionBackpressure(receipt.failure)) {
+                  throw makeZerospinError({ code: 'node-admission-uncertain' });
+                }
+                if (receipt.failure.code === 'node-producer-not-registered') {
+                  const verified = await attempt.wait(
+                    this.authentication.authenticate(),
+                  );
+                  const admission = await attempt.wait(verified.getAdmission());
+                  const registration = await attempt.wait(
+                    aggregateNodeNetwork(this.request, admission).register(
+                      before.metadata.nodeId,
+                      false,
+                      verified.developmentHistory?.id,
+                    ),
+                  );
+                  if (registration === 'missing') {
+                    throw makeZerospinError('node-producer-not-registered');
+                  }
+                }
+                const mismatch = Schema.decodeUnknownOption(
+                  Schema.Struct({
+                    code: Schema.Literal('node-admission-index-mismatch'),
+                    extra: Schema.Struct({ expectedPushIndex: Schema.Number }),
+                  }),
+                )(receipt.failure);
+                if (
+                  mismatch._tag === 'Some' &&
+                  mismatch.value.extra.expectedPushIndex >
+                    pending.command.pushIndex
+                ) {
+                  await attempt.wait(
+                    this.node.reconcileAdmission(
+                      mismatch.value.extra.expectedPushIndex,
+                      () =>
+                        generation === this.generation &&
+                        this.socket === socket &&
+                        !this.stopped,
+                    ),
+                  );
+                  if (
+                    generation !== this.generation ||
+                    this.socket !== socket ||
+                    this.stopped
+                  ) {
+                    return;
+                  }
+                  this.pending = null;
+                  pending.resolve();
+                } else {
+                  this.node.admissionRejected({
+                    commandId: pending.command.id,
+                    commandName: pending.command.commandName,
+                    failure: receipt.failure,
+                  });
+                  this.pending = null;
+                  pending.reject(receipt.failure);
+                  throw makeZerospinError({ code: 'node-admission-rejected' });
+                }
+              } else if (message.type === 'aggregateCommandAdmission') {
+                const receipt = message;
+                const pending = this.pending;
+                const prefix = (
+                  await attempt.wait(
+                    this.node.snapshot({ authoritative: true }),
+                  )
+                ).metadata.admittedThroughPushIndex;
+                if (
+                  generation !== this.generation ||
+                  this.socket !== socket ||
+                  this.stopped
+                ) {
+                  return;
+                }
+                if (
+                  receipt.pushIndex > prefix &&
+                  (pending === null ||
+                    receipt.id !== pending.command.id ||
+                    receipt.pushIndex !== pending.command.pushIndex)
+                ) {
+                  throw makeZerospinError({
+                    code: 'node-admission-reply-mismatch',
+                  });
+                }
+                await attempt.wait(
+                  this.node.admitted(
+                    receipt,
+                    () =>
+                      generation === this.generation &&
+                      this.socket === socket &&
+                      !this.stopped,
+                  ),
+                );
+                if (
+                  generation !== this.generation ||
+                  this.socket !== socket ||
+                  this.stopped
+                ) {
+                  return;
+                }
+                if (
+                  pending !== null &&
+                  receipt.id === pending.command.id &&
+                  receipt.pushIndex === pending.command.pushIndex
+                ) {
+                  this.pending = null;
+                  pending.resolve();
+                }
+              } else if (message.type === 'replay-complete') {
+                const snapshot = await attempt.wait(
+                  this.node.snapshot({ authoritative: true }),
+                );
+                if (!attempt.active()) return;
+                if (
+                  !hasAggregateNodeCheckpoint(snapshot.metadata) ||
+                  snapshot.metadata.aggregateIndex !== message.aggregateIndex ||
+                  snapshot.metadata.dispositionChainHash !==
+                    message.dispositionChainHash ||
+                  snapshot.outcomeIndex !== message.outcomeIndex
+                ) {
+                  throw makeZerospinError({ code: 'node-replay-incomplete' });
+                }
+                clearTimeout(timeout);
+                live = true;
+                recordStartup?.(
+                  'node.replay.complete',
+                  replayStartedAt,
+                  'ready',
+                );
+                this.node.connectionState('online');
+                resolve();
+                void this.push().catch(() => undefined);
+              } else {
+                throw makeZerospinError({
+                  code: 'node-subscription-message-invalid',
+                });
+              }
+            } catch (error) {
+              fail(error);
+            }
+          })
+          .catch(fail);
+      });
+      listen('error', () => socket.close());
+      listen('close', event => {
+        // Earlier frames determine the protocol failure before transport closure.
+        void attempt
+          .enqueue(async () => {
+            if (failed || this.stopped) return;
+            failed = true;
+            clearTimeout(timeout);
+            if (this.socket === socket) this.socket = null;
+            this.pending?.reject(
+              makeZerospinError({ code: 'node-admission-uncertain' }),
+            );
+            this.pending = null;
+            if (this.node.status().failure?.code === 'node-offline') {
+              this.node.connectionState(
+                'offline',
+                makeZerospinError('node-offline'),
+              );
+              this.scheduleRetry();
+              return;
+            }
+            const error = makeZerospinError({
+              code: 'node-subscription-closed',
+              extra: {
+                endpoint,
+                phase: live ? 'live' : opened ? 'replaying' : 'connecting',
+                closeCode: event.code,
+                closeReason: event.reason,
+                wasClean: event.wasClean,
+              },
+            });
+            if (!live) {
+              recordStartup?.(
+                opened ? 'node.replay.complete' : 'node.websocket.open',
+                opened ? replayStartedAt : socketStartedAt,
+                'failed',
+                error.code,
+              );
+              reject(error);
+              return;
+            }
+            // A local CLI restart can close a live socket while the browser itself is online.
+            if (isBrowserOffline() || this.verifiedLocalHistory) {
+              this.node.connectionState('offline', error);
+              this.scheduleRetry();
+            } else {
+              this.node.connectionState('blocked', error);
+            }
+          })
+          .catch(fail);
+      });
+    });
+  }
+
+  push(manual = false): Promise<{ status: 'empty' | 'pushed' }> {
+    return BrowserRpc.run(this.pushProgram(manual));
+  }
+
+  pushProgram(
+    manual = false,
+  ): Effect.Effect<{ status: 'empty' | 'pushed' }, IPushError> {
+    return Effect.suspend(() => {
+      if (this.pushing !== null) {
+        const pushing = this.pushing;
+        return Effect.promise(() => pushing).pipe(
+          Effect.flatMap(exit =>
+            Exit.isFailure(exit)
+              ? Effect.failCause(exit.cause)
+              : Effect.succeed(exit.value),
+          ),
+        );
+      }
+      const program = this.resumeProgram().pipe(
+        Effect.flatMap(() =>
+          Effect.tryPromise({
+            try: async signal => {
+              for (;;) {
+                if (this.stopped) throw makeZerospinError('node-signed-out');
+                if (isBrowserOffline()) throw makeZerospinError('node-offline');
+                const command = await awaitConnectionStep(
+                  this.node.nextPush(manual),
+                  signal,
+                );
+                if (command === null) {
+                  return { status: 'empty' as const };
+                }
+                if (this.stopped) throw makeZerospinError('node-signed-out');
+                const socket = this.socket;
+                if (socket?.readyState !== WebSocket.OPEN) {
+                  throw makeZerospinError({ code: 'node-offline' });
+                }
+                const {
+                  id,
+                  nodeId,
+                  pushIndex,
+                  commandName,
+                  payload,
+                  contractVersion,
+                  aggregateVersion,
+                  kind,
+                  actorName,
+                  actorVersion,
+                  claims,
+                  sessionName,
+                } = command;
+                await new Promise<void>((resolve, reject) => {
+                  const timeout = setTimeout(() => {
+                    socket.close();
+                    reject(
+                      makeZerospinError({ code: 'node-admission-uncertain' }),
+                    );
+                  }, 15000);
+                  this.pending = {
+                    command,
+                    resolve: () => {
+                      clearTimeout(timeout);
+                      resolve();
+                    },
+                    reject: error => {
+                      clearTimeout(timeout);
+                      reject(error);
+                    },
+                  };
+                  socket.send(
+                    JSON.stringify({
+                      type: 'pushAggregateCommand',
+                      command: {
+                        id,
+                        nodeId,
+                        pushIndex,
+                        commandName,
+                        payload,
+                        contractVersion,
+                        aggregateId: command.aggregateId,
+                        aggregateName: command.aggregateName,
+                        aggregateVersion,
+                        kind,
+                        actorName,
+                        actorVersion,
+                        claims,
+                        sessionName,
+                      },
+                    }),
+                  );
+                });
+                if (manual) {
+                  return { status: 'pushed' as const };
+                }
+              }
+            },
+            catch: pushFailure,
+          }),
+        ),
+      );
+      const controller = new AbortController();
+      this.pushController = controller;
+      const pushing = Effect.runPromiseExit(program, {
+        signal: controller.signal,
+      });
+      this.pushing = pushing;
+      void pushing
+        .finally(() => {
+          if (this.pushing === pushing) {
+            this.pushing = null;
+            if (this.pushController === controller) this.pushController = null;
+          }
+        })
+        .catch(() => undefined);
+      return Effect.promise(() => pushing).pipe(
+        Effect.flatMap(exit =>
+          Exit.isFailure(exit)
+            ? Effect.failCause(exit.cause)
+            : Effect.succeed(exit.value),
+        ),
+      );
+    });
+  }
+
+  stop(): Promise<void> {
+    if (this.stopping !== null) return this.stopping;
+    this.stopped = true;
+    this.generation += 1;
+    if (this.retry !== null) clearTimeout(this.retry);
+    this.retry = null;
+    this.authentication.clear();
+    this.pushController?.abort();
+    this.pushController = null;
+    this.pending?.reject(makeZerospinError('node-signed-out'));
+    this.pending = null;
+    const attempt = this.attempt;
+    this.attempt = null;
+    const retired = attempt?.stop();
+    const connecting = this.connecting;
+    const pushing = this.pushing;
+    const stopping = (async (): Promise<void> => {
+      let failure: unknown;
+      let failed = false;
+      try {
+        await retired;
+      } catch (error) {
+        failed = true;
+        failure = error;
+      }
+      await connecting;
+      await pushing;
+      this.connecting = null;
+      this.pushing = null;
+      this.socket = null;
+      if (failed) return Promise.reject(failure);
+    })();
+    this.stopping = stopping;
+    return stopping;
+  }
+}

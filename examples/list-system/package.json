@@ -1,0 +1,49 @@
+{
+  "name": "@zerospin/list-system-example",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "package:ios": "zerospin package --platform ios",
+    "storybook": "PORTLESS_PORT=443 PORTLESS_HTTPS=1 PORTLESS_WILDCARD=1 portless",
+    "storybook:app": "storybook dev --host 127.0.0.1 --port $PORT --no-open --exact-port",
+    "build-storybook": "storybook build --output-dir dist/storybook",
+    "ts": "tsc -p tsconfig.json --noEmit"
+  },
+  "portless": {
+    "name": "list-system.zerospin",
+    "script": "storybook:app",
+    "proxy": true
+  },
+  "dependencies": {
+    "@zerospin/cli": "workspace:*",
+    "@zerospin/sdk": "workspace:*",
+    "effect": "4.0.2"
+  },
+  "devDependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@remix-run/route-pattern": "^0.22.1",
+    "@storybook/react-vite": "10.6.1",
+    "@types/node": "^25.9.4",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@zerospin/browser": "workspace:*",
+    "@zerospin/react": "workspace:*",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "storybook": "10.6.1",
+    "vite": "^8.0.11"
+  },
+  "nx": {
+    "targets": {
+      "storybook": {
+        "dependsOn": ["^lib"],
+        "continuous": true
+      },
+      "build-storybook": {
+        "dependsOn": ["^lib"],
+        "outputs": ["{projectRoot}/dist/storybook"]
+      }
+    }
+  }
+}

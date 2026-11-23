@@ -1,0 +1,86 @@
+{
+  "name": "@zerospin/native",
+  "version": "1.0.0-alpha.11",
+  "private": false,
+  "type": "module",
+  "exports": {
+    "./createNativeSystem": {
+      "types": "./dist/lib/createNativeSystem.d.ts",
+      "import": "./dist/lib/createNativeSystem.js",
+      "default": "./dist/lib/createNativeSystem.js"
+    },
+    ".": {
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js",
+      "default": "./dist/lib/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "ts": "tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint src --deny-warnings --format stylish",
+    "lib": "tsc -p tsconfig.lib.json && node scripts/build.mjs --package"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "dependsOn": [
+          "lib"
+        ],
+        "outputs": [
+          "{projectRoot}/dist/tic-tac-toe.js"
+        ],
+        "inputs": [
+          "default",
+          "^default",
+          "{workspaceRoot}/examples/tic-tac-toe/src/**/*",
+          "{workspaceRoot}/packages/sdk/src/**/*",
+          "{workspaceRoot}/packages/server-only/src/**/*"
+        ]
+      },
+      "ts": {
+        "inputs": [
+          "default",
+          "^default",
+          "{workspaceRoot}/examples/tic-tac-toe/src/**/*"
+        ],
+        "dependsOn": [
+          "build",
+          "^lib"
+        ]
+      },
+      "lib": {
+        "inputs": [
+          "default",
+          "^default",
+          "{workspaceRoot}/packages/swift/Package.swift",
+          "{workspaceRoot}/packages/swift/Sources/Zerospin/**/*.swift"
+        ],
+        "outputs": [
+          "{projectRoot}/dist/lib",
+          "{projectRoot}/swift",
+          "{workspaceRoot}/packages/swift/Sources/Zerospin/Resources/host.bundle.js"
+        ]
+      }
+    }
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "@zerospin/browser": "workspace:*",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/logger": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "@zerospin/system-worker": "workspace:*",
+    "drizzle-orm": "1.0.0-rc.6",
+    "effect": "4.0.2",
+    "es-toolkit": "^1.52.0"
+  },
+  "files": [
+    "dist/lib",
+    "swift/Package.swift",
+    "swift/Sources"
+  ]
+}

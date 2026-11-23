@@ -1,0 +1,232 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00000000000000000000011 /* ZerospinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000001 /* ZerospinApp.swift */; };
+		A00000000000000000000012 /* SystemStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000002 /* SystemStore.swift */; };
+		A00000000000000000000013 /* SystemBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000003 /* SystemBackup.swift */; };
+		A00000000000000000000014 /* Zerospin in Frameworks */ = {isa = PBXBuildFile; productRef = A00000000000000000000071 /* Zerospin */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A00000000000000000000001 /* ZerospinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZerospinApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000002 /* SystemStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemStore.swift; sourceTree = "<group>"; };
+		A00000000000000000000003 /* SystemBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemBackup.swift; sourceTree = "<group>"; };
+		A00000000000000000000004 /* Zerospin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Zerospin.entitlements; sourceTree = "<group>"; };
+		A00000000000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A00000000000000000000009 /* Zerospin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zerospin.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000014 /* Zerospin in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000020 = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000021 /* Zerospin */,
+				A00000000000000000000022 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00000000000000000000021 /* Zerospin */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000001 /* ZerospinApp.swift */,
+				A00000000000000000000002 /* SystemStore.swift */,
+				A00000000000000000000003 /* SystemBackup.swift */,
+				A00000000000000000000004 /* Zerospin.entitlements */,
+				A00000000000000000000008 /* Info.plist */,
+			);
+			path = Zerospin;
+			sourceTree = "<group>";
+		};
+		A00000000000000000000022 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A00000000000000000000009 /* Zerospin.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000030 /* Zerospin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00000000000000000000041 /* Build configuration list for PBXNativeTarget "Zerospin" */;
+			buildPhases = (
+				A00000000000000000000032 /* Sources */,
+				A00000000000000000000033 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Zerospin;
+			packageProductDependencies = (
+				A00000000000000000000071 /* Zerospin */,
+			);
+			productName = Zerospin;
+			productReference = A00000000000000000000009 /* Zerospin.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000031 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 2720;
+			};
+			buildConfigurationList = A00000000000000000000040 /* Build configuration list for PBXProject "Zerospin" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A00000000000000000000020;
+			packageReferences = (
+				A00000000000000000000070 /* XCLocalSwiftPackageReference "../packages/swift" */,
+			);
+			productRefGroup = A00000000000000000000022 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00000000000000000000030 /* Zerospin */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000000000000000000032 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00000000000000000000011 /* ZerospinApp.swift in Sources */,
+				A00000000000000000000012 /* SystemStore.swift in Sources */,
+				A00000000000000000000013 /* SystemBackup.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A00000000000000000000050 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A00000000000000000000051 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		A00000000000000000000052 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Zerospin/Zerospin.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KS93PQ77SR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zerospin/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zerospin.ios;
+				PRODUCT_MODULE_NAME = ZerospinApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A00000000000000000000053 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Zerospin/Zerospin.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KS93PQ77SR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zerospin/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zerospin.ios;
+				PRODUCT_MODULE_NAME = ZerospinApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000040 /* Build configuration list for PBXProject "Zerospin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000050 /* Debug */,
+				A00000000000000000000051 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00000000000000000000041 /* Build configuration list for PBXNativeTarget "Zerospin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00000000000000000000052 /* Debug */,
+				A00000000000000000000053 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A00000000000000000000070 /* XCLocalSwiftPackageReference "../packages/swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../packages/swift;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A00000000000000000000071 /* Zerospin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A00000000000000000000070 /* XCLocalSwiftPackageReference "../packages/swift" */;
+			productName = Zerospin;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A00000000000000000000031 /* Project object */;
+}

@@ -1,0 +1,84 @@
+.studio-compact-table-scroll {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.studio-compact-table-scroll:focus-visible {
+  outline: 2px solid #999;
+  outline-offset: -2px;
+}
+
+.studio-compact-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #111;
+  background: #f4f4f4;
+  font: 14px/1.25 'Geist Mono Variable', ui-monospace, monospace;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+.studio-compact-table :is(th, td) {
+  padding: 0 1ch 0 0;
+  text-align: left;
+  vertical-align: top;
+  font-weight: 400;
+}
+
+.studio-compact-table thead {
+  color: #999;
+}
+
+.studio-compact-table tbody tr {
+  border: 0.5px solid #ccc;
+}
+
+.studio-compact-table[data-framed='false'] tbody tr {
+  border-inline: 0;
+}
+
+.studio-compact-table[data-framed='false'] tbody tr:last-child {
+  border-bottom: 0;
+}
+
+.studio-compact-table tbody th {
+  color: #999;
+  white-space: nowrap;
+}
+
+.studio-compact-table :is(th, td):first-child {
+  padding-left: 0;
+}
+
+.studio-compact-table :is(th, td):last-child {
+  padding-right: 0;
+}
+
+.studio-compact-table [data-align='right'] {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.studio-compact-table .compact-table-account {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  white-space: nowrap;
+}
+
+.studio-compact-table .compact-table-account-icon {
+  display: inline-flex;
+  width: 1ch;
+  height: 1ch;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #f4f4f4;
+  font-size: 8px;
+  line-height: 1;
+}

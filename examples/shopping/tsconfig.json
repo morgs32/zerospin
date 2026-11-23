@@ -1,0 +1,75 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext", "es2021"],
+    "declaration": false,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "incremental": true,
+    "composite": false,
+    "rootDir": ".",
+    "types": ["vite/client", "node", "./src/cloudflare-workers.d.ts"],
+    "paths": {
+      "*": ["./*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["dist", "node_modules", "src/routes/[__dev].*"],
+  "references": [
+    {
+      "path": "../../packages/sdk"
+    },
+    {
+      "path": "../../packages/error-boundary"
+    },
+    {
+      "path": "../../packages/error"
+    },
+    {
+      "path": "../../packages/devtools"
+    },
+    {
+      "path": "../../packages/shapes"
+    },
+    {
+      "path": "../../packages/browser"
+    },
+    {
+      "path": "../../packages/cli"
+    },
+    {
+      "path": "../../packages/system-worker"
+    },
+    {
+      "path": "../../packages/logger"
+    },
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/react"
+    }
+  ]
+}

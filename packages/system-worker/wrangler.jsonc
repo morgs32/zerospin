@@ -1,0 +1,122 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "core",
+  "main": "./src/index.ts",
+  "compatibility_date": "2025-04-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "durable_objects": {
+    "bindings": [
+      { "name": "SYSTEM_REPO", "class_name": "SystemRepo" },
+      {
+        "name": "AGGREGATE_VERSION_CHAIN",
+        "class_name": "AggregateVersionChain",
+      },
+      {
+        "name": "AGGREGATE_ACTOR_VERSION_ARCHIVE",
+        "class_name": "AggregateActorVersionArchive",
+      },
+      {
+        "name": "AGGREGATE_VERSION_ARCHIVE",
+        "class_name": "AggregateVersionArchive",
+      },
+      {
+        "name": "AGGREGATE_ACTOR_VERSION_REPO",
+        "class_name": "AggregateActorVersionRepo",
+      },
+      {
+        "name": "AGGREGATE_AGENT_VERSION_REPO",
+        "class_name": "AggregateAgentVersionRepo",
+      },
+      { "name": "SERVICE_VERSION_CHAIN", "class_name": "ServiceVersionChain" },
+      {
+        "name": "SERVICE_ACTOR_VERSION_ARCHIVE",
+        "class_name": "ServiceActorVersionArchive",
+      },
+      {
+        "name": "SERVICE_VERSION_ARCHIVE",
+        "class_name": "ServiceVersionArchive",
+      },
+      {
+        "name": "SERVICE_ACTOR_VERSION_REPO",
+        "class_name": "ServiceActorVersionRepo",
+      },
+      {
+        "name": "AGGREGATE_CHAIN",
+        "class_name": "AggregateChain",
+      },
+      {
+        "name": "AGGREGATE_ACTOR_VERSION_CHAIN",
+        "class_name": "AggregateActorVersionChain",
+      },
+      {
+        "name": "AGGREGATE_AGENT_VERSION_CHAIN",
+        "class_name": "AggregateAgentVersionChain",
+      },
+      {
+        "name": "SERVICE_CHAIN",
+        "class_name": "ServiceChain",
+      },
+      {
+        "name": "SERVICE_ACTOR_VERSION_CHAIN",
+        "class_name": "ServiceActorVersionChain",
+      },
+    ],
+  },
+  "exports": {
+    "SystemRepo": { "type": "durable-object", "storage": "sqlite" },
+    "AggregateVersionChain": { "type": "durable-object", "storage": "sqlite" },
+    "AggregateActorVersionArchive": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "AggregateVersionArchive": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "AggregateActorVersionRepo": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "AggregateAgentVersionRepo": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "ServiceVersionChain": { "type": "durable-object", "storage": "sqlite" },
+    "ServiceActorVersionArchive": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "ServiceVersionArchive": { "type": "durable-object", "storage": "sqlite" },
+    "ServiceActorVersionRepo": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "AggregateChain": { "type": "durable-object", "storage": "sqlite" },
+    "AggregateActorVersionChain": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "AggregateAgentVersionChain": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+    "ServiceChain": { "type": "durable-object", "storage": "sqlite" },
+    "ServiceActorVersionChain": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+  },
+  "observability": {
+    "enabled": false,
+    "logs": {
+      "enabled": false,
+    },
+    "traces": {
+      "enabled": false,
+    },
+  },
+  "vars": {
+    "ZEROSPIN_ENVIRONMENT": "dev",
+    "ZEROSPIN_SYSTEM_ID": "sys_local_20260907_fanout",
+  },
+}

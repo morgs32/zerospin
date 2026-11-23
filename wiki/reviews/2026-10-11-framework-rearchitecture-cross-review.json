@@ -1,0 +1,761 @@
+{
+  "review_date": "2026-10-11",
+  "status": "independently cross-reviewed; proposals unimplemented",
+  "runtime_checks_performed": false,
+  "root_plan_reviews": [
+    {
+      "plan": "wiki/plans/132-plan-actor-action-lifetime.md",
+      "sha256": "f58a0d2fa84a15159ea9689265ba35dd7d4fd0fd8aee6ae8bccbbe173ed2ba88",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "Owned cooperative action Fiber fixes gate-blocking shutdown; masked enrollment recheck closes missed-fork race. Transition stays outside old activation and commit remains uninterruptible; full local action versus terminal infrastructure Cause policy and noncooperative finalizer limits are explicit.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    },
+    {
+      "plan": "wiki/plans/133-plan-canonical-descriptor-semantics.md",
+      "sha256": "5883f15ff34f040f1234ff7f8ed5b6907e220f25dd1b1dd255c9fac1b3f4ec34",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "Descriptor decoded/row/portable meanings are distinguished; safe integer acceptance, numeric self-reference, fresh Date defaults and exact ID-prefix claims are grounded in source. Zod Type validation does not interpret encoded JSON Schema as decoded semantics.105/108/109 ownership agrees.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    },
+    {
+      "plan": "wiki/plans/134-plan-cli-dev-lifetime.md",
+      "sha256": "0826a97f41e9cc43b629a2bb373398ca6aac6841a730cefac59aaaf965272e9e",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "CLI development acquisition/reload/cleanup belongs to one scoped owner; preserve actual private Wrangler acceptance/drain integration and deployed compensation paths. Mounted procedure abort ownership is explicit; no invented timer or runner.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    },
+    {
+      "plan": "wiki/plans/135-plan-devtools-mounted-owners.md",
+      "sha256": "6fa6341eb8893745df1de9a3f0858f08f2d5a940dea52eb8d4c1f81ed5b24e28",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "Mounted preference/visibility/drag/popup/keyboard responsibilities have clear cleanup; unused profiler removal has real no-caller evidence. Captured UI/accessibility semantics preserved; no broad state-store replacement.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    },
+    {
+      "plan": "wiki/plans/136-plan-studio-repo-query-ownership.md",
+      "sha256": "9dec772de944a911bc602488904db593e6d258916525fcd29c49f0e24c57328f",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "Exact complete repo request identity prevents stale A data rendering under B. Same-key refresh and cancellation ownership agree with existing SWR/HTTP broker; opaque identifier086 stays its own pending work. No absent Storybook seam claimed.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    },
+    {
+      "plan": "wiki/plans/137-plan-diagnostic-trace-presentation.md",
+      "sha256": "730fc74aa1062775f64994b5a6b11374a88ac0252a9633132143e4e990386da0",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "Only the real DevTools consumer gets a pure trace graph/presentation; unused logger TraceStore/DAG renderer removed rather than justified as a second abstraction. Finite invalid-graph display handling remains diagnostic and does not affect domain authority.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    },
+    {
+      "plan": "wiki/plans/138-plan-telemetry-capture-ownership.md",
+      "sha256": "224126c46016e21c98e182a2309066d97163a19d3082e86818dfe5ddba0f2428",
+      "reviewer": "root",
+      "read_mode": "Full proposed plan and current full-source workflow review; coordinated caller/source evidence delegated explicitly. Tree-only marker additions checked separately.",
+      "assessment": "Boundary collectors and immutable error telemetry eliminate unbounded config-lived span sharing/mutation. Canonical diagnostic context schemas do not invalidate valid domain args; persisted links require actual persisted root. Unused proxy/handler removal verified; full-Cause and domain outcome policy agrees107/110/112.",
+      "status": "reviewed; no unresolved findings",
+      "verified_at": "2026-10-11T09:54:32.896346+00:00"
+    }
+  ],
+  "peer_reviews": [
+    {
+      "reviewer": "/root/write_admission_plan",
+      "review_date": "2026-10-11",
+      "scope": "Independent full proposed architecture cross-review against already reviewed browser/native/React/live-query/core Node and session source; root source findings trusted where ownership delegated.",
+      "plans_examined": [
+        {
+          "path": "wiki/plans/105-plan-immutable-authored-declarations.md",
+          "sha256": "b2b5ca23b3e87898d619b5ffd647481a979d26e2f9608930ae2d2bd16fc85308",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Owned metadata freezing retains executable/schema/table capabilities and lineage; forged provenance promise requires BR-X04.",
+          "rechecked_sha256": "02dadbf9bdabba3dec83ecfeab66ca009d8c3ef253ca318b55890f0fe517431f",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "02dadbf9bdabba3dec83ecfeab66ca009d8c3ef253ca318b55890f0fe517431f",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/106-plan-canonical-authored-manifest-projections.md",
+          "sha256": "14ebd3b17e452370af04bd0fdebbe041d21c213a46b2209c0d17f1b9e6b6007d",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Canonical metadata projection and supported manifest hard cut are coherent; exact validator API requires BR-X05.",
+          "rechecked_sha256": "d0f03df4c5eb31dfdf4ba87cd196bdd0913b1c251d6a47cef1dcbf4aec735b3f",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "d0f03df4c5eb31dfdf4ba87cd196bdd0913b1c251d6a47cef1dcbf4aec735b3f",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/107-plan-contract-evaluation-phases.md",
+          "sha256": "fd4f8faf5c9210adcaf64437f98831646d9eac6efad98ee4bd5bceabd196f099",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Prepared invocation/evaluated output phase ownership coherent after BR-X01; inherited callback Cause policy preserved.",
+          "rechecked_sha256": "fd4f8faf5c9210adcaf64437f98831646d9eac6efad98ee4bd5bceabd196f099",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "8c8a7c97f6de3ea8ea23be596ed08802d0867e2fcdf8230569e418bfe046a5e9",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/108-plan-model-operation-codecs.md",
+          "sha256": "a4dffc8b8bf6ee2340cc430bb129bed73b45d32fded34d4e1c0a0514d57d075d",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Exact model-owned paired codecs and actual prior-state inverse ownership coherent after BR-X03.",
+          "rechecked_sha256": "2cc4c98c88c65b0771db941dca897faa717582fafac246116b4a40677cc14bec",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "2cc4c98c88c65b0771db941dca897faa717582fafac246116b4a40677cc14bec",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/109-plan-bound-database-definition.md",
+          "sha256": "c13d6da326c962c4854b6500197e420e9f141b991c95b675830073b2eda2fc46",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-clean",
+          "assessment": "Single bound immutable database definition keeps encoded persistence and decoded query views distinct; provisioning remains local atomic.",
+          "rechecked_sha256": "c13d6da326c962c4854b6500197e420e9f141b991c95b675830073b2eda2fc46",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "c13d6da326c962c4854b6500197e420e9f141b991c95b675830073b2eda2fc46",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/110-plan-sqlite-execution-and-commit-observation.md",
+          "sha256": "0f225e3c8b09f37961fdc5f2ee7e10dc6380d7ff1894bf5bfa73a7bcc971d576",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Postcommit SQL/table observation and rollback full-Cause ownership coherent after BR-X02.",
+          "rechecked_sha256": "0f225e3c8b09f37961fdc5f2ee7e10dc6380d7ff1894bf5bfa73a7bcc971d576",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "0f225e3c8b09f37961fdc5f2ee7e10dc6380d7ff1894bf5bfa73a7bcc971d576",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/118-plan-version-result-owner.md",
+          "sha256": "15ba6dd74f11de9fe9391418b038d18d0b8eedcdd32c7a22ee100ba37e19d2b4",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Source ordinal proof checked against reviewed Node/session consumers and the cited source next-index/increment invariant. Independent private outcome cursor retained; release-specific disposition hash remains distinct.",
+          "rechecked_sha256": "64da7d3671593c443d8457a42ded40fc72d4cd20602a19bfef0d878b8ba1914f",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "3706076e1af3e8874fff608c6a848da200a6c64accc4f58fbe1bfe456986ff7e",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/119-plan-selected-view-owner.md",
+          "sha256": "f44e1c189a4eb7e8d8a6bd519b8cf8ad788e64acbb061d36c5f9445056961c00",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Single mutable selected graph/history owner is coherent; snapshot pre-capture race and postcommit broadcast acknowledgement require BR-X06/07.",
+          "rechecked_sha256": "778ef921b1250eb33870e0299912d76b80a728dfe32bdfa62363cf5d6d175807",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "ee709786752ecd020ae4cb6328b5a5673c72f2801b2415daaaf77447842f6ff5",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/120-plan-service-socket-protocol.md",
+          "sha256": "d8fa58985d221fa41010a55ed19c0a2b390edb89b4fa54315f212b6339375921",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Explicit service tagged unions, bounded fixed segments, synchronous replay-to-live join, scoped private outcomes and finally-released claims compose with111/112/116. No generic wire framework introduced.",
+          "rechecked_sha256": "a6feeea9f398f7bf47b3a4826535475241bbd3aec63a701b5dfa0b87e933a592",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "f976106f71086049ce41b3c5fd3e0bc680822b71dc91b99440517aebb179fdb6",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/121-plan-admission-authority.md",
+          "sha256": "6c36ad11ff34c04b4c64d2a47d1adf9b5192afa20527fe951ebbde1d2374501c",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Ordinary vs recorded authority is explicit; portable codec runner justified outside SQL because withSavepoint owns transaction runner only. Original producer observation is durably recorded before child delivery. New system-origin service continuation is an explicit proposed behavior, not a current caller claim.",
+          "rechecked_sha256": "429b9cb1e33af09c2bc7c8bd1570ec03b364a42b025bbb8513c9acc39594ca29",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "7dd0983b02a82ea1d5b5c477d28ba26e7c10b7ae1e19f0693b6572423d0d4d70",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/122-plan-remove-unused-raw-sql.md",
+          "sha256": "68e1f67023386235ad4ca808e9c50175f42ce3ddc22ba5b77cc9650aa14aee3b",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Unused raw-SQL deletion is cohesive; no replacement parser/security API invented. Exact consumers/deletions are explicit.",
+          "rechecked_sha256": "6f93f26c99a2914203a1b5f39f942fdf09254936446eb2912862c589ce7f3184",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "eef5910d0304d05b09fd57f5c6efa3c224b6b9abfa38bc2adee1d6dc23b4041a",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/123-plan-session-lock-validation.md",
+          "sha256": "bb3170289d5a82caa535b3a72280d6aa2f02ff008620992073ccbb63824f3ec1",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "Selection/authority remains server-owned and projection remains core-owned; exact shared API needs BR-X05.",
+          "rechecked_sha256": "ec49a9018b01882bd5d21fd41231da0d9774046e4d6db05de44f40ebe7cda219",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "2484aa3a234c877f8d33a8b961d2ade87d343a0b92777d402cae8c82da43f6db",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        },
+        {
+          "path": "wiki/plans/124-plan-session-snapshot.md",
+          "sha256": "aa411f50e5ddb4ee75703043cdce9608441e3a6f242b7a2ecc1cf0f5d9866934",
+          "read_at": "2026-10-11T09:36:08.370561+00:00",
+          "read_mode": "full-content tool output; dependent current-source seams and prior full owned-source review",
+          "classification": "reviewed-with-finding",
+          "assessment": "API boundary delegates coherent capture to selected owner; exact captured checkpoint must agree119/118 under BR-X06.",
+          "rechecked_sha256": "032e58767e105ebac01cbfb163966aea9465c2d8939c4c0ed549d8307981377b",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "recheck_mode": "Scoped complete correction text and parent procedure recheck against each finding; original full-plan review retained.",
+          "final_rechecked_sha256": "0dbf84f124fc45cb39664ee611343531c15c68329d7fb5094931a3294f5ef113",
+          "final_rechecked_at": "2026-10-11T10:00:07.369823+00:00"
+        }
+      ],
+      "findings": [
+        {
+          "id": "BR-X01",
+          "priority": 1,
+          "plans": [
+            107,
+            117
+          ],
+          "finding": "Optimistic staging, rebasing and rehearsal cannot await a host read adapter inside their synchronous transaction/savepoint.",
+          "resolution": "Plan107 observable behavior6 now explicitly requires synchronous original/stage/rebase/rehearsal and separates awaiting host transport/external production outside SQL.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00"
+        },
+        {
+          "id": "BR-X02",
+          "priority": 1,
+          "plans": [
+            110
+          ],
+          "finding": "A postcommit publication call inside the rollback catch can issue ROLLBACK after successful COMMIT and falsely reject committed work.",
+          "resolution": "Plan110 transaction shape now places commitCapture outside the rollback catch and explicitly isolates observer failures.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00"
+        },
+        {
+          "id": "BR-X03",
+          "priority": 2,
+          "plans": [
+            108
+          ],
+          "finding": "Dynamically indexing operation codecs by a union discriminant loses body/inverse correlation and pressures forbidden casts.",
+          "resolution": "Plan108 now names body procedures with exhaustive narrowing switches before the matching Schema codec; no arbitrary callback table or cast.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00"
+        },
+        {
+          "id": "BR-X04",
+          "priority": 2,
+          "plans": [
+            105
+          ],
+          "finding": "The promise to reject forged authored declarations is not established by instanceof, an exported class, a public symbol brand or freezing. Current empty Model class accepts Object.create(Model.prototype)/new Model() before canonical finish.",
+          "resolution": "Plan105 behavior7 now registers only fully constructed Model/Contract instances in private constructor-owned WeakSets and replaces touched prototype-only predicates with canonical membership guards; metadata immutability alone is explicitly insufficient.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "source": [
+            "packages/core/src/models/defineModel.ts",
+            "packages/core/src/assertSameCoreInstance.ts",
+            "packages/core/src/service/make/makeServiceRelease.ts",
+            "packages/core/src/contracts/make/constructContractVersion.ts"
+          ],
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "resolution_evidence": [
+            {
+              "path": "wiki/plans/105-plan-immutable-authored-declarations.md",
+              "lines": [
+                19
+              ]
+            }
+          ]
+        },
+        {
+          "id": "BR-X05",
+          "priority": 2,
+          "plans": [
+            106,
+            123
+          ],
+          "finding": "Canonical lock projection API names/inputs differ across owning and consuming plans.106 sketches make*SessionLock(declaration),123 calls project*SessionLock(actor,sessionName,selection).",
+          "resolution": "Plan106 decision2/procedure3 and Plan123 parent shapes now agree on existing canonical pure makeAggregateSessionLock/makeServiceSessionLock builders with selected typed authored declaration literals. No project* forwarding wrapper remains.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "resolution_evidence": [
+            {
+              "path": "wiki/plans/106-plan-canonical-authored-manifest-projections.md",
+              "lines": [
+                8,
+                74
+              ]
+            },
+            {
+              "path": "wiki/plans/123-plan-session-lock-validation.md",
+              "lines": [
+                25,
+                43,
+                59
+              ]
+            }
+          ]
+        },
+        {
+          "id": "BR-X06",
+          "priority": 1,
+          "plans": [
+            119,
+            124
+          ],
+          "finding": "Local projection can advance after asynchronous catchup through a requested canonical boundary but before synchronous capture. Current mutable resource graph cannot reconstruct earlier requested resources merely by reporting its earlier cursor.",
+          "resolution": "Plan119 snapshot contract and capture parent now treat the remote cursor as minimum, capture/report actual current local resources/source cursor/dispositionHash/private prefix in one transaction, and match Plan124. No delivery fence or stale resource labeling is proposed.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "resolution_evidence": [
+            {
+              "path": "wiki/plans/119-plan-selected-view-owner.md",
+              "lines": [
+                27,
+                62,
+                81
+              ]
+            },
+            {
+              "path": "wiki/plans/124-plan-session-snapshot.md",
+              "lines": [
+                9,
+                37
+              ]
+            }
+          ]
+        },
+        {
+          "id": "BR-X07",
+          "priority": 1,
+          "plans": [
+            119,
+            120
+          ],
+          "finding": "Yielding broadcast after projection commit can reject the committed receiver response; an exact retry skips retained publications and cannot repair a still-live socket.",
+          "resolution": "Plan119 explicitly isolates individual sends, closes failed sockets, returns unchanged committed acknowledgement and forbids broadcast throwing after commit; the parent calls broadcastAggregatePublicationsAndCloseFailedSockets then returns committed.acknowledgement. Durable replay repairs a closed socket.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "resolution_evidence": [
+            {
+              "path": "wiki/plans/119-plan-selected-view-owner.md",
+              "lines": [
+                21,
+                39,
+                40,
+                81
+              ]
+            }
+          ]
+        },
+        {
+          "id": "BR-X08",
+          "priority": 2,
+          "plans": [
+            118,
+            119,
+            120,
+            121,
+            122
+          ],
+          "finding": "Server plans list inherited tsc:typecheck targets as validation without distinguishing real compiler targets from disabled echo targets; browser/system-worker were previously resolved with real lib/ts/lint gates. Shopping application-browser verification is forbidden by its AGENTS.",
+          "resolution": "Plans118-122 now require meaningful core lib/lint/tsc:typecheck and browser/system-worker/dev-worker/production-worker lib/ts/lint, explicitly excluding disabled echo compiler tasks. Plan120 item5 and its cross-review note require permitted Shopping server/RPC/Workerd workflows, state its application-browser prohibition, and use Tic-tac-toe for browser/reconnect.",
+          "status": "resolved-in-plan",
+          "owner": "root",
+          "rechecked_at": "2026-10-11T09:50:14.392991+00:00",
+          "resolution_evidence": [
+            {
+              "path": "wiki/plans/118-plan-version-result-owner.md",
+              "lines": [
+                115
+              ]
+            },
+            {
+              "path": "wiki/plans/119-plan-selected-view-owner.md",
+              "lines": [
+                117
+              ]
+            },
+            {
+              "path": "wiki/plans/120-plan-service-socket-protocol.md",
+              "lines": [
+                113,
+                119,
+                133
+              ]
+            },
+            {
+              "path": "wiki/plans/121-plan-admission-authority.md",
+              "lines": [
+                156
+              ]
+            },
+            {
+              "path": "wiki/plans/122-plan-remove-unused-raw-sql.md",
+              "lines": [
+                52
+              ]
+            }
+          ]
+        }
+      ],
+      "gaps": [],
+      "runtime_checks_performed": false,
+      "production_sources_modified": false,
+      "own_plan_repairs": [
+        {
+          "plan": 114,
+          "resolution": "Integrated exact root-read Swift flock/initialization/publication/open-cleanup/finite-disposal findings."
+        },
+        {
+          "plan": 116,
+          "resolution": "Require expected standalone identity before retained retry lookup."
+        },
+        {
+          "plan": 117,
+          "resolution": "Use actual ordered SQL occurrence classification with one lazy optimistic rewind; delete proposed virtual identity/checkpoint copies."
+        }
+      ],
+      "recheck_summary": {
+        "resolved_findings": 8,
+        "partially_resolved_findings": 0,
+        "awaiting_plan_correction_findings": 0,
+        "new_findings": 0,
+        "scope": "All original eight findings rechecked against final corrected proposal text; all have explicit supporting clauses."
+      },
+      "independent_plan102_review": {
+        "reviewed_at": "2026-10-11T09:50:14.392991+00:00",
+        "status": "resolved-and-coherent",
+        "files": [
+          {
+            "path": "wiki/plans/102-plan-aggregate-command-admission-orchestration.md",
+            "sha256": "03a55e2c026c1e0960d6111cc1f46d54ce559f987997f1c4b751ee7bffa67234",
+            "read_mode": "full current source or full plan plus complete final correction clauses"
+          },
+          {
+            "path": "packages/core/src/drizzle/make/makeTx.ts",
+            "sha256": "5991b8b010899af8d8cbee48eeed36d6b60d2cbb28d9324f31e86e8e63258de5",
+            "read_mode": "full current source or full plan plus complete final correction clauses"
+          },
+          {
+            "path": "packages/core/src/drizzle/fenceTransaction.ts",
+            "sha256": "739a2be35303bf02e169bdb37125cfdd133cc298978e25344aaf7dfec262e56b",
+            "read_mode": "full current source or full plan plus complete final correction clauses"
+          },
+          {
+            "path": "packages/system-worker/src/AggregateChain/admitAggregateCommands/admitAggregateCommandsTx.ts",
+            "sha256": "3da3a4209cc004cbcbbd33bdcb4fd816de9f39c096d191cdb404eefde1b2bbd8",
+            "read_mode": "full current source or full plan plus complete final correction clauses"
+          }
+        ],
+        "conclusion": "One envelope normalization then ordered SQL retention is coherent with current makeTx. makeTx fences and cancels sole or composite AsyncFiberError fibers before rollback, returns original full execution Cause after successful rollback, and types only native transaction infrastructure failures as drizzle-transaction-failed. Admission classifier maps only sole recognized suspension and sole typed non-domain storage failure. Known domain Fail codes, other Die/Interrupt and composite Causes survive. Unwrapped synchronous statement throws are defects, not typed storage failures.",
+        "finding": {
+          "id": "BR-X09",
+          "priority": 2,
+          "finding": "Plan102 runtime5/acceptance10 broadly promised ordinary database failures map admission-failed, although unwrapped synchronous SQL generator throws are preserved Die after rollback.",
+          "status": "resolved-in-plan",
+          "resolution": "Runtime5 and acceptance10 now explicitly distinguish sole typed non-domain storage/transaction failure from original unwrapped statement defects. No per-statement wrapper/SQL-origin heuristic/shared makeTx policy hook is added.",
+          "evidence": [
+            {
+              "path": "wiki/plans/102-plan-aggregate-command-admission-orchestration.md",
+              "lines": [
+                108,
+                109,
+                172
+              ]
+            }
+          ]
+        },
+        "runtime_checks_performed": false
+      },
+      "additional_cross_plan_correction": {
+        "plan": 112,
+        "reviewed_at": "2026-10-11T09:50:14.392991+00:00",
+        "status": "resolved-and-peer-rechecked",
+        "resolution": "Clause3.6 now adopts118 canonical aggregateIndex/dispositionHash with independent node outcomeIndex/resolvedThrough and119/124 minimum request vs actual atomically captured snapshot boundary. Peer B notified through collaboration.",
+        "peer": "/root/count_admission_scenarios",
+        "peer_conclusion": "112 clause3.6 canonical aggregateIndex/dispositionHash, independent outcomeIndex/resolvedThrough, dual-prefix readiness and actual captured minimum-boundary snapshot agree with118/119/124.",
+        "peer_rechecked_at": "2026-10-11T09:51:50.854493+00:00"
+      },
+      "final_replay_authority_correction": {
+        "id": "BR-X10",
+        "priority": 1,
+        "status": "resolved-in-plan",
+        "finding": "Plan107 and index ambiguously said replay must not execute business callbacks, conflicting with canonical VersionRepo replay evaluating its own guards/programs.",
+        "resolution": "Plan107 behavior6 and index invariant row now explicitly distinguish canonical release replay with guard/program evaluation and no external producer lifecycle from selected/Node/session retained-operation replay without callbacks, plus optimistic rebase reevaluation of pending originals.",
+        "evidence": [
+          {
+            "path": "wiki/plans/107-plan-contract-evaluation-phases.md",
+            "line": 18
+          },
+          {
+            "path": "wiki/reviews/2026-10-11-framework-rearchitecture.md",
+            "line": 105
+          }
+        ],
+        "verified_at": "2026-10-11T10:00:07.369823+00:00"
+      }
+    },
+    {
+      "scope": "Independent full cross-review of API/server plans123-131 against command owner plans118-122 and current source",
+      "reviewDate": "2026-10-11",
+      "reviewedPlans": {
+        "wiki/plans/123-plan-session-lock-validation.md": {
+          "sha256": "ec49a9018b01882bd5d21fd41231da0d9774046e4d6db05de44f40ebe7cda219",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Canonical pure lock projection106; exact authored selection/model closure/current vs historical contract policy remain authorizer responsibilities; full Causes and claims declaration authority preserved."
+        },
+        "wiki/plans/124-plan-session-snapshot.md": {
+          "sha256": "032e58767e105ebac01cbfb163966aea9465c2d8939c4c0ed549d8307981377b",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Selected owner119 owns local capture, API owns boundary/adaptation. Current text explicitly uses requested cursor minimum and reports actual captured resources/hash/private prefix atomically. Agrees with revised119."
+        },
+        "wiki/plans/125-plan-websocket-tickets.md": {
+          "sha256": "779cc1f45b5de18a61ee51637800bcd3b51c21fd119ca92b7d191eea32b4d477",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "One retained admission tuple, configured system implicit, full claims retained, family derived and spend SQL family predicate before deletion. Hash outside SQL; spent ticket commits before downstream forwarding. Surviving119 identities only."
+        },
+        "wiki/plans/126-plan-fixed-repo-activation.md": {
+          "sha256": "eb566178c8393dd931410a93319dcb98f0dc101f950dfe06d2f3d49278aea0a9",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Configured system/key binding only for versionless AC/SC preserves static schema+empty registry activation and121/130duplicate-first receipt recovery. Authored model/view/result owners retain required release availability. No accepted-catalogue executable reconstruction."
+        },
+        "wiki/plans/127-plan-outbox-retry-policy.md": {
+          "sha256": "00fa9072be8ac85a25e2bc724942207908fbb61ab45eb5ea58a2f5b003d34034",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Locally distinguished retryable native attempt marker, release before sleep, envelope decode outside retry, full mixed Causes preserved; no permanent receiver refusal transport loop. Acknowledgement remains synchronous and completion recovery explicit."
+        },
+        "wiki/plans/128-plan-legacy-log-stream.md": {
+          "sha256": "3ff593b7b9866dd9f6445a330ce3f6bfaecdf91bf4c72b41f85ef5e07e8052d7",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Dead log feature deletion independent from ticket changes, telemetry/admission and SystemLogRepo retained. Hard fixed-storage cutover explicit; no new producer/compatibility route."
+        },
+        "wiki/plans/129-plan-fanout-delivery.md": {
+          "sha256": "170ac93101c7f3ed504c16754ca4a656206822e4b6c8a8a95c39f86c7679e47f",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Required immutable owner reader, explicit subscriber identity/storage, per-delivery suffix/cursor, bounded concurrent scope and recovery lease. No source-tip acknowledgement on empty page; permanent typed subscriber failure separate from127transport retry."
+        },
+        "wiki/plans/130-plan-administrative-execution.md": {
+          "sha256": "c715d920d4dcaa92000490d2c0b6aba6f2afde7d862213cbfc7d6a7c00df9ab7",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Canonical admission owns new authority/exact retained duplicates. Wrapper release removed and await uses retained receipt version. Missing historical executable release does not promise pending execution success; correct118/121 integration."
+        },
+        "wiki/plans/131-plan-accepted-definitions.md": {
+          "sha256": "493ee2052dc2075a53cd2fe90afd51e8cc5ed2061832cf9f6469a7e26c9a9499",
+          "readAt": "2026-10-11T09:43:07.956061+00:00",
+          "fullRead": true,
+          "assessment": "Single immutable comparison catalogue, actor identity independent of release, all-or-none acceptance, registration cannot implicitly accept. Executable callbacks remain authored only; no catalogue reconstruction or conflicting authority."
+        }
+      },
+      "findings": [
+        {
+          "id": "CR-COMMAND-01",
+          "severity": "P1 architectural regression in proposed behavior",
+          "plan": "wiki/plans/126-plan-fixed-repo-activation.md",
+          "location": "Required behavior2: versionless owner chains require declared owner",
+          "problem": "A current-owner requirement during AC/SC activation prevents exact retained receipt recovery when the deployment omits the final authored release/owner. This moves current declaration availability ahead of duplicate lookup, contradicting121/130.",
+          "currentEvidence": [
+            "packages/system-worker/src/AggregateChain/aggregateChainFixedDORepoConfig.ts",
+            "packages/system-worker/src/ServiceChain/serviceChainFixedDORepoConfig.ts",
+            "packages/system-worker/src/AggregateChain/onDOActivation/onDOActivation.ts",
+            "packages/system-worker/src/ServiceChain/onDOActivation/onDOActivation.ts",
+            "packages/system-worker/src/makeFixedDORepo/makeFixedDORepo.ts"
+          ],
+          "requiredResolution": "Require configured-system/exact-key binding for versionless source chains without requiring current authored owner availability. New-command admission checks current owner/release/actor/contract. Authored-model version/view owners still require release definitions.131 remains comparison metadata, never reconstructed executable authority.",
+          "status": "Resolved by plan author in published126; root independently agreed. Changed clause reread on2026-10-11."
+        }
+      ],
+      "resolvedCoordinations": [
+        {
+          "id": "CR-COMMAND-02",
+          "plans": [
+            "119",
+            "124"
+          ],
+          "resolution": "Requested snapshot boundary is minimum. Read actual local checkpoint/hash/resources/private prefix in one capture transaction; report captured actual position. Both published plans now agree.",
+          "status": "Resolved in119 by command owner;124 already adopted same policy."
+        },
+        {
+          "id": "CR-COMMAND-03",
+          "plans": [
+            "119",
+            "120",
+            "127",
+            "129"
+          ],
+          "resolution": "Postcommit socket send failure cannot reject canonical receive acknowledgement; close failed socket for durable replay.119parent fixed;120wire and127/129delivery responsibility remain separate.",
+          "status": "Resolved in119; caller transport/retained occurrence semantics preserved."
+        }
+      ],
+      "limits": [
+        "No source edits or runtime checks; architectural review does not establish retry timing, concurrency liveness or deployed Durable Object behavior.",
+        "123-131 authored by another reviewer; this agent sent findings without editing those docs.",
+        "Read current source only to resolve the precise disputed activation/registration/admission boundary; trusted complete-source author review for other owned modules."
+      ],
+      "completedAt": "2026-10-11T09:51:26.822232+00:00",
+      "unresolvedFindings": [],
+      "additionalCrossReviews": [
+        {
+          "plan": "wiki/plans/102-plan-aggregate-command-admission-orchestration.md",
+          "sha256": "03a55e2c026c1e0960d6111cc1f46d54ce559f987997f1c4b751ee7bffa67234",
+          "fullRead": true,
+          "assessment": "Correct local admission policy: only sole Async Die and sole typed non-domain Fail normalize; unwrapped synchronous SQL statement throw captured inside Effect.gen remains original Die after successful rollback. Native transaction/rollback infrastructure typed failure distinct. Checked current core makeTx full source; no additional change required."
+        },
+        {
+          "plan": "wiki/plans/112-plan-agent-session-owners.md",
+          "sha256": "62bdbc8dcb1a222454d3741acf4444a01649b2d96da2c2dfb4659a7947f19fb9",
+          "fullRead": false,
+          "scope": "Rechecked corrected3.6cursor/capture clause",
+          "assessment": "Canonical aggregateIndex/dispositionHash, independent private outcomeIndex/resolvedThrough, exact dual-prefix replay completion and actual atomic snapshot capture at or beyond requested minimum agree with118/119/124. No remaining finding."
+        }
+      ]
+    },
+    {
+      "reviewer": "server auth/API/infrastructure and tooling owner",
+      "reviewed_at": "2026-10-11T09:48:58.112952+00:00",
+      "root": "/Users/morgs32/GitHub/zerospin",
+      "files": {
+        "wiki/plans/111-plan-connected-worker-ownership.md": {
+          "sha256": "036333c538895ad154208cd6af0dfc470397fe455ff67e31c244e051437706ab",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full plan read against server admission/selected-view/snapshot/fanout/RPC source ownership and published118-131 contracts."
+        },
+        "wiki/plans/112-plan-agent-session-owners.md": {
+          "sha256": "62bdbc8dcb1a222454d3741acf4444a01649b2d96da2c2dfb4659a7947f19fb9",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full corrected plan reread; sole independent cursor/captured-position finding resolved.",
+          "sha256_at_initial_review": "c10013751fd315eaff5708c5236614f192fa39260f234b21f39d4d009a927b1b",
+          "rechecked_at": "2026-10-11T09:51:55.530991+00:00"
+        },
+        "wiki/plans/113-plan-session-replica-bootstrap.md": {
+          "sha256": "23655b491af2892a9f5adc4ce1bd5024a9db9ec986310923e0bd39117ad90979",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full plan read against server admission/selected-view/snapshot/fanout/RPC source ownership and published118-131 contracts."
+        },
+        "wiki/plans/114-plan-native-persistent-owner.md": {
+          "sha256": "6d6fbf4869f1a4d31b2fe6ed87a467e8344cad7ef2f529317ec4448d36fe6234",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full plan read against server admission/selected-view/snapshot/fanout/RPC source ownership and published118-131 contracts."
+        },
+        "wiki/plans/115-plan-live-query-commit-invalidation.md": {
+          "sha256": "854a58c17056355f0f85003c6c1d600e2a38633aff774d44d2989b96951b7f72",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full plan read against server admission/selected-view/snapshot/fanout/RPC source ownership and published118-131 contracts."
+        },
+        "wiki/plans/116-plan-node-command-journal-and-subscriptions.md": {
+          "sha256": "e72b5f254f2f9541826c5ba6370b87139f259593db7611ef48af27e416677886",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full plan read against server admission/selected-view/snapshot/fanout/RPC source ownership and published118-131 contracts."
+        },
+        "wiki/plans/117-plan-session-reconciliation-and-evaluation.md": {
+          "sha256": "6df4b54c125be873e523b6820f470bc369de6f73211894862bd5be29b0268593",
+          "read_at": "2026-10-11T09:48:58.112952+00:00",
+          "classification": "reviewed",
+          "reason": "Full plan read against server admission/selected-view/snapshot/fanout/RPC source ownership and published118-131 contracts."
+        }
+      },
+      "findings": [
+        {
+          "priority": 2,
+          "plan": "wiki/plans/112-plan-agent-session-owners.md",
+          "section": "3.6 connectAgentSession",
+          "issue": "The proposed replay-completion contract still says exact executed hash/index, although118 removes executedIndex/executedHash and120 binds canonical aggregateIndex/serviceIndex plus dispositionHash. Agent HTTP bootstrap should also explicitly use the actual snapshot checkpoint returned by119/124 (requested catchup boundary is only a minimum).",
+          "required_fix": "Name aggregateIndex/dispositionHash and independent node outcomeIndex/resolvedThrough in the proposed contract; validate replay completion against the actual captured snapshot position, never the earlier requested minimum. Add concrete118/119/124 dependencies so no alias survives.",
+          "behavioral_risk": "Implementing the stated old fields or labelling a newer captured resource graph at the requested lower position breaks coordinated hard-cut replay/readiness; current generic canonical-result dependency partly covers it, but proposed contract must be unambiguous.",
+          "status": "resolved",
+          "verified_at": "2026-10-11T09:51:55.530991+00:00",
+          "resolution": "112\u00a73.6 now explicitly adopts118 aggregateIndex/dispositionHash and independent outcomeIndex/resolvedThrough, links119/124 minimum-boundary capture, imports the actual atomic position and resumes from it, and forbids older boundary labels/executed aliases."
+        }
+      ],
+      "checks": {
+        "111-owned-connection-close": "No server protocol conflict: attempts fence late results, join accepted SQL and release host ownership even on close failure. Single-use ticket retirement/retry keeps attempts distinct; remote/native operations need only late-result fencing where interruption is unavailable.",
+        "112-agent-producer-journal": "Exact immutable retry, one-time push position, atomic refusal compaction, no canonical position consumed by refused command, failure publication after commit and transient aggregate-bound lifetime align with121/119. Cursor terminology finding above is the only required clarification.",
+        "113-local-handoff": "Receipt import removes original from pending replica journal; receipt arrival alone does not claim completion. Local Node durable acceptance remains distinct from server admission/finalization. Snapshot receipt-or-missing partition and epoch guard stay atomic. Coordinate127 transport retry policy when shared delivery is changed; plan does not redefine it.",
+        "114-native-lifetime": "Native storage/host drain preserves offline original/final distinctions and synchronous SQL authority, and does not add transport work inside transactions. Actual flock/serial queue ownership remains root-verified; this independent pass does not claim fresh Swift runtime evidence.",
+        "115-live-query-commit": "All/list commit invalidation and install-before-catchup listener preserve committed selected-view visibility. Observer failures remain isolated after domain commit; root110 owns transaction notification semantics. No server schema/protocol change required.",
+        "116-node-journal": "Duplicate original equality includes immutable supported input/staging and reset capability epoch; exact duplicate bypasses current program execution. Finals compare exact occurrences and keep public source cursor/private producer outcomes/local Node delivery positions separate. Snapshot-registration atomicity and canceled sink fencing preserve ordering/privacy.",
+        "117-current-transaction-loop": "Confirmed settled design is one ordered occurrence loop reading/writing the current SQL transaction, lazy once-only rewind then one pending replay. No preliminary virtual duplicate/checkpoint mirror remains. Historical private recovery below a captured public baseline settles an original without applying its delta again; future recovery remains deferred. Sole async suspension classification after fenced savepoint rollback preserves full mixed/defect/interruption Cause."
+      },
+      "limits": [
+        "Full111-117 plan reads; supporting server source already fully read in150-file server pass and active tooling/RPC fullreads. Current source unchanged by review.",
+        "Published118/119/120/121/124/127/130 contracts checked for exact cursor/privacy/receipt/rollback/lifetime alignment; no runtime/tests/type/lint tasks run.",
+        "No source, C plan, test, fixture, runner, config, memory or commit edits performed by this cross-review. Root/C owner applies requested112 clarification.",
+        "Some C plan source citations are absolute with line suffixes and trees are only declared rooted in prose; root owns final document-convention normalization. This is documentation cleanup, not an additional behavioral finding."
+      ],
+      "final_recheck": {
+        "at": "2026-10-11T09:51:55.530991+00:00",
+        "unresolved_findings": 0,
+        "runtime_checks_run": false
+      }
+    }
+  ],
+  "unresolved_architecture_findings": [],
+  "final_inventory_audit": {
+    "status": "passed; no unresolved findings",
+    "reviewer": "/root/write_admission_plan",
+    "record": "wiki/reviews/2026-10-11-framework-rearchitecture-independent-audit.json",
+    "files": 1052,
+    "source_files": 947,
+    "modules": 144,
+    "proposals": 35,
+    "runtime_checks_performed": false
+  },
+  "finalized_at": "2026-10-11T10:01:34.454495+00:00"
+}

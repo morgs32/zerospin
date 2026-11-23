@@ -1,0 +1,70 @@
+# AggregateVersionChain.actorVersionChainFanoutSubscribers
+
+**Reviewed:** 2026-10-15, after completed [Plans 202](../../archive/plans/202-plan-aggregate-version-chain-commands-and-actor-fanout.md) and [203](../../archive/plans/203-plan-aggregate-version-chain-agent-fanout.md). Exactly this physical subscriber table was reviewed; commands, projection state and shared queue machinery were dependencies.
+
+**Verdict: retain membership and acknowledged progress; derive the actor version from the bound immutable Aggregate release.** The current row is exactly `actorName`, `actorPath`, `acknowledgedAggregateIndex`, unique over the actor pair. Complete recipient Repo keys still contain `actorVersion`; enrollment validates the requested version before extracting that pair, and delivery derives it from the bound release.
+
+**Decision status:** The 2026-10-22 actor identity cutover replaces Plan 204's four-column row. Source implementation and scoped verification are complete; the current-cutover evidence is recorded below. The original review/Plan 204 evidence below remains historical. No availability or retirement policy is added.
+
+## Physical scope and represented fact
+
+AggregateVersionChain fixes `systemId / aggregateId / aggregateName / aggregateVersion`. That is the evaluating Aggregate release, independent of each retained command's original admission release. One subscriber row says: this exact AggregateActorVersionRepo projection is enrolled, and AggregateVersionChain knows that projection committed through an inclusive Aggregate position.
+
+The row represents subscriber membership and source acknowledgement. It is no resource, command, pending payload, socket presence or registry of every possible actor projection. Actor definitions cannot enumerate arbitrary `actorPath` partitions; a projection can enroll without originating a command, and consumes positions whose model changes leave its selected delta empty.
+
+- [Source owner](../../../packages/system-worker/src/AggregateVersionChain/aggregateVersionChainName.ts), [table declaration](../../../packages/system-worker/src/AggregateVersionChain/aggregateVersionChainDbConfig.ts), [queue binding](../../../packages/system-worker/src/AggregateVersionChain/AggregateVersionChain.ts), [AggregateActorVersionRepo identity](../../../packages/system-worker/src/AggregateActorVersionRepo/aggregateActorVersionRepoName.ts).
+
+## Current three-column row
+
+| Column                       | Meaning, writer/reader and null rule                                                                                                                                                                        | Necessity                                                                                                                                                   |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `actorName`                  | Non-null text identifying the actor declaration. Enrollment stores it from the complete AggregateActorVersionRepo key; selection, conflicts and acknowledgement match it with actorPath.                    | Different actors may share a version and path. Removing it aliases distinct projections.                                                                    |
+| `actorPath`                  | Non-null canonical authored actor identity path. It contains identity fields encoded by that actor's route/schema, not a Node, session or command ID.                                                       | Different identity partitions require independent membership and acknowledgement. Preserve the canonical path without duplicating its decoded fields.       |
+| `acknowledgedAggregateIndex` | Non-null integer. Enrollment records reported committed progress; successful page receipts advance it with SQL `max`. Eligibility compares it with the fixed command tip; delivery reads commands after it. | The source's durable acknowledged prefix can lag AggregateActorVersionRepo's materialization head. Removing it loses durable scheduling/progress knowledge. |
+
+The actorName/actorPath pair is unique. AggregateVersionChain validates the requested actorVersion against its bound immutable Aggregate release before storing that pair, and derives the version from the same release when reconstructing complete AggregateActorVersionRepo keys. In particular, the evaluating `aggregateVersion` comes from the containing Chain, never from an admitted command's original release. The physical Repo abbreviation belongs to name utilities, with no independent subscriber meaning.
+
+An absent row means **unenrolled**. Zero means **enrolled with no command position acknowledged at AggregateVersionChain**; it does not mean the Aggregate has no commands. A caught-up row remains enrolled for future pushes. No column needs to be nullable, and no expiry, failure, availability, session or producer field belongs in this representation. There is no demonstrated need for an additional progress index.
+
+Queue RPCs retain `currentIndex` as their transport cursor. Enrollment accepts nonnegative safe integers and rejects positions beyond the committed source tip. A receipt advances the SQL acknowledgement to the last delivered command, never merely to an envelope's advertised tip. Supported writers enforce those protocol bounds.
+
+- [Structured subscriber storage](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueueStorage.ts), [enrollment boundary and receipt ordering](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueue.ts), [canonical actor path](../../../packages/system-worker/src/aggregateProjection/resolveActorIdentity/resolveActorIdentity.ts), [exact actor resolution](../../../packages/core/src/aggregateActor/getAggregateActorVersion.ts).
+
+## Shared queue implementation boundary
+
+The shared queue uses `subscriberIdentityColumns`, a named text-column map, and the Effect callbacks `subscriberIdentityFromKey` / `subscriberKeyFromIdentity`. The same identity record drives enrollment, full-key reconstruction, conflict handling, lookup, acknowledgement, deterministic ordering, and in-flight/failed exclusion. Bounded SQL applies availability and exclusion before `LIMIT`; structured JSON record sets avoid expanding one SQL parameter per identity field. Delivery state retains identity records without inventing a packed transient ID.
+
+All queue owners use this API. AggregateChain and ServiceChain bind release-only identity records; owners retaining a physical name column bind that existing single field and its name-codec Effects. Other physical schemas, including `agentVersionChainFanoutSubscribers`, are unchanged. The actor table has no parallel old-ID path or compatibility decoder.
+
+- [Shared queue binding](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueue.ts), [composite SQL operations](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueueStorage.ts), [independent deliveries](../../../packages/system-worker/src/makeFanoutQueue/runFanoutDeliveries.ts).
+
+## Enrollment, receipt, recovery and deletion
+
+1. AggregateActorVersionRepo activation calls its source-bound subscriber's `subscribe()`. Catch-up fixes one source prefix and commits through it, then rereads the actual materialization head before enrollment. Failed catch-up does not create the normal enrollment row.
+2. AggregateVersionChain validates the complete owner-qualified key and safe cursor bound, validates actorVersion against its bound release, extracts the actor pair, and atomically upserts membership/progress with `max(existing, reported)`. A stale activation cannot rewind acknowledgement. A producer lease spans tip validation and enrollment outside the drain semaphore, so cold projection activation cannot deadlock a delivery awaiting it.
+3. Retained `commands` covers the catch-up/enrollment interval. Each drain fixes a source tip and selects lagging subscriptions by progress and every identity column, with a bounded limit. In-flight subscriptions are excluded before that limit, preserving one ordered delivery per projection.
+4. AggregateActorVersionRepo atomically commits resources, its materialization head and complete pending selected publication. Its receipt proves that transaction; it does not prove AggregateActorVersionChain retained selected publication. That transfer has its own acknowledgement.
+5. Only after that receipt does AggregateVersionChain advance `acknowledgedAggregateIndex`. A lost receipt leaves source acknowledgement behind the projection's materialization head; redelivery skips committed positions. Those are separate durable facts across two Durable Objects.
+6. A failed subscription keeps its row/cursor and is excluded only for that drain. Other projections continue; later alarms retry retained backlog. Source append and enrollment preserve pre-commit producer recovery, and producer revisions prevent an overlapping empty drain from releasing a new enrollment's wake.
+7. There is no delete, unsubscribe, expiry or garbage-collection path. Capability disposal, browser disconnection, no selected delta and inactivity do not end membership. Deleting a row stops future push delivery until that exact projection activates and enrolls again. Acknowledgement never deletes retained commands.
+
+- [Activation](../../../packages/system-worker/src/AggregateActorVersionRepo/AggregateActorVersionRepo.ts), [catch-up then committed-cursor enrollment](../../../packages/system-worker/src/makeFanoutSubscriber/subscribe.ts), [fixed-prefix catch-up](../../../packages/system-worker/src/makeFanoutSubscriber/runFanoutCatchup.ts), [bound projection subscriber](../../../packages/system-worker/src/aggregateProjection/evaluatedCommandsFanoutSubscriber/evaluatedCommandsFanoutSubscriber.ts).
+- [Projection page transaction](../../../packages/system-worker/src/aggregateProjection/applyEvaluatedCommands/applyEvaluatedCommandsTx.ts), [selected publication/head commit](../../../packages/system-worker/src/aggregateProjection/commitProjectionTx/commitProjectionTx.ts), [queue recovery](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueue.ts), [durable alarms](../../../packages/system-worker/src/makeRecoveryRegistry/makeRecoveryRegistry.ts).
+
+## Original review history and source-validation boundary
+
+The review originally inspected exactly two non-null columns: primary-key `aggregateActorVersionRepoName`, containing the canonical full physical name, and integer `currentIndex`. The full name packed four already-bound source-owner fields with the necessary actor name/version/path and physical abbreviation. The acknowledgement fact was necessary, but its name obscured whose progress it measured. Independent column and lifecycle reviews agreed to retain the table, expose the variable actor triple and name source acknowledgement precisely. The old shared queue's single-string lookup/upsert/exclusion assumption required coordinated replacement, not merely a four-column declaration.
+
+The original review also recorded a separate enrollment-validation limitation (historical; the 2026-10-22 cutover now validates the actor declaration/version at enrollment). Ordinary AggregateActorVersionRepo activation resolves the authored actor/version/path before enrollment. The source queue independently validates owner fields and key shape, but does not itself resolve the authored actor/version/path or filter actor code availability. A direct internal enrollment can therefore name unavailable code; previously valid code can also disappear. Delivery failures preserve the row and cursor and renew alarms while healthy projections proceed. The default alarm renewal is one second, not a guaranteed retry latency.
+
+Plan 204 changes the stored identity representation and shared queue binding, not that validation/retirement policy. No ordinary-path data-loss defect or public-user exploit was established. Temporary code unavailability does not authorize deleting membership or adding `active`, failure, last-seen or expiry state. Any authored-identity validation or availability/retirement change requires its own explicit bounded decision.
+
+## Verification and cutover
+
+**2026-10-22 current actor-pair cutover:** The system-worker source build/typecheck/lint graph, shared root test typecheck and all 54 selected repo-names/agent-runtime cases passed. The new actual SQLite case verifies the three-column table and unique actor pair, independent acknowledgement/exclusion, monotonic reenrollment and reopened storage. Incoming bound-release actorVersion validation and derived complete keys were source-reviewed; AggregateVersionChain Workerd RPC delivery was not exercised by this cutover.
+
+The original review changed only this finding and Plan 151 and checked documentation. Plan 204 implemented the four-column row and uniform structured queue API. The nine-task system-worker graph passed, including 27 Workerd tests across six files; final type-only import cleanup passed the eight-task type/lint graph. Existing acceptance checks passed all 13 groups. Existing scenarios verify exact columns and uniqueness, independent actor-path acknowledgement, monotonic reenrollment, failed/in-flight exclusion and alarm recovery. Independent source review found no actionable bug. Current documentation links, source metadata, formatting and whitespace checks passed.
+
+The current three-column fixed schema requires empty affected AggregateVersionChain storage. No reset is authorized or performed, and no compatibility migration or fallback is added. Additional publication `dispositionChainHash` validation remains deferred.
+
+**Next table:** AggregateVersionChain.agentVersionChainFanoutSubscribers. Its purpose/columns remain individually unreviewed.

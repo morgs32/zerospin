@@ -1,0 +1,99 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+.npmrc
+node_modules
+/.pnpm-store/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# agents
+.claude/
+.opencode/
+opencode.json
+.cursor/
+.codex/
+.skills/
+.playwright-mcp/
+
+# wrangler
+.wrangler/
+
+# next.js
+.next/
+/docs/next-env.d.ts
+out/
+
+# production
+build/
+dist/
+.output/
+.vinxi/
+.tanstack/
+.turbo/
+generated/
+packages/studio/storybook-static/
+.nx/*
+!.nx/version-plans/
+
+# misc
+.DS_Store
+*.pem
+*.db
+*.local
+*.local.*
+tmp/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+**/.env*
+!**/.env.example
+!**/.env.e2e.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+packages/devtools/src/**/*.js
+packages/devtools/src/**/*.js.map
+packages/devtools/src/**/*.jsx
+packages/devtools/src/**/*.jsx.map
+packages/devtools/src/**/*.d.ts
+packages/devtools/src/**/*.d.ts.map
+
+.trigger
+# Sentry Config File
+.env.sentry-build-plugin
+
+# wiki local state and per-machine Obsidian configuration
+.llmwiki/state/
+.obsidian/
+
+# Scoped CLI entrypoints and configuration test workspaces
+.typed-config-e2e-*/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
+
+# Native Swift builds and per-user Xcode state
+.build/
+DerivedData/
+xcuserdata/
+.swiftpm/
+packages/swift/Sources/Zerospin/Resources/host.bundle.js
+
+# Generated Swift package for the npm artifact
+packages/native/swift/

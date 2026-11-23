@@ -1,0 +1,30 @@
+# Aggregate command builders and System authority
+
+**Date:** 2026-10-26
+**Scope:** Source investigation of the administrative command constructors, followed by the explicitly requested naming correction. Contract-category enforcement remains unchanged.
+
+## Finding
+
+At investigation time these functions were named `makeAggregateCommand` and `makeServiceCommand`: administrative, System-only constructors with generic names. The earlier command-kind diff changed `origin: 'system'` to `kind: 'system'`; it did not introduce System provenance. The constructors are now named `makeAggregateSystemCommand` and `makeServiceSystemCommand`. Their declared results select only the System variant, and their implementations always assign that variant. [Aggregate constructor](../../packages/core/src/aggregate/make/makeAggregateSystemCommand.ts), [Service constructor](../../packages/core/src/service/make/makeServiceSystemCommand.ts).
+
+Aggregate/Service identifies the command's destination family. Actor/Agent/System/External identifies its provenance. Aggregate commands can have any of those four kinds; an Aggregate destination does not imply System authority. The current union schemas express these independent dimensions. [Command schemas](../../packages/core/src/contracts/CommandSchema.ts).
+
+## The substantive defect in the model
+
+The Aggregate constructor accepts any key in `aggregateRelease.contracts` at the type level. At runtime it rejects only contracts with `external` or `claims` defined. The Service constructor repeats this rule. Neither establishes that the selected contract was authored for System execution. Absence of a claims codec is insufficient to distinguish System actions from claims-free Actor or Agent actions. [Aggregate eligibility and construction](../../packages/core/src/aggregate/make/makeAggregateSystemCommand.ts), [Service eligibility and construction](../../packages/core/src/service/make/makeServiceSystemCommand.ts).
+
+This distinction affects execution. `AggregateVersionRepo.findExecutionContract` selects an Actor's contract map only for `kind: 'actor'`; other kinds select the owner release's contract map. Actor resolution occurs only for Actor commands, and the Actor-specific aggregate guard returns immediately when no Actor name is supplied. A System command therefore follows a different permission/evaluation context from an Actor command. [Contract selection](../../packages/system-worker/src/AggregateVersionRepo/utils/findExecutionContract.ts), [Execution preparation](../../packages/system-worker/src/AggregateVersionRepo/utils/resolveAggregateExecution.ts), [Guard invocation](../../packages/system-worker/src/AggregateVersionRepo/utils/evaluateAggregateCommand.ts), [Actor guard](../../packages/core/src/contracts/validateAggregateCommand.ts).
+
+## Concrete caller evidence
+
+Shopping declares `addToCartV1` without a claims codec and exposes it through `userActorV1.contracts`. The Shopping cart scenario calls `makeAggregateSystemCommand` for `addToCart` and pushes the resulting System command into the harness. The harness invokes the ordinary contract with undefined claims and validates it with undefined Actor name. Those scenarios exercise business behavior under the System path; they do not prove authenticated Actor admission or Actor-specific guards. [Contract](../../examples/shopping/src/zerospin/aggregates/user/contracts/addToCartV1.ts), [Actor grant](../../examples/shopping/src/zerospin/aggregates/user/actors/userActorV1.ts), [Scenario](../../examples/shopping/tests/system.spec.ts), [Harness evaluator](../../packages/core/src/testing/systemHarness/executeHarnessCommand.ts).
+
+Constructing this object does not itself grant an administrative RPC capability. `GatewayApi.getSystemApi` checks the deployment's secret-key policy before returning `SystemApi`, and `SystemApi.executeAggregateCommand` accepts only System commands. This is an ambiguity in command construction and contract-category enforcement, not evidence of anonymous administrative access. [Capability acquisition](../../packages/system-worker/src/GatewayApi/getSystemApi/getSystemApi.ts), [Secret-key policy](../../packages/system-worker/src/GatewayApi/getSystemApi/checkSecretApiKey/checkSecretApiKey.ts), [Administrative execution](../../packages/system-worker/src/SystemApi/executeAggregateCommand/executeAggregateCommand.ts).
+
+## Recommended design
+
+Make contract category an explicit immutable authored fact. Restrict System construction and administrative execution to System contracts; require matching Actor/Agent grants for their corresponding command kinds. Use complete Actor envelopes in harness scenarios for Actor actions, including their real Node provenance, rather than relabeling them as System commands for convenience. These are already identified in Plan 270 phase 3, including the Shopping harness migration. [Agreed category design and enforcement](../archive/plans/270-plan-contract-release-names-and-command-kinds.md).
+
+The requested naming follow-up replaces both generic public constructor names and their module paths, updates SDK/package exports and migrates their in-repository callers without aliases. This does not repair category enforcement: current Aggregate and Service releases still register implementations under `contracts`, while separate `system` registration belongs to the planned phase 3. Changing the current literal to Actor would also be wrong: these constructors receive no authenticated Actor identity, claims or retained Node position. [Aggregate inputs and selection](../../packages/core/src/aggregate/make/makeAggregateSystemCommand.ts), [Service inputs and selection](../../packages/core/src/service/make/makeServiceSystemCommand.ts), [Actor envelope requirements](../../packages/core/src/contracts/CommandSchema.ts), [Planned registration and enforcement](../archive/plans/270-plan-contract-release-names-and-command-kinds.md).
+
+The investigation itself added only this note. The subsequent naming change preserves command behavior; no storage reset, commit or deployment was performed.

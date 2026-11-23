@@ -1,0 +1,51 @@
+{
+  "name": "@zerospin/dev-worker",
+  "version": "1.0.0-alpha.11",
+  "private": false,
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    "./makeWranglerConfig": {
+      "types": "./dist/makeWranglerConfig.d.ts",
+      "import": "./dist/makeWranglerConfig.js",
+      "default": "./dist/makeWranglerConfig.js"
+    },
+    "./shims/makeProvisionedInMemoryWasmSqliteDb": {
+      "types": "./dist/shims/makeProvisionedInMemoryWasmSqliteDb.d.ts",
+      "import": "./dist/shims/makeProvisionedInMemoryWasmSqliteDb.js",
+      "default": "./dist/shims/makeProvisionedInMemoryWasmSqliteDb.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lib": "pnpm run clean && tsc -b tsconfig.json",
+    "ts": "tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint . --format stylish"
+  },
+  "dependencies": {
+    "@remix-run/route-pattern": "^0.22.1",
+    "@zerospin/agent-worker": "workspace:*",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/logger": "workspace:*",
+    "@zerospin/owner-release-worker": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "@zerospin/system-worker": "workspace:*",
+    "capnweb": "^0.12.0",
+    "cloudflare": "^6.1.0",
+    "wrangler": "4.135.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.4",
+    "effect": "4.0.2",
+    "rimraf": "^6.1.3",
+    "vite": "^8.0.11"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.2"
+  }
+}

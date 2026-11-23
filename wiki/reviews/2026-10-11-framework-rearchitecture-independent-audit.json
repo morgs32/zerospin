@@ -1,0 +1,374 @@
+{
+  "reviewer": "/root/write_admission_plan",
+  "verified_at": "2026-10-11T10:02:34.071657+00:00",
+  "verdict": "complete-source-coverage-and-coherent-proposed-architecture; no unresolved findings; implementation/runtime verification remain unperformed",
+  "reviewed_artifacts": [
+    {
+      "path": "wiki/reviews/2026-10-11-framework-rearchitecture.md",
+      "sha256": "44604e86699a515e2862e31fd9215a8fc08aeafe641bba5446217a8b09f75d69",
+      "read_mode": "full index plus complete final changes",
+      "final_publication_verified_at": "2026-10-11T10:02:34.071657+00:00"
+    },
+    {
+      "path": "wiki/reviews/2026-10-11-framework-rearchitecture-coverage.json",
+      "sha256": "772a60ee300250712bce56bd4981435d70d3932cff71d94480d9d2b0d27be6cf",
+      "read_mode": "full index; complete coverage structure/data integrity audit; cross-review resolution evidence audit",
+      "final_publication_verified_at": "2026-10-11T10:02:34.071657+00:00"
+    },
+    {
+      "path": "wiki/reviews/2026-10-11-framework-rearchitecture-cross-review.json",
+      "sha256": "50a1561ca5922c65d1f6175503b609720780c1f9912b40859fab88550af0b195",
+      "read_mode": "full index; complete coverage structure/data integrity audit; cross-review resolution evidence audit",
+      "final_publication_verified_at": "2026-10-11T10:02:34.071657+00:00"
+    }
+  ],
+  "independent_scope_check": {
+    "method": "Fresh rg --files --hidden packages inventory, excluding exactly declared generated/dependency/build paths; compare exact sets and SHA256 of every saved file",
+    "all_authored_package_files": 1052,
+    "framework_source_files": 947,
+    "authored_host_and_support_files": 105,
+    "packages": 21,
+    "module_groups": 144,
+    "missing_files": [],
+    "extra_files": [],
+    "duplicate_entries": [],
+    "source_or_support_hash_drift": []
+  },
+  "integrity_checks": {
+    "all_file_reviews_have_reviewer_read_mode_time_matching_sha256": true,
+    "every_file_has_nonempty_conclusions": true,
+    "every_module_has_meaningful_aggregated_conclusions_clean_files_reviewers_plans": true,
+    "module_and_package_counts_classifications_and_plan_unions_match_files": true,
+    "every_nonclean_file_has_existing_published_owner_plan": true,
+    "proposal_table_rows": 35,
+    "expected_proposals": [
+      102,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138
+    ],
+    "missing_duplicate_or_unexpected_proposal_numbers": [],
+    "all_35_proposals_linked_to_coverage_files": true,
+    "local_markdown_links_checked": 453,
+    "broken_local_markdown_links": [],
+    "classification_totals": {
+      "clean": 485,
+      "proposed": 365,
+      "related-plan": 202
+    }
+  },
+  "classification_honesty_corrections": [
+    {
+      "path": "packages/browser/src/Node/makeSessionFailureObserver.ts",
+      "classification": "related-plan",
+      "plans": [
+        112,
+        113
+      ]
+    },
+    {
+      "path": "packages/react/package.json",
+      "classification": "related-plan",
+      "plans": [
+        115
+      ]
+    },
+    {
+      "path": "packages/browser/src/AggregateNode/AggregateNodeCommandInputSchema.ts",
+      "classification": "proposed",
+      "plans": [
+        116
+      ]
+    },
+    {
+      "path": "packages/browser/src/ServiceNode/ServiceNodeCommandInputSchema.ts",
+      "classification": "proposed",
+      "plans": [
+        116
+      ]
+    }
+  ],
+  "architecture_agreement": [
+    "133 primitive meanings ->105 completed declarations/109 bound graph ->106 authored-only projection;131 only flattens serialized comparison data, never executable authority.",
+    "107 prepared invocation phases and108 model-owned paired codecs are distinct; operation previous state belongs inside application transaction. Canonical release replay runs own guards/programs without producers; retained-operation replay runs no callbacks; pending optimistic rebase reevaluates.",
+    "110 keeps synchronous makeTx/savepoint fencing, cancellation/flush/rollback and full Cause; committed SQL/table observers cannot rollback or reject domain commit.115 consumes postcommit observation with declared dependency/key semantics.",
+    "102 normalized envelope then ordered retained/fresh decisions compose with121 recorded proof outside local transaction. Sole typed storage failures and sole recognized AsyncFiberError classification preserve every other Die/Interrupt/composite Cause.",
+    "118 one per-release immutable result journal uses source index/dispositionHash;119 one selected Chain owns full relational graph/history/snapshot/socket.120 service protocol and124 API share minimum requested versus actual local captured checkpoint and independent private outcome prefix.",
+    "125 tickets derive surviving selected identity once;126 binds configured system before acquisition/SQL and preserves versionless Chain retained receipt recovery;130 follows actual retained admission release;127 transport-only retry and129 independent durable fanout remain justified.",
+    "111 connection attempts and namespace leases,112 transient agent journal,113 replica handoff,116 Node SQL/subscription quiescence,117 local optimism,114 durable native+Swift owner and132 Actor-owned action Fiber have separate real lifetimes, cancellation and drain order.",
+    "134 CLI development,135 mounted DevTools,136 exact Studio query identity,137 local diagnostic presentation and138 invocation/session telemetry capture remain separate consumers and owners. No new runtime registry or diagnostic authority is introduced."
+  ],
+  "resolved_final_findings": [
+    {
+      "id": "BR-X09",
+      "priority": 2,
+      "finding": "Plan102 runtime5/acceptance10 broadly promised ordinary database failures map admission-failed, although unwrapped synchronous SQL generator throws are preserved Die after rollback.",
+      "status": "resolved-in-plan",
+      "resolution": "Runtime5 and acceptance10 now explicitly distinguish sole typed non-domain storage/transaction failure from original unwrapped statement defects. No per-statement wrapper/SQL-origin heuristic/shared makeTx policy hook is added.",
+      "evidence": [
+        {
+          "path": "wiki/plans/102-plan-aggregate-command-admission-orchestration.md",
+          "lines": [
+            108,
+            109,
+            172
+          ]
+        }
+      ]
+    },
+    {
+      "id": "BR-X10",
+      "priority": 1,
+      "status": "resolved-in-plan",
+      "finding": "Plan107 and index ambiguously said replay must not execute business callbacks, conflicting with canonical VersionRepo replay evaluating its own guards/programs.",
+      "resolution": "Plan107 behavior6 and index invariant row now explicitly distinguish canonical release replay with guard/program evaluation and no external producer lifecycle from selected/Node/session retained-operation replay without callbacks, plus optimistic rebase reevaluation of pending originals.",
+      "evidence": [
+        {
+          "path": "wiki/plans/107-plan-contract-evaluation-phases.md",
+          "line": 18
+        },
+        {
+          "path": "wiki/reviews/2026-10-11-framework-rearchitecture.md",
+          "line": 105
+        }
+      ],
+      "verified_at": "2026-10-11T10:00:07.369823+00:00"
+    }
+  ],
+  "reviewed_proposal_hashes": [
+    {
+      "path": "wiki/plans/102-plan-aggregate-command-admission-orchestration.md",
+      "sha256": "03a55e2c026c1e0960d6111cc1f46d54ce559f987997f1c4b751ee7bffa67234",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/105-plan-immutable-authored-declarations.md",
+      "sha256": "02dadbf9bdabba3dec83ecfeab66ca009d8c3ef253ca318b55890f0fe517431f",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/106-plan-canonical-authored-manifest-projections.md",
+      "sha256": "d0f03df4c5eb31dfdf4ba87cd196bdd0913b1c251d6a47cef1dcbf4aec735b3f",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/107-plan-contract-evaluation-phases.md",
+      "sha256": "8c8a7c97f6de3ea8ea23be596ed08802d0867e2fcdf8230569e418bfe046a5e9",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/108-plan-model-operation-codecs.md",
+      "sha256": "2cc4c98c88c65b0771db941dca897faa717582fafac246116b4a40677cc14bec",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/109-plan-bound-database-definition.md",
+      "sha256": "c13d6da326c962c4854b6500197e420e9f141b991c95b675830073b2eda2fc46",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/110-plan-sqlite-execution-and-commit-observation.md",
+      "sha256": "0f225e3c8b09f37961fdc5f2ee7e10dc6380d7ff1894bf5bfa73a7bcc971d576",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/111-plan-connected-worker-ownership.md",
+      "sha256": "036333c538895ad154208cd6af0dfc470397fe455ff67e31c244e051437706ab",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/112-plan-agent-session-owners.md",
+      "sha256": "62bdbc8dcb1a222454d3741acf4444a01649b2d96da2c2dfb4659a7947f19fb9",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/113-plan-session-replica-bootstrap.md",
+      "sha256": "23655b491af2892a9f5adc4ce1bd5024a9db9ec986310923e0bd39117ad90979",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/114-plan-native-persistent-owner.md",
+      "sha256": "6d6fbf4869f1a4d31b2fe6ed87a467e8344cad7ef2f529317ec4448d36fe6234",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/115-plan-live-query-commit-invalidation.md",
+      "sha256": "854a58c17056355f0f85003c6c1d600e2a38633aff774d44d2989b96951b7f72",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/116-plan-node-command-journal-and-subscriptions.md",
+      "sha256": "e72b5f254f2f9541826c5ba6370b87139f259593db7611ef48af27e416677886",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/117-plan-session-reconciliation-and-evaluation.md",
+      "sha256": "6df4b54c125be873e523b6820f470bc369de6f73211894862bd5be29b0268593",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/118-plan-version-result-owner.md",
+      "sha256": "3706076e1af3e8874fff608c6a848da200a6c64accc4f58fbe1bfe456986ff7e",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/119-plan-selected-view-owner.md",
+      "sha256": "ee709786752ecd020ae4cb6328b5a5673c72f2801b2415daaaf77447842f6ff5",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/120-plan-service-socket-protocol.md",
+      "sha256": "f976106f71086049ce41b3c5fd3e0bc680822b71dc91b99440517aebb179fdb6",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/121-plan-admission-authority.md",
+      "sha256": "7dd0983b02a82ea1d5b5c477d28ba26e7c10b7ae1e19f0693b6572423d0d4d70",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/122-plan-remove-unused-raw-sql.md",
+      "sha256": "eef5910d0304d05b09fd57f5c6efa3c224b6b9abfa38bc2adee1d6dc23b4041a",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/123-plan-session-lock-validation.md",
+      "sha256": "2484aa3a234c877f8d33a8b961d2ade87d343a0b92777d402cae8c82da43f6db",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/124-plan-session-snapshot.md",
+      "sha256": "0dbf84f124fc45cb39664ee611343531c15c68329d7fb5094931a3294f5ef113",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/125-plan-websocket-tickets.md",
+      "sha256": "813ce33063bc600889721e053503b1382d6a4f4c1b08eec56aaeb2ed1ce8bc96",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/126-plan-fixed-repo-activation.md",
+      "sha256": "6a8807c2ed88a1bece9844fd2681cb7c911bdd3a4423d68fae1d245dd44fc6a4",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/127-plan-outbox-retry-policy.md",
+      "sha256": "fe113f7ac08a7e713d9de4c81fa85b42505a124e1c9ecb4fd7e2b48b0da2835b",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/128-plan-legacy-log-stream.md",
+      "sha256": "e053ffe07c7c72f8ef774dff3e13c6153ed318162134ec4a4746b2a2acdfe435",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/129-plan-fanout-delivery.md",
+      "sha256": "8fa393f7b93fbae19b37dd600ed2f01a04fa40e12921f40dd1ac877d298177ed",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/130-plan-administrative-execution.md",
+      "sha256": "7433bf7185f8589f87f9af80ee8589d54994d6801b3f6461ef74ac69f6e01a40",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/131-plan-accepted-definitions.md",
+      "sha256": "63daf60817f303315a8ecb4c32aa445a167357c07b9f9169b56fd2e8a42e6ba9",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/132-plan-actor-action-lifetime.md",
+      "sha256": "f58a0d2fa84a15159ea9689265ba35dd7d4fd0fd8aee6ae8bccbbe173ed2ba88",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/133-plan-canonical-descriptor-semantics.md",
+      "sha256": "5883f15ff34f040f1234ff7f8ed5b6907e220f25dd1b1dd255c9fac1b3f4ec34",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/134-plan-cli-dev-lifetime.md",
+      "sha256": "0826a97f41e9cc43b629a2bb373398ca6aac6841a730cefac59aaaf965272e9e",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/135-plan-devtools-mounted-owners.md",
+      "sha256": "6fa6341eb8893745df1de9a3f0858f08f2d5a940dea52eb8d4c1f81ed5b24e28",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/136-plan-studio-repo-query-ownership.md",
+      "sha256": "9dec772de944a911bc602488904db593e6d258916525fcd29c49f0e24c57328f",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/137-plan-diagnostic-trace-presentation.md",
+      "sha256": "730fc74aa1062775f64994b5a6b11374a88ac0252a9633132143e4e990386da0",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    },
+    {
+      "path": "wiki/plans/138-plan-telemetry-capture-ownership.md",
+      "sha256": "224126c46016e21c98e182a2309066d97163a19d3082e86818dfe5ddba0f2428",
+      "read_mode": "full proposed document/current correction clauses; root and delegated full-source evidence integrated"
+    }
+  ],
+  "limitations": [
+    "This audit verifies source inventory/read evidence, proposal coherence and documentation links, not runtime behavior.",
+    "No production build/lint/typecheck/tests/probes/browser/deployment performed; no new test/fixture/runner/config/memory/commit.",
+    "All authored package source is covered; application/Explorer callers are traced but not exhaustively reviewed.",
+    "Shopping application-browser prohibition, absent Studio stories, unavailable permanent worker test target, empty-storage hard cuts, missing historical authored release execution and noncooperative finalizer limits remain explicit.",
+    "Source file hash stability proves no reviewed package file changed; it does not assert unrelated working-tree history is clean."
+  ],
+  "unresolved_findings": [],
+  "final_hash_refresh": {
+    "changed_since_prior_snapshot": [
+      "wiki/reviews/2026-10-11-framework-rearchitecture.md",
+      "wiki/reviews/2026-10-11-framework-rearchitecture-cross-review.json"
+    ],
+    "note": "Final publication metadata only: index says independent audit passed and links this record; cross-review embeds latest resolved peer ledgers and points to this record. Coverage and all35 proposal hashes unchanged. Audit never includes its own hash."
+  },
+  "publication_closure": {
+    "verified_at": "2026-10-11T10:02:34.071657+00:00",
+    "status": "passed; final closure",
+    "index_saved_audit_link_valid": true,
+    "cross_review_saved_audit_record_valid": true,
+    "latest_peer_resolutions_present": true,
+    "unresolved_architecture_findings": [],
+    "coverage_hash_and_file_hashes_unchanged": true,
+    "proposal_hash_drift": [],
+    "local_links_checked": 453,
+    "broken_links": [],
+    "self_hash_excluded": true
+  }
+}

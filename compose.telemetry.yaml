@@ -1,0 +1,13 @@
+name: zerospin-telemetry
+
+services:
+  grafana:
+    image: grafana/otel-lgtm:0.38.1
+    ports:
+      - '127.0.0.1:12300:3000'
+      - '127.0.0.1:4318:4318'
+    volumes:
+      - grafana-data:/data
+
+volumes:
+  grafana-data:

@@ -1,0 +1,42 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@zerospin/agent-worker/AgentNodeRepos": [
+        "./packages/agent-worker/src/AgentNodeRepos.ts"
+      ],
+      "@zerospin/owner-release-worker/*": [
+        "./packages/owner-release-worker/src/*"
+      ],
+      "config": ["./packages/system-worker/src/config.d.ts"]
+    },
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "types": ["node", "@cloudflare/vitest-plugin/types"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "include": [
+    "examples/shopping/tests/**/*.ts",
+    "examples/tic-tac-toe/tests/**/*.ts",
+    "packages/core/tests/**/*.ts",
+    "packages/error/tests/**/*.ts",
+    "packages/browser/tests/**/*.ts",
+    "packages/cli/tests/**/*.ts",
+    "packages/react/tests/**/*.ts",
+    "packages/react/tests/**/*.tsx",
+    "packages/system-worker/tests/**/*.ts",
+    "tests/**/*.ts",
+    "vitest.config.mts",
+    "vitest.workerd.config.mts",
+    "examples/shopping/src/cloudflare-workers.d.ts"
+  ]
+}

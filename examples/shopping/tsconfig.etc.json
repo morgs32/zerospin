@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "paths": {
+      "*": ["./*"],
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client", "node", "./src/cloudflare-workers.d.ts"]
+  },
+  "include": ["zerospin.config.ts", "vite.config.ts", "*.jsonc", "*.d.ts"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    {
+      "path": "../../packages/react"
+    },
+    {
+      "path": "../../packages/sdk"
+    },
+    {
+      "path": "../../packages/error"
+    },
+    {
+      "path": "../../packages/cli"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "shopping",
+  "targets": {
+    "tsc:typecheck": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "ts"
+      },
+      "dependsOn": ["^lib"]
+    },
+    "dev": {
+      "continuous": true,
+      "dependsOn": ["^lib", "zerospin:dev"]
+    },
+    "zerospin:dev": {
+      "continuous": true,
+      "dependsOn": ["^lib"]
+    }
+  }
+}

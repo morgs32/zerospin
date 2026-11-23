@@ -1,0 +1,102 @@
+{
+  "name": "@zerospin/browser",
+  "version": "1.0.0-alpha.11",
+  "private": false,
+  "description": "Zerospin browser sessions, runtimes, transport, and durable nodes",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "skills"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morgs32/zerospin.git",
+    "directory": "packages/browser"
+  },
+  "keywords": [
+    "tanstack-intent"
+  ],
+  "exports": {
+    "./fetchAggregateSessionSnapshot": {
+      "types": "./dist/fetchAggregateSessionSnapshot.d.ts",
+      "import": "./dist/fetchAggregateSessionSnapshot.js",
+      "default": "./dist/fetchAggregateSessionSnapshot.js"
+    },
+    "./createAggregateSessionWebSocketTicket": {
+      "types": "./dist/createAggregateSessionWebSocketTicket.d.ts",
+      "import": "./dist/createAggregateSessionWebSocketTicket.js",
+      "default": "./dist/createAggregateSessionWebSocketTicket.js"
+    },
+    "./fetchServiceSessionSnapshot": {
+      "types": "./dist/fetchServiceSessionSnapshot.d.ts",
+      "import": "./dist/fetchServiceSessionSnapshot.js",
+      "default": "./dist/fetchServiceSessionSnapshot.js"
+    },
+    "./createServiceSessionWebSocketTicket": {
+      "types": "./dist/createServiceSessionWebSocketTicket.d.ts",
+      "import": "./dist/createServiceSessionWebSocketTicket.js",
+      "default": "./dist/createServiceSessionWebSocketTicket.js"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    },
+    "./makeSharedWorker": {
+      "types": "./dist/makeSharedWorker.d.ts",
+      "import": "./dist/makeSharedWorker.js",
+      "default": "./dist/makeSharedWorker.js"
+    },
+    "./sqlite.wasm": "./dist/sqlite.wasm",
+    "./makeSharedWorker.bundle": null
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lib": "pnpm run clean && tsc -b tsconfig.json && node -e \"const fs=require('node:fs'); const wasm=require.resolve('wa-sqlite/dist/wa-sqlite-async.wasm'); fs.copyFileSync(wasm, 'dist/sqlite.wasm');\" && tsup",
+    "ts": "tsc -p tsconfig.etc.json --noEmit",
+    "watch": "tsc -b tsconfig.json --watch",
+    "lint": "oxlint . --format stylish"
+  },
+  "dependencies": {
+    "@remix-run/route-pattern": "^0.22.1",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/devtools": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/logger": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "@zerospin/system-worker": "workspace:*",
+    "capnweb": "^0.12.0",
+    "drizzle-orm": "1.0.0-rc.6",
+    "es-toolkit": "^1.52.0",
+    "wa-sqlite": "github:rhashimoto/wa-sqlite#07ad48cf2f682d279f9cd69818cc1d39b2ccda86",
+    "zustand": "^5.0.13"
+  },
+  "devDependencies": {
+    "@effect/language-service": "^0.87.2",
+    "@types/node": "^25.6.2",
+    "@zerospin/sdk": "workspace:*",
+    "effect": "4.0.2",
+    "rimraf": "^6.1.3",
+    "tsup": "^8.5.1",
+    "vite": "^8.3.4"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.2"
+  },
+  "nx": {
+    "targets": {
+      "lint": {
+        "dependsOn": [
+          "lib"
+        ]
+      }
+    }
+  }
+}

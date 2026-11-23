@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@zerospin/production-worker",
+  "targets": {
+    "lib": {
+      "inputs": ["default", "^default", "{projectRoot}/tsconfig.json"],
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": [
+        {
+          "target": "lib",
+          "projects": [
+            "@zerospin/agent-worker",
+            "@zerospin/core",
+            "@zerospin/error",
+            "@zerospin/logger",
+            "@zerospin/shapes",
+            "@zerospin/system-worker"
+          ]
+        }
+      ]
+    }
+  }
+}

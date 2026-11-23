@@ -1,0 +1,172 @@
+{
+  "name": "zerospin",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A local first library",
+  "license": "ISC",
+  "author": "Morgan Intrator",
+  "scripts": {
+    "build": "nx run-many -t lib build --all",
+    "lib": "nx run-many -t lib --all",
+    "types": "nx run-many -t types --all",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "nx run-many -t lint --all --exclude=zerospin",
+    "ts": "nx run-many -t ts --all --nxBail",
+    "knip": "knip --reporter compact",
+    "knip:production": "knip --production --include-entry-exports --reporter compact",
+    "knip:deps": "knip --reporter compact --dependencies",
+    "scc": "scc --by-file -s complexity packages/*",
+    "skills:check": "pnpm --filter @zerospin/sdk --filter @zerospin/browser --filter @zerospin/react --fail-if-no-match exec intent validate skills --check",
+    "release": "node scripts/release.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.4.7",
+    "@effect/vitest": "4.0.2",
+    "@livestore/wa-sqlite": "^1.0.5",
+    "@nx/js": "23.1.0",
+    "@swc-node/register": "~1.11.1",
+    "@swc/core": "~1.15.5",
+    "@swc/helpers": "~0.5.18",
+    "@tanstack/intent": "0.5.5",
+    "@types/node": "^25.9.4",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "@zerospin/browser": "workspace:*",
+    "@zerospin/cli": "workspace:*",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/dev-worker": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/react": "workspace:*",
+    "@zerospin/sdk": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "@zerospin/system-worker": "workspace:*",
+    "effect": "4.0.2",
+    "esbuild": "0.28.2",
+    "eslint": "^10.3.0",
+    "eslint-plugin-perfectionist": "^5.9.0",
+    "jsdom": "27.4.0",
+    "knip": "^6.12.2",
+    "madge": "^8.0.0",
+    "nx": "23.1.0",
+    "oxfmt": "^0.48.0",
+    "oxlint": "^1.63.0",
+    "portless": "0.15.8",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "rimraf": "^6.1.3",
+    "tslib": "^2.8.1",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "verdaccio": "6.3.2",
+    "vitest": "5.0.5"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@11.1.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "@parcel/watcher",
+      "@swc/core",
+      "better-sqlite3",
+      "core-js",
+      "core-js-pure",
+      "esbuild",
+      "msgpackr-extract",
+      "msw",
+      "nx",
+      "protobufjs",
+      "sharp",
+      "workerd"
+    ],
+    "overrides": {
+      "drizzle-orm": "1.0.0-rc.6",
+      "effect": "4.0.2",
+      "react": "19.2.7",
+      "react-dom": "19.2.7",
+      "vite@^8": "^8.0.11"
+    }
+  },
+  "nx": {
+    "namedInputs": {
+      "tests": [
+        "{workspaceRoot}/tests/**/*.ts",
+        "{workspaceRoot}/packages/core/tests/**/*.ts",
+        "{workspaceRoot}/packages/error/tests/**/*.ts",
+        "{workspaceRoot}/packages/browser/tests/**/*.ts",
+        "{workspaceRoot}/packages/cli/tests/**/*.ts",
+        "{workspaceRoot}/packages/cli/tests/fixtures/same-release/*.mjs",
+        "{workspaceRoot}/packages/react/tests/**/*",
+        "{workspaceRoot}/packages/system-worker/tests/**/*.ts",
+        "{workspaceRoot}/packages/system-worker/src/**/*.ts",
+        "{workspaceRoot}/packages/production-worker/src/**/*.ts",
+        "{workspaceRoot}/examples/tic-tac-toe/src/**/*.ts",
+        "{workspaceRoot}/examples/tic-tac-toe/tests/**/*.ts",
+        "{workspaceRoot}/examples/tic-tac-toe/package.json",
+        "{workspaceRoot}/examples/shopping/src/zerospin/**/*.ts",
+        "{workspaceRoot}/examples/shopping/src/cloudflare-workers.d.ts",
+        "{workspaceRoot}/examples/shopping/tests/**/*.ts",
+        "{workspaceRoot}/examples/shopping/package.json",
+        "{workspaceRoot}/packages/system-worker/env-types.d.ts",
+        "{workspaceRoot}/packages/system-worker/worker-configuration.d.ts",
+        "{workspaceRoot}/package.json",
+        "{workspaceRoot}/vitest*.mts",
+        "{workspaceRoot}/tsconfig.tests.json",
+        "{workspaceRoot}/pnpm-lock.yaml",
+        "{workspaceRoot}/tsconfig.base.json",
+        "{workspaceRoot}/packages/agent-worker/src/**/*.ts",
+        "{workspaceRoot}/packages/dev-worker/src/**/*.ts",
+        "{workspaceRoot}/packages/owner-release-worker/src/**/*.ts"
+      ]
+    },
+    "targets": {
+      "test": {
+        "executor": "nx:run-commands",
+        "cache": true,
+        "dependsOn": [
+          {
+            "target": "lib",
+            "projects": [
+              "@zerospin/browser",
+              "@zerospin/cli",
+              "@zerospin/dev-worker",
+              "@zerospin/react",
+              "@zerospin/sdk",
+              "@zerospin/system-worker"
+            ]
+          }
+        ],
+        "inputs": [
+          "tests",
+          {
+            "dependentTasksOutputFiles": "**/*.{js,d.ts}",
+            "transitive": true
+          }
+        ],
+        "options": {
+          "commands": [
+            {
+              "command": "tsc -p tsconfig.tests.json",
+              "forwardAllArgs": false
+            },
+            "vitest run"
+          ],
+          "parallel": false
+        }
+      },
+      "local-registry": {
+        "executor": "@nx/js:verdaccio",
+        "cache": false,
+        "continuous": true,
+        "options": {
+          "port": 4873,
+          "listenAddress": "127.0.0.1",
+          "location": "none",
+          "clear": false,
+          "storage": "tmp/local-registry/storage",
+          "config": ".verdaccio/config.yml"
+        }
+      }
+    }
+  }
+}

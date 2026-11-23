@@ -1,0 +1,30 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@zerospin/cli",
+  "targets": {
+    "lib": {
+      "inputs": ["default", "^default", "{projectRoot}/tsconfig.json"],
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": [
+        {
+          "target": "lib",
+          "projects": [
+            "@zerospin/agent-worker",
+            "@zerospin/core",
+            "@zerospin/dev-worker",
+            "@zerospin/error",
+            "@zerospin/logger",
+            "@zerospin/owner-release-worker",
+            "@zerospin/production-worker",
+            "@zerospin/shapes",
+            "@zerospin/studio",
+            "@zerospin/system-worker"
+          ]
+        }
+      ]
+    },
+    "watch": {
+      "continuous": true
+    }
+  }
+}

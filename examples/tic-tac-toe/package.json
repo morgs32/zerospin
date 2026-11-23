@@ -1,0 +1,58 @@
+{
+  "name": "tic-tac-toe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "PORTLESS_PORT=443 PORTLESS_HTTPS=1 PORTLESS_WILDCARD=1 portless",
+    "dev:app": "vite dev",
+    "zerospin:dev": "zerospin dev --port ${ZEROSPIN_PORT:-12003}",
+    "ts": "tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint src --format stylish",
+    "studio": "PORTLESS_PORT=443 PORTLESS_HTTPS=1 portless studio.tic-tac-toe --app-port 12031 zerospin studio --port 12031"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@libp2p/circuit-relay-v2": "^4.2.17",
+    "@libp2p/crypto": "^5.2.0",
+    "@libp2p/identify": "^4.1.18",
+    "@libp2p/interface": "^3.4.0",
+    "@libp2p/noise": "^17.0.7",
+    "@libp2p/peer-id": "^6.0.18",
+    "@libp2p/websockets": "^10.1.25",
+    "@libp2p/yamux": "^8.0.7",
+    "@multiformats/multiaddr": "^13.0.3",
+    "@remix-run/route-pattern": "^0.22.1",
+    "@simplewebauthn/server": "^14.1.0",
+    "@tanstack/react-router": "1.170.45",
+    "@tanstack/react-start": "1.169.3",
+    "@zerospin/browser": "workspace:*",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/native": "workspace:*",
+    "@zerospin/react": "workspace:*",
+    "@zerospin/sdk": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "drizzle-orm": "1.0.0-rc.4",
+    "effect": "4.0.2",
+    "es-toolkit": "^1.52.0",
+    "libp2p": "^3.5.1",
+    "libsodium-wrappers": "^0.8.4",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@zerospin/cli": "workspace:*",
+    "vite": "^8.0.11",
+    "wrangler": "4.135.0"
+  },
+  "portless": {
+    "name": "tic-tac-toe.zerospin",
+    "script": "dev:app",
+    "proxy": true
+  }
+}

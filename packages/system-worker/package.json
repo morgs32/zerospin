@@ -1,0 +1,686 @@
+{
+  "name": "@zerospin/system-worker",
+  "version": "1.0.0-alpha.11",
+  "private": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "description": "Zerospin internal APIs (merged library)",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./SystemRepo/SystemRepo": {
+      "types": "./dist/SystemRepo/SystemRepo.d.ts",
+      "workerd": "./src/SystemRepo/SystemRepo.ts",
+      "import": "./src/SystemRepo/SystemRepo.ts",
+      "default": "./src/SystemRepo/SystemRepo.ts"
+    },
+    "./workerConfiguration/workerConfiguration": {
+      "types": "./dist/workerConfiguration/workerConfiguration.d.ts",
+      "workerd": "./src/workerConfiguration/workerConfiguration.ts",
+      "import": "./src/workerConfiguration/workerConfiguration.ts",
+      "default": "./src/workerConfiguration/workerConfiguration.ts"
+    },
+    "./nativeAggregateSystem": {
+      "types": "./dist/nativeAggregateSystem.d.ts",
+      "import": "./src/nativeAggregateSystem.ts",
+      "default": "./src/nativeAggregateSystem.ts"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "workerd": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./GatewayApi": {
+      "types": "./dist/GatewayApi/GatewayApi.d.ts",
+      "workerd": "./src/GatewayApi/GatewayApi.ts",
+      "import": "./src/GatewayApi/GatewayApi.ts",
+      "default": "./src/GatewayApi/GatewayApi.ts"
+    },
+    "./GatewayApi/GatewayApi": {
+      "types": "./dist/GatewayApi/GatewayApi.d.ts",
+      "workerd": "./src/GatewayApi/GatewayApi.ts",
+      "import": "./src/GatewayApi/GatewayApi.ts",
+      "default": "./src/GatewayApi/GatewayApi.ts"
+    },
+    "./SystemApi": {
+      "types": "./dist/SystemApi/SystemApi.d.ts",
+      "workerd": "./src/SystemApi/SystemApi.ts",
+      "import": "./src/SystemApi/SystemApi.ts",
+      "default": "./src/SystemApi/SystemApi.ts"
+    },
+    "./getNativeSystemApi": {
+      "types": "./dist/getNativeSystemApi/getNativeSystemApi.d.ts",
+      "workerd": "./src/getNativeSystemApi/getNativeSystemApi.ts",
+      "import": "./src/getNativeSystemApi/getNativeSystemApi.ts",
+      "default": "./src/getNativeSystemApi/getNativeSystemApi.ts"
+    },
+    "./SystemApi/SystemApi": {
+      "types": "./dist/SystemApi/SystemApi.d.ts",
+      "workerd": "./src/SystemApi/SystemApi.ts",
+      "import": "./src/SystemApi/SystemApi.ts",
+      "default": "./src/SystemApi/SystemApi.ts"
+    },
+    "./repoServices/RepoServicesLive": {
+      "types": "./dist/repoServices/RepoServicesLive.d.ts",
+      "workerd": "./src/repoServices/RepoServicesLive.ts",
+      "import": "./src/repoServices/RepoServicesLive.ts",
+      "default": "./src/repoServices/RepoServicesLive.ts"
+    },
+    "./SystemApi/SystemApiFailure": {
+      "types": "./dist/SystemApi/SystemApiFailure/SystemApiFailure.d.ts",
+      "workerd": "./src/SystemApi/SystemApiFailure/SystemApiFailure.ts",
+      "import": "./src/SystemApi/SystemApiFailure/SystemApiFailure.ts",
+      "default": "./src/SystemApi/SystemApiFailure/SystemApiFailure.ts"
+    },
+    "./AggregateSessionApi": {
+      "types": "./dist/AggregateSessionApi/AggregateSessionApi.d.ts",
+      "workerd": "./src/AggregateSessionApi/AggregateSessionApi.ts",
+      "import": "./src/AggregateSessionApi/AggregateSessionApi.ts",
+      "default": "./src/AggregateSessionApi/AggregateSessionApi.ts"
+    },
+    "./AggregateSessionApi/AggregateSessionApi": {
+      "types": "./dist/AggregateSessionApi/AggregateSessionApi.d.ts",
+      "workerd": "./src/AggregateSessionApi/AggregateSessionApi.ts",
+      "import": "./src/AggregateSessionApi/AggregateSessionApi.ts",
+      "default": "./src/AggregateSessionApi/AggregateSessionApi.ts"
+    },
+    "./AggregateSessionApi/AggregateSessionApiFailure": {
+      "types": "./dist/AggregateSessionApi/AggregateSessionApiFailure/AggregateSessionApiFailure.d.ts",
+      "workerd": "./src/AggregateSessionApi/AggregateSessionApiFailure/AggregateSessionApiFailure.ts",
+      "import": "./src/AggregateSessionApi/AggregateSessionApiFailure/AggregateSessionApiFailure.ts",
+      "default": "./src/AggregateSessionApi/AggregateSessionApiFailure/AggregateSessionApiFailure.ts"
+    },
+    "./ServiceSessionApi": {
+      "types": "./dist/ServiceSessionApi/ServiceSessionApi.d.ts",
+      "workerd": "./src/ServiceSessionApi/ServiceSessionApi.ts",
+      "import": "./src/ServiceSessionApi/ServiceSessionApi.ts",
+      "default": "./src/ServiceSessionApi/ServiceSessionApi.ts"
+    },
+    "./ServiceSessionApi/ServiceSessionApi": {
+      "types": "./dist/ServiceSessionApi/ServiceSessionApi.d.ts",
+      "workerd": "./src/ServiceSessionApi/ServiceSessionApi.ts",
+      "import": "./src/ServiceSessionApi/ServiceSessionApi.ts",
+      "default": "./src/ServiceSessionApi/ServiceSessionApi.ts"
+    },
+    "./ServiceSessionApi/ServiceSessionApiFailure": {
+      "types": "./dist/ServiceSessionApi/ServiceSessionApiFailure/ServiceSessionApiFailure.d.ts",
+      "workerd": "./src/ServiceSessionApi/ServiceSessionApiFailure/ServiceSessionApiFailure.ts",
+      "import": "./src/ServiceSessionApi/ServiceSessionApiFailure/ServiceSessionApiFailure.ts",
+      "default": "./src/ServiceSessionApi/ServiceSessionApiFailure/ServiceSessionApiFailure.ts"
+    },
+    "./makeMigratableDORepo/makeMigratableDORepo": {
+      "types": "./dist/makeMigratableDORepo/makeMigratableDORepo.d.ts",
+      "workerd": "./src/makeMigratableDORepo/makeMigratableDORepo.ts",
+      "import": "./src/makeMigratableDORepo/makeMigratableDORepo.ts",
+      "default": "./src/makeMigratableDORepo/makeMigratableDORepo.ts"
+    },
+    "./makeMigratableDORepo/makeMigratableDORepoConfig": {
+      "types": "./dist/makeMigratableDORepo/makeMigratableDORepoConfig.d.ts",
+      "workerd": "./src/makeMigratableDORepo/makeMigratableDORepoConfig.ts",
+      "import": "./src/makeMigratableDORepo/makeMigratableDORepoConfig.ts",
+      "default": "./src/makeMigratableDORepo/makeMigratableDORepoConfig.ts"
+    },
+    "./ServiceChain/ServiceChain": {
+      "types": "./dist/ServiceChain/ServiceChain.d.ts",
+      "workerd": "./src/ServiceChain/ServiceChain.ts",
+      "import": "./src/ServiceChain/ServiceChain.ts",
+      "default": "./src/ServiceChain/ServiceChain.ts"
+    },
+    "./systemWorkerAbbreviations": {
+      "types": "./dist/systemWorkerAbbreviations.d.ts",
+      "workerd": "./src/systemWorkerAbbreviations.ts",
+      "import": "./src/systemWorkerAbbreviations.ts",
+      "default": "./src/systemWorkerAbbreviations.ts"
+    },
+    "./makeRecoveryRegistry/makeRecoveryRegistry": {
+      "types": "./dist/makeRecoveryRegistry/makeRecoveryRegistry.d.ts",
+      "workerd": "./src/makeRecoveryRegistry/makeRecoveryRegistry.ts",
+      "import": "./src/makeRecoveryRegistry/makeRecoveryRegistry.ts",
+      "default": "./src/makeRecoveryRegistry/makeRecoveryRegistry.ts"
+    },
+    "./makeOutboxQueue/makeOutboxQueue": {
+      "types": "./dist/makeOutboxQueue/makeOutboxQueue.d.ts",
+      "workerd": "./src/makeOutboxQueue/makeOutboxQueue.ts",
+      "import": "./src/makeOutboxQueue/makeOutboxQueue.ts",
+      "default": "./src/makeOutboxQueue/makeOutboxQueue.ts"
+    },
+    "./makeOutboxSubscriber/makeOutboxSubscriber": {
+      "types": "./dist/makeOutboxSubscriber/makeOutboxSubscriber.d.ts",
+      "workerd": "./src/makeOutboxSubscriber/makeOutboxSubscriber.ts",
+      "import": "./src/makeOutboxSubscriber/makeOutboxSubscriber.ts",
+      "default": "./src/makeOutboxSubscriber/makeOutboxSubscriber.ts"
+    },
+    "./makeFanoutSubscriber/makeFanoutSubscriber": {
+      "types": "./dist/makeFanoutSubscriber/makeFanoutSubscriber.d.ts",
+      "workerd": "./src/makeFanoutSubscriber/makeFanoutSubscriber.ts",
+      "import": "./src/makeFanoutSubscriber/makeFanoutSubscriber.ts",
+      "default": "./src/makeFanoutSubscriber/makeFanoutSubscriber.ts"
+    },
+    "./makeDORepo/makeDurableDb": {
+      "types": "./dist/makeDORepo/makeDurableDb.d.ts",
+      "workerd": "./src/makeDORepo/makeDurableDb.ts",
+      "import": "./src/makeDORepo/makeDurableDb.ts",
+      "default": "./src/makeDORepo/makeDurableDb.ts"
+    },
+    "./AggregateVersionRepo/aggregateVersionRepoName": {
+      "types": "./dist/AggregateVersionRepo/aggregateVersionRepoName.d.ts",
+      "workerd": "./src/AggregateVersionRepo/aggregateVersionRepoName.ts",
+      "import": "./src/AggregateVersionRepo/aggregateVersionRepoName.ts",
+      "default": "./src/AggregateVersionRepo/aggregateVersionRepoName.ts"
+    },
+    "./ServiceVersionRepo/serviceVersionRepoName": {
+      "types": "./dist/ServiceVersionRepo/serviceVersionRepoName.d.ts",
+      "workerd": "./src/ServiceVersionRepo/serviceVersionRepoName.ts",
+      "import": "./src/ServiceVersionRepo/serviceVersionRepoName.ts",
+      "default": "./src/ServiceVersionRepo/serviceVersionRepoName.ts"
+    },
+    "./externalOperations/runExternalOperation": {
+      "types": "./dist/externalOperations/runExternalOperation.d.ts",
+      "workerd": "./src/externalOperations/runExternalOperation.ts",
+      "import": "./src/externalOperations/runExternalOperation.ts",
+      "default": "./src/externalOperations/runExternalOperation.ts"
+    },
+    "./ownerOperations/ownerOperationSchema": {
+      "types": "./dist/ownerOperations/ownerOperationSchema.d.ts",
+      "workerd": "./src/ownerOperations/ownerOperationSchema.ts",
+      "import": "./src/ownerOperations/ownerOperationSchema.ts",
+      "default": "./src/ownerOperations/ownerOperationSchema.ts"
+    },
+    "./AggregateVersionArchive/AggregateVersionArchive": {
+      "types": "./dist/AggregateVersionArchive/AggregateVersionArchive.d.ts",
+      "workerd": "./src/AggregateVersionArchive/AggregateVersionArchive.ts",
+      "import": "./src/AggregateVersionArchive/AggregateVersionArchive.ts",
+      "default": "./src/AggregateVersionArchive/AggregateVersionArchive.ts"
+    },
+    "./AggregateActorVersionChain/AggregateActorVersionChain": {
+      "types": "./dist/AggregateActorVersionChain/AggregateActorVersionChain.d.ts",
+      "workerd": "./src/AggregateActorVersionChain/AggregateActorVersionChain.ts",
+      "import": "./src/AggregateActorVersionChain/AggregateActorVersionChain.ts",
+      "default": "./src/AggregateActorVersionChain/AggregateActorVersionChain.ts"
+    },
+    "./AggregateActorVersionRepo/AggregateActorVersionRepo": {
+      "types": "./dist/AggregateActorVersionRepo/AggregateActorVersionRepo.d.ts",
+      "workerd": "./src/AggregateActorVersionRepo/AggregateActorVersionRepo.ts",
+      "import": "./src/AggregateActorVersionRepo/AggregateActorVersionRepo.ts",
+      "default": "./src/AggregateActorVersionRepo/AggregateActorVersionRepo.ts"
+    },
+    "./AggregateActorVersionArchive/AggregateActorVersionArchive": {
+      "types": "./dist/AggregateActorVersionArchive/AggregateActorVersionArchive.d.ts",
+      "workerd": "./src/AggregateActorVersionArchive/AggregateActorVersionArchive.ts",
+      "import": "./src/AggregateActorVersionArchive/AggregateActorVersionArchive.ts",
+      "default": "./src/AggregateActorVersionArchive/AggregateActorVersionArchive.ts"
+    },
+    "./ServiceVersionArchive/ServiceVersionArchive": {
+      "types": "./dist/ServiceVersionArchive/ServiceVersionArchive.d.ts",
+      "workerd": "./src/ServiceVersionArchive/ServiceVersionArchive.ts",
+      "import": "./src/ServiceVersionArchive/ServiceVersionArchive.ts",
+      "default": "./src/ServiceVersionArchive/ServiceVersionArchive.ts"
+    },
+    "./ServiceActorVersionChain/ServiceActorVersionChain": {
+      "types": "./dist/ServiceActorVersionChain/ServiceActorVersionChain.d.ts",
+      "workerd": "./src/ServiceActorVersionChain/ServiceActorVersionChain.ts",
+      "import": "./src/ServiceActorVersionChain/ServiceActorVersionChain.ts",
+      "default": "./src/ServiceActorVersionChain/ServiceActorVersionChain.ts"
+    },
+    "./ServiceActorVersionRepo/ServiceActorVersionRepo": {
+      "types": "./dist/ServiceActorVersionRepo/ServiceActorVersionRepo.d.ts",
+      "workerd": "./src/ServiceActorVersionRepo/ServiceActorVersionRepo.ts",
+      "import": "./src/ServiceActorVersionRepo/ServiceActorVersionRepo.ts",
+      "default": "./src/ServiceActorVersionRepo/ServiceActorVersionRepo.ts"
+    },
+    "./ServiceActorVersionArchive/ServiceActorVersionArchive": {
+      "types": "./dist/ServiceActorVersionArchive/ServiceActorVersionArchive.d.ts",
+      "workerd": "./src/ServiceActorVersionArchive/ServiceActorVersionArchive.ts",
+      "import": "./src/ServiceActorVersionArchive/ServiceActorVersionArchive.ts",
+      "default": "./src/ServiceActorVersionArchive/ServiceActorVersionArchive.ts"
+    },
+    "./runWorkerInvocation/runWorkerInvocation": {
+      "types": "./dist/runWorkerInvocation/runWorkerInvocation.d.ts",
+      "workerd": "./src/runWorkerInvocation/runWorkerInvocation.ts",
+      "import": "./src/runWorkerInvocation/runWorkerInvocation.ts",
+      "default": "./src/runWorkerInvocation/runWorkerInvocation.ts"
+    },
+    "./aggregateReplayAdapter/prepareAggregateReplaySource": {
+      "types": "./dist/aggregateReplayAdapter/prepareAggregateReplaySource.d.ts",
+      "workerd": "./src/aggregateReplayAdapter/prepareAggregateReplaySource.ts",
+      "import": "./src/aggregateReplayAdapter/prepareAggregateReplaySource.ts",
+      "default": "./src/aggregateReplayAdapter/prepareAggregateReplaySource.ts"
+    },
+    "./serviceReplayAdapter/prepareServiceReplaySource": {
+      "types": "./dist/serviceReplayAdapter/prepareServiceReplaySource.d.ts",
+      "workerd": "./src/serviceReplayAdapter/prepareServiceReplaySource.ts",
+      "import": "./src/serviceReplayAdapter/prepareServiceReplaySource.ts",
+      "default": "./src/serviceReplayAdapter/prepareServiceReplaySource.ts"
+    },
+    "./GatewayApi/getSystemApi/checkSecretApiKey/checkSecretApiKey": {
+      "types": "./dist/GatewayApi/getSystemApi/checkSecretApiKey/checkSecretApiKey.d.ts",
+      "workerd": "./src/GatewayApi/getSystemApi/checkSecretApiKey/checkSecretApiKey.ts",
+      "import": "./src/GatewayApi/getSystemApi/checkSecretApiKey/checkSecretApiKey.ts",
+      "default": "./src/GatewayApi/getSystemApi/checkSecretApiKey/checkSecretApiKey.ts"
+    },
+    "./AggregateChain/AggregateChain": {
+      "types": "./dist/AggregateChain/AggregateChain.d.ts",
+      "workerd": "./src/AggregateChain/AggregateChain.ts",
+      "import": "./src/AggregateChain/AggregateChain.ts",
+      "default": "./src/AggregateChain/AggregateChain.ts"
+    },
+    "./AggregateChain/aggregateChainName": {
+      "types": "./dist/AggregateChain/aggregateChainName.d.ts",
+      "workerd": "./src/AggregateChain/aggregateChainName.ts",
+      "import": "./src/AggregateChain/aggregateChainName.ts",
+      "default": "./src/AggregateChain/aggregateChainName.ts"
+    },
+    "./AggregateChain/types": {
+      "types": "./dist/AggregateChain/types.d.ts",
+      "workerd": "./src/AggregateChain/types.ts",
+      "import": "./src/AggregateChain/types.ts",
+      "default": "./src/AggregateChain/types.ts"
+    },
+    "./AggregateVersionChain/AggregateVersionChain": {
+      "types": "./dist/AggregateVersionChain/AggregateVersionChain.d.ts",
+      "workerd": "./src/AggregateVersionChain/AggregateVersionChain.ts",
+      "import": "./src/AggregateVersionChain/AggregateVersionChain.ts",
+      "default": "./src/AggregateVersionChain/AggregateVersionChain.ts"
+    },
+    "./AggregateVersionChain/evaluatedAggregateCommand": {
+      "types": "./dist/AggregateVersionChain/evaluatedAggregateCommand.d.ts",
+      "workerd": "./src/AggregateVersionChain/evaluatedAggregateCommand.ts",
+      "import": "./src/AggregateVersionChain/evaluatedAggregateCommand.ts",
+      "default": "./src/AggregateVersionChain/evaluatedAggregateCommand.ts"
+    },
+    "./AggregateVersionRepo/aggregateVersionRepoDbConfig": {
+      "types": "./dist/AggregateVersionRepo/aggregateVersionRepoDbConfig.d.ts",
+      "workerd": "./src/AggregateVersionRepo/aggregateVersionRepoDbConfig.ts",
+      "import": "./src/AggregateVersionRepo/aggregateVersionRepoDbConfig.ts",
+      "default": "./src/AggregateVersionRepo/aggregateVersionRepoDbConfig.ts"
+    },
+    "./AggregateVersionRepo/authorizeAggregateSession/validateAggregateSessionLock": {
+      "types": "./dist/AggregateVersionRepo/authorizeAggregateSession/validateAggregateSessionLock.d.ts",
+      "workerd": "./src/AggregateVersionRepo/authorizeAggregateSession/validateAggregateSessionLock.ts",
+      "import": "./src/AggregateVersionRepo/authorizeAggregateSession/validateAggregateSessionLock.ts",
+      "default": "./src/AggregateVersionRepo/authorizeAggregateSession/validateAggregateSessionLock.ts"
+    },
+    "./AggregateVersionRepo/materializeCommandTx": {
+      "types": "./dist/AggregateVersionRepo/materializeCommandTx.d.ts",
+      "workerd": "./src/AggregateVersionRepo/materializeCommandTx.ts",
+      "import": "./src/AggregateVersionRepo/materializeCommandTx.ts",
+      "default": "./src/AggregateVersionRepo/materializeCommandTx.ts"
+    },
+    "./AggregateVersionRepo/readAggregateMaterializationHead": {
+      "types": "./dist/AggregateVersionRepo/readAggregateMaterializationHead.d.ts",
+      "workerd": "./src/AggregateVersionRepo/readAggregateMaterializationHead.ts",
+      "import": "./src/AggregateVersionRepo/readAggregateMaterializationHead.ts",
+      "default": "./src/AggregateVersionRepo/readAggregateMaterializationHead.ts"
+    },
+    "./AggregateVersionRepo/utils/findExecutionContract": {
+      "types": "./dist/AggregateVersionRepo/utils/findExecutionContract.d.ts",
+      "workerd": "./src/AggregateVersionRepo/utils/findExecutionContract.ts",
+      "import": "./src/AggregateVersionRepo/utils/findExecutionContract.ts",
+      "default": "./src/AggregateVersionRepo/utils/findExecutionContract.ts"
+    },
+    "./AggregateVersionRepo/utils/resolveAggregateExecution": {
+      "types": "./dist/AggregateVersionRepo/utils/resolveAggregateExecution.d.ts",
+      "workerd": "./src/AggregateVersionRepo/utils/resolveAggregateExecution.ts",
+      "import": "./src/AggregateVersionRepo/utils/resolveAggregateExecution.ts",
+      "default": "./src/AggregateVersionRepo/utils/resolveAggregateExecution.ts"
+    },
+    "./ServiceChain/types": {
+      "types": "./dist/ServiceChain/types.d.ts",
+      "workerd": "./src/ServiceChain/types.ts",
+      "import": "./src/ServiceChain/types.ts",
+      "default": "./src/ServiceChain/types.ts"
+    },
+    "./ServiceVersionChain/ServiceVersionChain": {
+      "types": "./dist/ServiceVersionChain/ServiceVersionChain.d.ts",
+      "workerd": "./src/ServiceVersionChain/ServiceVersionChain.ts",
+      "import": "./src/ServiceVersionChain/ServiceVersionChain.ts",
+      "default": "./src/ServiceVersionChain/ServiceVersionChain.ts"
+    },
+    "./ServiceVersionChain/evaluatedServiceCommand": {
+      "types": "./dist/ServiceVersionChain/evaluatedServiceCommand.d.ts",
+      "workerd": "./src/ServiceVersionChain/evaluatedServiceCommand.ts",
+      "import": "./src/ServiceVersionChain/evaluatedServiceCommand.ts",
+      "default": "./src/ServiceVersionChain/evaluatedServiceCommand.ts"
+    },
+    "./ServiceVersionRepo/utils/decodeAndValidateActorClaims": {
+      "types": "./dist/ServiceVersionRepo/utils/decodeAndValidateActorClaims.d.ts",
+      "workerd": "./src/ServiceVersionRepo/utils/decodeAndValidateActorClaims.ts",
+      "import": "./src/ServiceVersionRepo/utils/decodeAndValidateActorClaims.ts",
+      "default": "./src/ServiceVersionRepo/utils/decodeAndValidateActorClaims.ts"
+    },
+    "./ServiceVersionRepo/utils/findServiceExecutionContract": {
+      "types": "./dist/ServiceVersionRepo/utils/findServiceExecutionContract.d.ts",
+      "workerd": "./src/ServiceVersionRepo/utils/findServiceExecutionContract.ts",
+      "import": "./src/ServiceVersionRepo/utils/findServiceExecutionContract.ts",
+      "default": "./src/ServiceVersionRepo/utils/findServiceExecutionContract.ts"
+    },
+    "./SystemRepo/registerRepo/systemRepoNamespaces": {
+      "types": "./dist/SystemRepo/registerRepo/systemRepoNamespaces.d.ts",
+      "workerd": "./src/SystemRepo/registerRepo/systemRepoNamespaces.ts",
+      "import": "./src/SystemRepo/registerRepo/systemRepoNamespaces.ts",
+      "default": "./src/SystemRepo/registerRepo/systemRepoNamespaces.ts"
+    },
+    "./aggregateReplayAdapter/AggregateReplayAdapterRequestSchema": {
+      "types": "./dist/aggregateReplayAdapter/AggregateReplayAdapterRequestSchema.d.ts",
+      "workerd": "./src/aggregateReplayAdapter/AggregateReplayAdapterRequestSchema.ts",
+      "import": "./src/aggregateReplayAdapter/AggregateReplayAdapterRequestSchema.ts",
+      "default": "./src/aggregateReplayAdapter/AggregateReplayAdapterRequestSchema.ts"
+    },
+    "./executeDirectSystemAggregateCommand/executeDirectSystemAggregateCommand": {
+      "types": "./dist/executeDirectSystemAggregateCommand/executeDirectSystemAggregateCommand.d.ts",
+      "workerd": "./src/executeDirectSystemAggregateCommand/executeDirectSystemAggregateCommand.ts",
+      "import": "./src/executeDirectSystemAggregateCommand/executeDirectSystemAggregateCommand.ts",
+      "default": "./src/executeDirectSystemAggregateCommand/executeDirectSystemAggregateCommand.ts"
+    },
+    "./externalOperations/prepareExternalOperation": {
+      "types": "./dist/externalOperations/prepareExternalOperation.d.ts",
+      "workerd": "./src/externalOperations/prepareExternalOperation.ts",
+      "import": "./src/externalOperations/prepareExternalOperation.ts",
+      "default": "./src/externalOperations/prepareExternalOperation.ts"
+    },
+    "./getCommandPayloadFailure": {
+      "types": "./dist/getCommandPayloadFailure.d.ts",
+      "workerd": "./src/getCommandPayloadFailure.ts",
+      "import": "./src/getCommandPayloadFailure.ts",
+      "default": "./src/getCommandPayloadFailure.ts"
+    },
+    "./makeFanoutQueue/makeFanoutQueue": {
+      "types": "./dist/makeFanoutQueue/makeFanoutQueue.d.ts",
+      "workerd": "./src/makeFanoutQueue/makeFanoutQueue.ts",
+      "import": "./src/makeFanoutQueue/makeFanoutQueue.ts",
+      "default": "./src/makeFanoutQueue/makeFanoutQueue.ts"
+    },
+    "./repoServices/AggregateChains": {
+      "types": "./dist/repoServices/AggregateChains.d.ts",
+      "workerd": "./src/repoServices/AggregateChains.ts",
+      "import": "./src/repoServices/AggregateChains.ts",
+      "default": "./src/repoServices/AggregateChains.ts"
+    },
+    "./repoServices/AggregateVersionChains": {
+      "types": "./dist/repoServices/AggregateVersionChains.d.ts",
+      "workerd": "./src/repoServices/AggregateVersionChains.ts",
+      "import": "./src/repoServices/AggregateVersionChains.ts",
+      "default": "./src/repoServices/AggregateVersionChains.ts"
+    },
+    "./repoServices/AggregateVersionRepos": {
+      "types": "./dist/repoServices/AggregateVersionRepos.d.ts",
+      "workerd": "./src/repoServices/AggregateVersionRepos.ts",
+      "import": "./src/repoServices/AggregateVersionRepos.ts",
+      "default": "./src/repoServices/AggregateVersionRepos.ts"
+    },
+    "./repoServices/ServiceChains": {
+      "types": "./dist/repoServices/ServiceChains.d.ts",
+      "workerd": "./src/repoServices/ServiceChains.ts",
+      "import": "./src/repoServices/ServiceChains.ts",
+      "default": "./src/repoServices/ServiceChains.ts"
+    },
+    "./repoServices/ServiceVersionChains": {
+      "types": "./dist/repoServices/ServiceVersionChains.d.ts",
+      "workerd": "./src/repoServices/ServiceVersionChains.ts",
+      "import": "./src/repoServices/ServiceVersionChains.ts",
+      "default": "./src/repoServices/ServiceVersionChains.ts"
+    },
+    "./serviceDispositionChainHash/serviceDispositionChainHash": {
+      "types": "./dist/serviceDispositionChainHash/serviceDispositionChainHash.d.ts",
+      "workerd": "./src/serviceDispositionChainHash/serviceDispositionChainHash.ts",
+      "import": "./src/serviceDispositionChainHash/serviceDispositionChainHash.ts",
+      "default": "./src/serviceDispositionChainHash/serviceDispositionChainHash.ts"
+    },
+    "./agentNodeRepo/agentInstallation": {
+      "types": "./dist/agentNodeRepo/agentInstallation.d.ts",
+      "workerd": "./src/agentNodeRepo/agentInstallation.ts",
+      "import": "./src/agentNodeRepo/agentInstallation.ts",
+      "default": "./src/agentNodeRepo/agentInstallation.ts"
+    },
+    "./agentNodeRepo/agentMaterializedTables": {
+      "types": "./dist/agentNodeRepo/agentMaterializedTables.d.ts",
+      "workerd": "./src/agentNodeRepo/agentMaterializedTables.ts",
+      "import": "./src/agentNodeRepo/agentMaterializedTables.ts",
+      "default": "./src/agentNodeRepo/agentMaterializedTables.ts"
+    },
+    "./agentNodeRepo/agentNodeRepoDbConfig": {
+      "types": "./dist/agentNodeRepo/agentNodeRepoDbConfig.d.ts",
+      "workerd": "./src/agentNodeRepo/agentNodeRepoDbConfig.ts",
+      "import": "./src/agentNodeRepo/agentNodeRepoDbConfig.ts",
+      "default": "./src/agentNodeRepo/agentNodeRepoDbConfig.ts"
+    },
+    "./agentNodeRepo/agentNodeRuntimeTypes": {
+      "types": "./dist/agentNodeRepo/agentNodeRuntimeTypes.d.ts",
+      "workerd": "./src/agentNodeRepo/agentNodeRuntimeTypes.ts",
+      "import": "./src/agentNodeRepo/agentNodeRuntimeTypes.ts",
+      "default": "./src/agentNodeRepo/agentNodeRuntimeTypes.ts"
+    },
+    "./makeDORepo/bindRepoNamespace": {
+      "types": "./dist/makeDORepo/bindRepoNamespace.d.ts",
+      "workerd": "./src/makeDORepo/bindRepoNamespace.ts",
+      "import": "./src/makeDORepo/bindRepoNamespace.ts",
+      "default": "./src/makeDORepo/bindRepoNamespace.ts"
+    },
+    "./makeWakeRegistry/makeWakeRegistry": {
+      "types": "./dist/makeWakeRegistry/makeWakeRegistry.d.ts",
+      "workerd": "./src/makeWakeRegistry/makeWakeRegistry.ts",
+      "import": "./src/makeWakeRegistry/makeWakeRegistry.ts",
+      "default": "./src/makeWakeRegistry/makeWakeRegistry.ts"
+    },
+    "./AggregateAgentNodeRepo/aggregateAgentNodeRepoDbConfig": {
+      "types": "./dist/AggregateAgentNodeRepo/aggregateAgentNodeRepoDbConfig.d.ts",
+      "workerd": "./src/AggregateAgentNodeRepo/aggregateAgentNodeRepoDbConfig.ts",
+      "import": "./src/AggregateAgentNodeRepo/aggregateAgentNodeRepoDbConfig.ts",
+      "default": "./src/AggregateAgentNodeRepo/aggregateAgentNodeRepoDbConfig.ts"
+    },
+    "./AggregateAgentNodeRepo/aggregateAgentNodeRepoMigratableDORepoConfig": {
+      "types": "./dist/AggregateAgentNodeRepo/aggregateAgentNodeRepoMigratableDORepoConfig.d.ts",
+      "workerd": "./src/AggregateAgentNodeRepo/aggregateAgentNodeRepoMigratableDORepoConfig.ts",
+      "import": "./src/AggregateAgentNodeRepo/aggregateAgentNodeRepoMigratableDORepoConfig.ts",
+      "default": "./src/AggregateAgentNodeRepo/aggregateAgentNodeRepoMigratableDORepoConfig.ts"
+    },
+    "./ServiceAgentNodeRepo/serviceAgentNodeRepoDbConfig": {
+      "types": "./dist/ServiceAgentNodeRepo/serviceAgentNodeRepoDbConfig.d.ts",
+      "workerd": "./src/ServiceAgentNodeRepo/serviceAgentNodeRepoDbConfig.ts",
+      "import": "./src/ServiceAgentNodeRepo/serviceAgentNodeRepoDbConfig.ts",
+      "default": "./src/ServiceAgentNodeRepo/serviceAgentNodeRepoDbConfig.ts"
+    },
+    "./ServiceAgentNodeRepo/serviceAgentNodeRepoMigratableDORepoConfig": {
+      "types": "./dist/ServiceAgentNodeRepo/serviceAgentNodeRepoMigratableDORepoConfig.d.ts",
+      "workerd": "./src/ServiceAgentNodeRepo/serviceAgentNodeRepoMigratableDORepoConfig.ts",
+      "import": "./src/ServiceAgentNodeRepo/serviceAgentNodeRepoMigratableDORepoConfig.ts",
+      "default": "./src/ServiceAgentNodeRepo/serviceAgentNodeRepoMigratableDORepoConfig.ts"
+    },
+    "./AggregateAgentVersionChain/aggregateAgentVersionChainName": {
+      "types": "./dist/AggregateAgentVersionChain/aggregateAgentVersionChainName.d.ts",
+      "workerd": "./src/AggregateAgentVersionChain/aggregateAgentVersionChainName.ts",
+      "import": "./src/AggregateAgentVersionChain/aggregateAgentVersionChainName.ts",
+      "default": "./src/AggregateAgentVersionChain/aggregateAgentVersionChainName.ts"
+    },
+    "./AggregateAgentVersionRepo/aggregateAgentVersionRepoName": {
+      "types": "./dist/AggregateAgentVersionRepo/aggregateAgentVersionRepoName.d.ts",
+      "workerd": "./src/AggregateAgentVersionRepo/aggregateAgentVersionRepoName.ts",
+      "import": "./src/AggregateAgentVersionRepo/aggregateAgentVersionRepoName.ts",
+      "default": "./src/AggregateAgentVersionRepo/aggregateAgentVersionRepoName.ts"
+    },
+    "./ServiceChain/serviceChainName": {
+      "types": "./dist/ServiceChain/serviceChainName.d.ts",
+      "workerd": "./src/ServiceChain/serviceChainName.ts",
+      "import": "./src/ServiceChain/serviceChainName.ts",
+      "default": "./src/ServiceChain/serviceChainName.ts"
+    },
+    "./ServiceAgentVersionChain/serviceAgentVersionChainName": {
+      "types": "./dist/ServiceAgentVersionChain/serviceAgentVersionChainName.d.ts",
+      "workerd": "./src/ServiceAgentVersionChain/serviceAgentVersionChainName.ts",
+      "import": "./src/ServiceAgentVersionChain/serviceAgentVersionChainName.ts",
+      "default": "./src/ServiceAgentVersionChain/serviceAgentVersionChainName.ts"
+    },
+    "./ServiceAgentVersionRepo/serviceAgentVersionRepoName": {
+      "types": "./dist/ServiceAgentVersionRepo/serviceAgentVersionRepoName.d.ts",
+      "workerd": "./src/ServiceAgentVersionRepo/serviceAgentVersionRepoName.ts",
+      "import": "./src/ServiceAgentVersionRepo/serviceAgentVersionRepoName.ts",
+      "default": "./src/ServiceAgentVersionRepo/serviceAgentVersionRepoName.ts"
+    },
+    "./AggregateVersionRepo/types": {
+      "types": "./dist/AggregateVersionRepo/types.d.ts",
+      "workerd": "./src/AggregateVersionRepo/types.ts",
+      "import": "./src/AggregateVersionRepo/types.ts",
+      "default": "./src/AggregateVersionRepo/types.ts"
+    },
+    "./AggregateVersionRepo/getAggregateVersionRepo": {
+      "types": "./dist/AggregateVersionRepo/getAggregateVersionRepo.d.ts",
+      "workerd": "./src/AggregateVersionRepo/getAggregateVersionRepo.ts",
+      "import": "./src/AggregateVersionRepo/getAggregateVersionRepo.ts",
+      "default": "./src/AggregateVersionRepo/getAggregateVersionRepo.ts"
+    },
+    "./ServiceVersionRepo/types": {
+      "types": "./dist/ServiceVersionRepo/types.d.ts",
+      "workerd": "./src/ServiceVersionRepo/types.ts",
+      "import": "./src/ServiceVersionRepo/types.ts",
+      "default": "./src/ServiceVersionRepo/types.ts"
+    },
+    "./AggregateVersionChain/aggregateVersionChainName": {
+      "types": "./dist/AggregateVersionChain/aggregateVersionChainName.d.ts",
+      "workerd": "./src/AggregateVersionChain/aggregateVersionChainName.ts",
+      "import": "./src/AggregateVersionChain/aggregateVersionChainName.ts",
+      "default": "./src/AggregateVersionChain/aggregateVersionChainName.ts"
+    },
+    "./ServiceVersionChain/serviceVersionChainName": {
+      "types": "./dist/ServiceVersionChain/serviceVersionChainName.d.ts",
+      "workerd": "./src/ServiceVersionChain/serviceVersionChainName.ts",
+      "import": "./src/ServiceVersionChain/serviceVersionChainName.ts",
+      "default": "./src/ServiceVersionChain/serviceVersionChainName.ts"
+    },
+    "./makeDORepo/makeDORepo": {
+      "types": "./dist/makeDORepo/makeDORepo.d.ts",
+      "workerd": "./src/makeDORepo/makeDORepo.ts",
+      "import": "./src/makeDORepo/makeDORepo.ts",
+      "default": "./src/makeDORepo/makeDORepo.ts"
+    },
+    "./makeMigratableDORepo/types": {
+      "types": "./dist/makeMigratableDORepo/types.d.ts",
+      "workerd": "./src/makeMigratableDORepo/types.ts",
+      "import": "./src/makeMigratableDORepo/types.ts",
+      "default": "./src/makeMigratableDORepo/types.ts"
+    },
+    "./repoServices/AggregateAgentVersionRepos": {
+      "types": "./dist/repoServices/AggregateAgentVersionRepos.d.ts",
+      "workerd": "./src/repoServices/AggregateAgentVersionRepos.ts",
+      "import": "./src/repoServices/AggregateAgentVersionRepos.ts",
+      "default": "./src/repoServices/AggregateAgentVersionRepos.ts"
+    },
+    "./repoServices/ServiceAgentVersionRepos": {
+      "types": "./dist/repoServices/ServiceAgentVersionRepos.d.ts",
+      "workerd": "./src/repoServices/ServiceAgentVersionRepos.ts",
+      "import": "./src/repoServices/ServiceAgentVersionRepos.ts",
+      "default": "./src/repoServices/ServiceAgentVersionRepos.ts"
+    },
+    "./makeFanoutSubscriber/fanoutSubscriberOptions": {
+      "types": "./dist/makeFanoutSubscriber/fanoutSubscriberOptions.d.ts",
+      "workerd": "./src/makeFanoutSubscriber/fanoutSubscriberOptions.ts",
+      "import": "./src/makeFanoutSubscriber/fanoutSubscriberOptions.ts",
+      "default": "./src/makeFanoutSubscriber/fanoutSubscriberOptions.ts"
+    },
+    "./makeDORepo/makeRepoNameUtils": {
+      "types": "./dist/makeDORepo/makeRepoNameUtils.d.ts",
+      "workerd": "./src/makeDORepo/makeRepoNameUtils.ts",
+      "import": "./src/makeDORepo/makeRepoNameUtils.ts",
+      "default": "./src/makeDORepo/makeRepoNameUtils.ts"
+    },
+    "./ownerOperations/releaseRepoNamespaces": {
+      "types": "./dist/ownerOperations/releaseRepoNamespaces.d.ts",
+      "workerd": "./src/ownerOperations/releaseRepoNamespaces.ts",
+      "import": "./src/ownerOperations/releaseRepoNamespaces.ts",
+      "default": "./src/ownerOperations/releaseRepoNamespaces.ts"
+    },
+    "./AggregateApi/authenticate/authenticateAggregate/authenticateAggregate": {
+      "types": "./dist/AggregateApi/authenticate/authenticateAggregate/authenticateAggregate.d.ts",
+      "workerd": "./src/AggregateApi/authenticate/authenticateAggregate/authenticateAggregate.ts",
+      "import": "./src/AggregateApi/authenticate/authenticateAggregate/authenticateAggregate.ts",
+      "default": "./src/AggregateApi/authenticate/authenticateAggregate/authenticateAggregate.ts"
+    },
+    "./ServiceApi/admit/admitService/admitService": {
+      "types": "./dist/ServiceApi/admit/admitService/admitService.d.ts",
+      "workerd": "./src/ServiceApi/admit/admitService/admitService.ts",
+      "import": "./src/ServiceApi/admit/admitService/admitService.ts",
+      "default": "./src/ServiceApi/admit/admitService/admitService.ts"
+    },
+    "./ServiceAccessApi/authorize/authorizeServiceSession/validateServiceSessionLock/validateServiceSessionLock": {
+      "types": "./dist/ServiceAccessApi/authorize/authorizeServiceSession/validateServiceSessionLock/validateServiceSessionLock.d.ts",
+      "workerd": "./src/ServiceAccessApi/authorize/authorizeServiceSession/validateServiceSessionLock/validateServiceSessionLock.ts",
+      "import": "./src/ServiceAccessApi/authorize/authorizeServiceSession/validateServiceSessionLock/validateServiceSessionLock.ts",
+      "default": "./src/ServiceAccessApi/authorize/authorizeServiceSession/validateServiceSessionLock/validateServiceSessionLock.ts"
+    },
+    "./ownerOperations/validateNativeActorSession": {
+      "types": "./dist/ownerOperations/validateNativeActorSession.d.ts",
+      "workerd": "./src/ownerOperations/validateNativeActorSession.ts",
+      "import": "./src/ownerOperations/validateNativeActorSession.ts",
+      "default": "./src/ownerOperations/validateNativeActorSession.ts"
+    },
+    "./ownerOperations/validateReleaseAdmission": {
+      "types": "./dist/ownerOperations/validateReleaseAdmission.d.ts",
+      "workerd": "./src/ownerOperations/validateReleaseAdmission.ts",
+      "import": "./src/ownerOperations/validateReleaseAdmission.ts",
+      "default": "./src/ownerOperations/validateReleaseAdmission.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lib": "pnpm run clean && tsc -b tsconfig.json --emitDeclarationOnly",
+    "ts": "tsc -p tsconfig.json --noEmit",
+    "types": "wrangler types -c ./wrangler.jsonc --include-env=false",
+    "lint": "oxlint . --format stylish"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/core": "^2.7.1",
+    "@opentelemetry/sdk-trace-node": "^2.7.1",
+    "@remix-run/route-pattern": "^0.22.1",
+    "@zerospin/core": "workspace:*",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/logger": "workspace:*",
+    "@zerospin/server-only": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "agents": "^0.17.0",
+    "capnweb": "^0.12.0",
+    "cloudflare": "^6.1.0",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "1.0.0-rc.6",
+    "es-toolkit": "^1.46.1",
+    "partyserver": "^0.5.8",
+    "solid-js": "^1.9.12",
+    "tiny-invariant": "^1.3.3"
+  },
+  "devDependencies": {
+    "@effect/language-service": "^0.87.2",
+    "@effect/opentelemetry": "4.0.2",
+    "@opentelemetry/sdk-trace-base": "^2.7.1",
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "effect": "4.0.2",
+    "knip": "^6.12.2",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "rimraf": "^6.1.3",
+    "wrangler": "^4.135.0"
+  },
+  "peerDependencies": {
+    "@effect/opentelemetry": "^4.0.2",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/core": "^2.1.0",
+    "@opentelemetry/sdk-trace-base": "^2.0.1",
+    "@opentelemetry/sdk-trace-node": "^2.0.1",
+    "effect": "^4.0.2",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "solid-js": ">=1.9.7"
+  },
+  "nx": {
+    "targets": {
+      "lint": {
+        "dependsOn": [
+          "lib"
+        ]
+      }
+    }
+  }
+}

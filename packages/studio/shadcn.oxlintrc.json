@@ -1,0 +1,20 @@
+{
+  "jsPlugins": ["@shadcn/lint"],
+  "overrides": [
+    {
+      "files": ["src/**/*.tsx", "stories/**/*.tsx"],
+      "rules": {
+        "shadcn/require-static-classes": [
+          "error",
+          {
+            "componentImports": ["^@zerospin/system-diagrams$"]
+          }
+        ]
+      },
+      "excludeFiles": ["src/components/ui/**"]
+    }
+  ],
+  "categories": {
+    "correctness": "off"
+  }
+}

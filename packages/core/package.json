@@ -1,0 +1,71 @@
+{
+  "name": "@zerospin/core",
+  "version": "1.0.0-alpha.11",
+  "private": false,
+  "description": "Zerospin internal APIs (merged library)",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lib": "pnpm run clean && tsc -b tsconfig.json",
+    "watch": "tsc -b tsconfig.json --watch",
+    "lint": "oxlint . --format stylish"
+  },
+  "dependencies": {
+    "@livestore/wa-sqlite": "^1.0.5",
+    "@remix-run/route-pattern": "^0.22.1",
+    "@zerospin/error": "workspace:*",
+    "@zerospin/logger": "workspace:*",
+    "@zerospin/server-only": "workspace:*",
+    "@zerospin/shapes": "workspace:*",
+    "capnweb": "^0.12.0",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "1.0.0-rc.6",
+    "es-toolkit": "^1.46.1",
+    "fast-sha256": "1.3.0",
+    "mutative": "^1.3.0",
+    "nanoid": "^5.1.11",
+    "sql.js": "^1.14.1",
+    "tiny-invariant": "^1.3.3",
+    "type-fest": "^5.6.0",
+    "ulid": "^3.0.2",
+    "zustand": "^5.0.13"
+  },
+  "devDependencies": {
+    "@effect/language-service": "^0.87.2",
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.2.14",
+    "@types/sql.js": "^1.4.11",
+    "effect": "4.0.2",
+    "knip": "^6.12.2",
+    "react": "19.2.7",
+    "rimraf": "^6.1.3",
+    "vite": "^8.0.11"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.2",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "solid-js": ">=1.9.7"
+  },
+  "nx": {
+    "targets": {
+      "lint": {
+        "dependsOn": [
+          "lib"
+        ]
+      }
+    }
+  }
+}

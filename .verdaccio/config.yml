@@ -1,0 +1,30 @@
+# Nx also sets VERDACCIO_STORAGE_PATH to this persistent directory.
+storage: ../tmp/local-registry/storage
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    maxage: 60m
+
+packages:
+  '@zerospin/*':
+    access: $all
+    publish: $all
+    unpublish: ''
+  'system-worker':
+    access: $all
+    publish: ''
+    unpublish: ''
+  '**':
+    access: $all
+    publish: ''
+    unpublish: ''
+    proxy: npmjs
+
+publish:
+  allow_offline: true
+
+log:
+  type: stdout
+  format: pretty
+  level: warn

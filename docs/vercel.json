@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "sh scripts/install-vercel-dependencies.sh",
+  "buildCommand": "corepack pnpm --config.verify-deps-before-run=false run build"
+}

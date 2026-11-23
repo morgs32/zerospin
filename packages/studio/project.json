@@ -1,0 +1,25 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@zerospin/studio",
+  "targets": {
+    "lib": {
+      "inputs": ["default", "^default", "{projectRoot}/tsconfig.json"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "storybook": {
+      "dependsOn": ["^lib"],
+      "continuous": true
+    },
+    "build-storybook": {
+      "dependsOn": ["^lib"],
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "outputs": ["{projectRoot}/storybook-static"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm exec storybook build",
+        "cwd": "packages/studio"
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+import type { ISessionId } from '@zerospin/core/aggregateSession/types';
+import { useParams } from 'react-router';
+import { useStore } from 'zustand/react';
+
+import type {
+  IDevtoolsAggregateSessionEntry,
+  IDevtoolsServiceSessionEntry,
+} from '../../../types.js';
+import { zerospinDevtoolsStore } from '../../../zerospinDevtoolsStore.js';
+
+export function useAggregateSession():
+  | IDevtoolsAggregateSessionEntry
+  | undefined {
+  const { sessionId } = useParams<{ sessionId: ISessionId }>();
+  return useStore(zerospinDevtoolsStore, state =>
+    sessionId === undefined
+      ? undefined
+      : state.aggregateSessionsById.get(sessionId),
+  );
+}
+
+export function useAggregateSessionOrThrow(): IDevtoolsAggregateSessionEntry {
+  const session = useAggregateSession();
+  if (!session) {
+    throw new Error('Aggregate session not found');
+  }
+  return session;
+}
+
+export function useServiceSession(): IDevtoolsServiceSessionEntry | undefined {
+  const { sessionId } = useParams<{ sessionId: ISessionId }>();
+  return useStore(zerospinDevtoolsStore, state =>
+    sessionId === undefined
+      ? undefined
+      : state.serviceSessionsById.get(sessionId),
+  );
+}
+
+export function useServiceSessionOrThrow(): IDevtoolsServiceSessionEntry {
+  const session = useServiceSession();
+  if (!session) {
+    throw new Error('Service session not found');
+  }
+  return session;
+}

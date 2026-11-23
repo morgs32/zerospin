@@ -1,0 +1,38 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "target": "es2022",
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "incremental": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "types": ["node"],
+    "paths": {
+      "config": ["../system-worker/src/config.d.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "../system-worker/worker-configuration.d.ts",
+    "../system-worker/env-types.d.ts"
+  ],
+  "references": [
+    { "path": "../core" },
+    { "path": "../error" },
+    { "path": "../shapes" },
+    { "path": "../system-worker" }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "extends": ["../../.oxlintrc.json"],
+  "overrides": [
+    {
+      "files": ["src/types.ts"],
+      "rules": {
+        "typescript/triple-slash-reference": "off"
+      }
+    },
+    {
+      "files": ["tests/**/*.ts"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@zerospin/sdk",
+                "message": "Use the matching @zerospin/core/* module outside examples/shopping."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["**/src/**", "!../src/**", "!../../src/**"],
+                "message": "System Worker tests may import local source. Use package entrypoints for other packages."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "Blob": "readonly",
+    "File": "readonly",
+    "FormData": "readonly",
+    "Headers": "readonly",
+    "Request": "readonly",
+    "Response": "readonly",
+    "URL": "readonly",
+    "URLSearchParams": "readonly",
+    "WebSocketPair": "readonly",
+    "Worker": "readonly",
+    "console": "readonly",
+    "crypto": "readonly",
+    "document": "readonly",
+    "fetch": "readonly",
+    "IntersectionObserver": "readonly",
+    "localStorage": "readonly",
+    "navigator": "readonly",
+    "process": "readonly",
+    "sessionStorage": "readonly",
+    "setTimeout": "readonly",
+    "window": "readonly"
+  }
+}

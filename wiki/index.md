@@ -1,0 +1,53 @@
+---
+title: Index
+updated: 2026-10-07
+---
+
+# Index
+
+Master catalog of every wiki page. The ingest hook updates this file on every commit.
+
+Organised by category. Pages are `[[wiki-links]]` without the `.md` extension.
+
+## Getting oriented
+
+- [[overview|SystemRepo Durable Architecture]] — how authoring, fixed-schema command chains, Repos, and browser session databases interact
+- [[glossary]] — domain terms discovered from the code
+- [[log]] — chronological record of every ingest, lint, and query
+
+## Agent pattern libraries (not auto-ingested)
+
+- `$engineering-patterns` — globally installed generic code-shape guidance
+- [wiki patterns](../wiki/patterns/index.md) — zerospin-specific patterns and case studies
+
+## Architecture
+
+- [[architecture/server/admitAggregateCommands]] — aggregate admission, materialization, and durable delivery
+- [[architecture/AuthoredSystem]] — static authored-System deployment and provision-once Repo schemas
+- [[architecture/SystemApi]] — singular static queries, command admission, health, and Repo inspection
+- [[architecture/NativeSystemHost]] — iPhone System packages, local Aggregate execution, retained history, and iCloud recovery
+
+### Browser
+
+- [[architecture/browser/Authentication|Direct Exact Session Authentication]] — direct Gateway authentication, owner authorization, and aggregate/service child capability surfaces
+- [[architecture/browser/SessionWebSocket|Browser Session Startup and SharedWorker Synchronization]] — tab attachment, the SharedWorker server connection, ordered catch-up, and local tab initialization
+- [[architecture/browser/StandaloneSharedWorkerExecution]] — authoritative standalone SQLite, scoped Effect reads, ordered execution, and reset rebuilding
+- [[architecture/browser/PushSequence]] — local aggregate occurrence, live-socket admission receipts, and selected completion
+- [[architecture/browser/AggregateCommandLifecycle]] — initialized session ownership, validation rehearsal, synchronous commit, and command retention
+- [[architecture/browser/bootstrapBrowserSession]] — tab projection recovery, persistent SharedWorker Nodes, accepted identity, and scoped ownership
+
+### Server
+
+## Decisions
+
+_No pages yet._
+
+## Concepts
+
+_No pages yet._
+
+## Sources
+
+_No pages yet. One page is created per significant source file or module as the codebase grows._
+
+- [[architecture/server/serviceExecution]] — service command execution, retained history, actor projections, and session snapshots
