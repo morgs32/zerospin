@@ -1,0 +1,8 @@
+{
+  "name": "@zerospin/username-example",
+  "private": true,
+  "type": "module",
+  "portless": {
+    "name": "username.zerospin"
+  }
+}
