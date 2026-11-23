@@ -1,9 +1,13 @@
 ---
 title: Glossary
-updated: 2026-11-21
+updated: 2026-11-23
 ---
 
 # Glossary
+
+## Service contract extension
+
+A Service contract extension is server-only behavior that a Service release binds to an exact ordinary Service contract. On original execution, `ServiceVersionRepo` runs the extension after the shared program for every caller, including direct system calls. The extension can update Service-owned models, issue commands, and request external work through the same operation definitions as an ordinary Service contract. An extension failure rolls back both programs’ model changes and pending outbound work. A replaying Service release runs its own extension only when the originating Service release also declared one for that command. Replay does not dispatch outbound work again. Implementation is tracked in [MOR-518](https://linear.app/morganatwork/issue/MOR-518/add-server-only-service-contract-extensions).
 
 ## Hosted on ZeroSpinner
 
