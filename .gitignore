@@ -42,6 +42,9 @@ dist/
 generated/
 packages/studio/storybook-static/
 .nx/*
+!.nx/pipelines/
+.nx/pipelines/*
+!.nx/pipelines/ci.yaml
 !.nx/version-plans/
 
 # misc

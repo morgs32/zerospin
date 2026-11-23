@@ -63,9 +63,9 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
-      - name: Start Nx Agents
+      - name: Start Nx Workers
         if: env.NX_NO_CLOUD != 'true'
-        run: nx-cloud start-nx-agents
+        run: nx-cloud start-workers --config .nx/pipelines/ci.yaml
 
       - name: Lint
         run: nx run-many -t lint --all
