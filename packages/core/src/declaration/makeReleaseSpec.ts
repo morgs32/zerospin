@@ -32,7 +32,7 @@ export function makeReleaseSpec(
         commandOperations: projectCommandOperationBindings(contract.operations),
       }),
     );
-  if ('extensions' in release) {
+  if ('guards' in release) {
     return {
       aggregate: makeAggregateSpec(release),
       extensionCommandOperations: projectSortedRecord(
@@ -46,6 +46,14 @@ export function makeReleaseSpec(
   }
   return {
     service: makeServiceSpec(release),
+    ...(Object.keys(release.extensions).length
+      ? {
+          extensionCommandOperations: projectSortedRecord(
+            release.extensions,
+            extension => projectCommandOperationBindings(extension.operations),
+          ),
+        }
+      : {}),
     contracts,
     models,
     actors: projectSortedRecord(release.actors, makeServiceActorSpec),

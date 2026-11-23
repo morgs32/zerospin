@@ -21,7 +21,16 @@ export const performReservationWorkV1 = makeServiceContractRelease(
     payload: {
       reservationId: primitives.id({ abbreviation: 'rsv' }),
       expiresAt: primitives.integer(),
-      mode: primitives.enum({ values: ['success', 'noop', 'failure'] }),
+      mode: primitives.enum({
+        values: [
+          'success',
+          'noop',
+          'failure',
+          'extend',
+          'rejectExtension',
+          'externalExtension',
+        ],
+      }),
     },
     failures: {
       refused: ContractError.schema({ code: 'reservation-work-refused' }),
@@ -43,6 +52,7 @@ export const performReservationWorkV1 = makeServiceContractRelease(
           message: 'Reservation work was refused',
         });
       }
+      if (payload.mode === 'externalExtension') return;
       yield* operations.recordReservationWork({
         payload: { reservationId: payload.reservationId },
       });

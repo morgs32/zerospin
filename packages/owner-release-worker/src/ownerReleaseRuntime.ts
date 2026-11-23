@@ -37,7 +37,7 @@ export function configureOwnerReleaseRuntime(
     name: config.systemName,
     aggregateAgents: {},
     serviceAgents: {},
-    ...('extensions' in release
+    ...('guards' in release
       ? {
           aggregates: {
             [release.name]: { releases: { [release.version]: release } },
@@ -62,7 +62,7 @@ export function configureOwnerReleaseRuntime(
     for (const [buildId, build] of serviceBuilds) {
       if (
         !buildId ||
-        'extensions' in release ||
+        'guards' in release ||
         build.name !== release.name ||
         build.version !== release.version
       ) {

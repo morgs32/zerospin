@@ -102,8 +102,8 @@ requirement; external contracts do not guarantee exactly-once provider effects.
    Terminal admission refusal is logged before the pending row is consumed.
    Authors choose which business facts the continuation payload preserves.
    Each admitted continuation records its own `outcome`.
-9. For server-only Aggregate work following a shared ordinary contract, register
-   `makeAggregateContractExtension(source, { models, operations, program })` in
+9. For server-only work following a shared ordinary contract, register
+   `makeAggregateContractExtension(source, { models, operations, program })` or its Service equivalent, `makeServiceContractExtension`, in
    the owning release's `extensions` map under that source command name. Give it
    its own read projections and exact operations. Shared model operations apply
    before extension evaluation; extension model operations and outgoing intents

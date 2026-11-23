@@ -1,7 +1,10 @@
+import { makeServiceContractExtension } from '@zerospin/core/contracts/makeServiceContractExtension';
 import { makeServiceRelease } from '@zerospin/core/service/make/makeServiceRelease';
+import * as Effect from 'effect/Effect';
 
 import { createReservationV1 } from '../declarations/contracts/createReservationV1.ts';
 import { performReservationWorkV1 } from '../declarations/contracts/performReservationWorkV1.ts';
+import { recordReservationWorkDefinitionV1 } from '../declarations/contracts/recordReservationWorkDefinitionV1.ts';
 import {
   recordReservationObservation,
   recordReservationWorkV1,
@@ -29,6 +32,28 @@ export const reservationsV1 = makeServiceRelease(reservationService, {
   system: {
     createReservation: createReservationV1,
     performReservationWork: performReservationWorkV1,
+  },
+  extensions: {
+    performReservationWork: makeServiceContractExtension(
+      performReservationWorkV1,
+      {
+        models: {},
+        operations: {
+          record: recordReservationWorkDefinitionV1.externalOperation,
+          update: reservationV1.operations.update,
+        },
+        program: Effect.fn(function* ({ operations, payload }) {
+          if (payload.mode !== 'externalExtension') return;
+          yield* operations.record({
+            payload: { reservationId: payload.reservationId },
+          });
+          yield* operations.update({
+            resourceId: payload.reservationId,
+            attributes: { expiresAt: payload.expiresAt + 1 },
+          });
+        }),
+      },
+    ),
   },
   contracts: {
     recordReservationObservation,

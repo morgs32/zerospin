@@ -42,3 +42,12 @@ export const ContractSpecSchema = Schema.Struct({
     }),
   ),
 });
+
+export const ContractExtensionsSpecSchema = Schema.Record(
+  Schema.String,
+  Schema.Struct({
+    sourceVersion: VersionSchema,
+    models: ContractSpecSchema.fields.models,
+    operations: ContractOperationsSchema,
+  }),
+);

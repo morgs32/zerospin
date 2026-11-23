@@ -1,22 +1,30 @@
+import type * as Effect from 'effect/Effect';
 import * as Schema from 'effect/Schema';
 import { mapValues } from 'es-toolkit';
 
 import { assertSameCoreInstance } from '../../assertSameCoreInstance.ts';
 import { isServiceContract } from '../../contracts/make/constructContractRelease.ts';
-import '@zerospin/server-only';
-
+import {
+  isServiceContractExtension,
+  type IServiceContractExtension,
+} from '../../contracts/makeServiceContractExtension.ts';
 import type {
   IGrantedContracts,
   IServiceContracts,
 } from '../../contracts/types.ts';
+import '@zerospin/server-only';
+
 import { assembleOwnerContracts } from '../../declaration/assembleOwnerContracts.ts';
+import { validateContractExtensions } from '../../declaration/validateContractExtensions.ts';
 import { validateReleaseContinuations } from '../../declaration/validateReleaseContinuations.ts';
 import { VersionSchema } from '../../declaration/VersionSchema.ts';
 import {
   OwnerReleaseLayerSchema,
   type IOwnerActorRequirements,
   type IOwnerContractRequirements,
+  type IOwnerOperationRequirements,
   type IOwnerReleaseLayerProps,
+  type IRequiredOwnerServices,
 } from '../../execution/ownerReleaseLayer.ts';
 import { Model } from '../../models/defineModel.ts';
 import { isModel } from '../../models/make/makeModelVersion.ts';
@@ -44,6 +52,9 @@ const ServiceReleasePropsSchema = Schema.Struct({
   external: Schema.optionalKey(
     Schema.Record(Schema.String, CanonicalContractSchema),
   ),
+  extensions: Schema.optionalKey(
+    Schema.Record(Schema.String, Schema.declare(isServiceContractExtension)),
+  ),
   actors: Schema.optionalKey(
     Schema.Record(Schema.String, ServiceActorReleaseSchema),
   ),
@@ -62,6 +73,8 @@ export function makeServiceRelease<
   const ACTORS extends Readonly<Record<string, IAnyServiceActorRelease>> = {},
   const VERSION extends number = number,
   const CONTRACTS extends IServiceContracts = {},
+  const EXTENSIONS extends Readonly<Record<string, IServiceContractExtension>> =
+    {},
 >(
   definition: Readonly<{
     name: NAME;
@@ -72,12 +85,23 @@ export function makeServiceRelease<
     models: MODELS;
     system?: SYSTEM;
     external?: EXTERNAL;
+    extensions?: EXTENSIONS & {
+      [K in keyof EXTENSIONS]: { source: { commandName: K } };
+    };
     actors?: ACTORS & {
       [K in keyof ACTORS]: {
         name: K;
       };
     };
   } & IOwnerReleaseLayerProps<
+    | IRequiredOwnerServices<
+        Effect.Services<
+          ReturnType<NoInfer<EXTENSIONS>[keyof EXTENSIONS]['evaluate']>
+        >
+      >
+    | IOwnerOperationRequirements<
+        NoInfer<EXTENSIONS>[keyof EXTENSIONS]['operations']
+      >
     | IOwnerContractRequirements<NoInfer<SYSTEM>>
     | IOwnerContractRequirements<NoInfer<EXTERNAL>>
     | IOwnerContractRequirements<NoInfer<CONTRACTS>>
@@ -120,6 +144,7 @@ export function makeServiceRelease(
     models,
     system = {},
     external = {},
+    extensions = {},
     actors = {},
     contracts: declaredContracts = {},
   } = decodedProps;
@@ -129,6 +154,7 @@ export function makeServiceRelease(
     system,
     external,
   });
+  validateContractExtensions(extensions, contracts, models);
   const { name } = definition;
   const systemGrants: IServiceContracts = Object.assign(
     Object.create(null),
@@ -139,6 +165,7 @@ export function makeServiceRelease(
     external,
   );
   const fields = {
+    extensions: { ...extensions },
     actors: { ...actors },
     definition,
     name,

@@ -589,7 +589,7 @@ const authoredReservationWork = (
     payload: JSON.stringify({
       reservationId,
       expiresAt: 60_000,
-      mode: 'success',
+      mode: 'externalExtension',
     }),
     serviceName: 'reservations',
     serviceVersion: 1,

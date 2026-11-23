@@ -240,7 +240,7 @@ it('publishes and proves snapshot N even when N+1 commits during its checkpoint 
       success: {
         serviceIndex: 1,
         resolvedThrough: 1,
-        resources: [{ id: 'rsv_selected', expiresAt: 60_000 }],
+        resources: [{ id: 'rsv_selected', expiresAt: 60_001 }],
       },
     },
   });

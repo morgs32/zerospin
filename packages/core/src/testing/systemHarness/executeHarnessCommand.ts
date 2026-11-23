@@ -20,7 +20,6 @@ import type {
   IAggregateCommand,
   IContractFailure,
   IContractRelease,
-  IEncodedCommand,
   IServiceCommand,
 } from '../../contracts/types.ts';
 import { validateAggregateCommand } from '../../contracts/validateAggregateCommand.ts';
@@ -282,22 +281,26 @@ const executeCommandTx = makeTx('executeHarnessCommand')(function* (
       appliedAt,
     });
   }
-  const extension =
-    store.kind === 'aggregate'
-      ? store.release.extensions[command.commandName]
-      : undefined;
-  if (
-    extension !== undefined &&
-    store.kind === 'aggregate' &&
-    'aggregateName' in command
-  ) {
-    const operations = yield* extension.evaluate({
-      aggregateId: command.aggregateId,
-      command,
-      payload: evaluated.payload,
-      claims: evaluated.claims,
-      db: makeContractReadDb({ db: tx, models: store.release.models }),
-    });
+  const extensionInput = {
+    payload: evaluated.payload,
+    claims: evaluated.claims,
+    db: makeContractReadDb({ db: tx, models: store.release.models }),
+  };
+  const evaluateExtension =
+    store.kind === 'aggregate' && 'aggregateName' in command
+      ? store.release.extensions[command.commandName]?.evaluate({
+          ...extensionInput,
+          aggregateId: command.aggregateId,
+          command,
+        })
+      : store.kind === 'service' && 'serviceName' in command
+        ? store.release.extensions[command.commandName]?.evaluate({
+            ...extensionInput,
+            command,
+          })
+        : undefined;
+  if (evaluateExtension !== undefined) {
+    const operations = yield* evaluateExtension;
     const extensionOutput = yield* prepareHarnessOutput({
       store,
       command,

@@ -194,12 +194,12 @@ on the pending row. It admits the ordinary continuation and deletes the row
 atomically. The continuation owns its `outcome`. Authors choose which business
 facts to preserve in its payload.
 
-## Server-only Aggregate extensions
+## Server-only Aggregate and Service extensions
 
 `makeAggregateContractExtension(source, { models, operations, program })` binds
-an exact ordinary Aggregate contract to additional server-owned behavior. Import
+an exact ordinary Aggregate contract to additional server-owned behavior. For a Service, use `makeServiceContractExtension` with an exact ordinary Service contract. Its program runs on every original invocation, including direct system calls, and can record Service model, command and external operations. Import
 it from `@zerospin/sdk` and register the extension under the source command name
-in the Aggregate release's `extensions` map. Declare its own model read
+in the owning release’s `extensions` map. Declare its own model read
 projections and exact operation definitions. The shared program's model
 operations are applied before extension evaluation. The extension may read those
 changes and records its own operations; both batches and outgoing intents commit

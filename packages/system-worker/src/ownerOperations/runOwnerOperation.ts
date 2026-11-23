@@ -91,9 +91,7 @@ function checkOwnerOperationReply(
   const sourceVersion = declaration.contracts[commandName];
   if (sourceVersion === undefined) return false;
   const operations = extension
-    ? 'extensions' in declaration
-      ? declaration.extensions?.[commandName]?.operations
-      : undefined
+    ? declaration.extensions?.[commandName]?.operations
     : owner.contractVersions[commandName]?.[sourceVersion]?.operations;
   const [destinationName, destinationVersion] =
     recorded.type === 'aggregate'

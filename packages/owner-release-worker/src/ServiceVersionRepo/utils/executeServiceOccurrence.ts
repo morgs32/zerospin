@@ -1,5 +1,6 @@
 import { DownAdapterRefused } from '@zerospin/core/contracts/DownAdapterRefused';
 import { encodeBusinessFailure } from '@zerospin/core/contracts/failureCodec';
+import { makeContractReadDb } from '@zerospin/core/contracts/make/makeContractReadDb';
 import { withCommandEvaluationClock } from '@zerospin/core/contracts/withCommandEvaluationClock';
 import { withSavepoint } from '@zerospin/core/drizzle/withSavepoint';
 import {
@@ -69,12 +70,48 @@ export const executeServiceOccurrence = makeFn(
           executionRelease,
           mode,
         );
-        const operations = yield* applyServiceOutputTx(
+        const { operations } = yield* applyServiceOutputTx(
           commandTx,
           output,
           occurrence,
         );
-        return { result: evaluated.encodedResult, ...operations };
+        const extension = executionRelease.extensions[command.commandName];
+        if (
+          extension &&
+          (mode === 'original' || execution.sourceHasExtension)
+        ) {
+          if (extension.source !== execution.executionContract) {
+            return yield* makeZerospinError(
+              'contract-extension-source-mismatch',
+            );
+          }
+          const extensionOperations = yield* extension.evaluate({
+            command: {
+              ...command,
+              payload: execution.invocation.command.payload,
+            },
+            payload: execution.invocation.payload,
+            claims: execution.invocation.claims,
+            db: makeContractReadDb({
+              db: commandTx,
+              models: executionRelease.models,
+            }),
+          });
+          const extensionOutput = yield* prepareServiceOutput(
+            extensionOperations,
+            occurrence,
+            executionRelease,
+            mode,
+            evaluated.operations.length,
+          );
+          const appliedExtension = yield* applyServiceOutputTx(
+            commandTx,
+            extensionOutput,
+            occurrence,
+          );
+          operations.push(...appliedExtension.operations);
+        }
+        return { result: evaluated.encodedResult, operations };
       }).pipe(Effect.scoped, program =>
         withCommandEvaluationClock(program, occurrence.finalizedAt),
       ),

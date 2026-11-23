@@ -76,6 +76,7 @@ export const resolveServiceExecution = makeFn(
     });
     const claims = yield* prepareContractClaims(executionContract, actorClaims);
     return {
+      sourceHasExtension: preparedReplayInput.sourceHasExtension,
       executionContract,
       actorClaims,
       invocation: {
@@ -88,6 +89,13 @@ export const resolveServiceExecution = makeFn(
   }
   const system = yield* System;
   const serviceRegistry = system.services[command.serviceName]?.releases ?? {};
+  const originatingRelease = serviceRegistry[command.serviceVersion];
+  if (
+    executionRelease.extensions[command.commandName] &&
+    originatingRelease === undefined
+  ) {
+    return yield* makeZerospinError('service-version-unsupported');
+  }
   const sourceContract = resolveSupportedServiceContract(
     serviceRegistry,
     command,
@@ -155,5 +163,11 @@ export const resolveServiceExecution = makeFn(
     command: { ...command, payload: decodedPayload },
     claims: actorClaims,
   }).pipe(Effect.tapError(validateDownAdapterRefusal));
-  return { executionContract, actorClaims, invocation };
+  return {
+    executionContract,
+    actorClaims,
+    invocation,
+    sourceHasExtension:
+      originatingRelease?.extensions[command.commandName] !== undefined,
+  };
 });

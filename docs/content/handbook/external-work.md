@@ -95,13 +95,13 @@ selects the branch independently of work the destination emits. If continuation
 admission is interrupted, the sending Chain retries with the retained destination
 outcome and the same child ID.
 
-For an Aggregate source contract, `makeAggregateContractExtension` adds a
+Use `makeAggregateContractExtension` or `makeServiceContractExtension` to add a
 server-only program with its own projections and operations. Register it under
 `extensions` on the source release. Shared model operations apply before the
 extension reads, and both batches and recorded outgoing work commit together.
 A failure rolls them back. On first replay in another release, its extension
 runs only if the originating release also declared an extension for the command.
-It applies the target release's model effects without producing additional
+It applies the replaying release's model effects without producing additional
 outbound work. Reconstruction from retained output does not reevaluate it.
 
 For an API outside that System, an authored external request may acquire an explicit

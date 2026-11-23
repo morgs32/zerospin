@@ -19,16 +19,23 @@ export const prepareServiceOutput = makeFn(
   >,
   executionRelease: Parameters<typeof resolveServiceExecution>[1],
   mode: 'original' | 'replay',
+  extensionStartIndex?: number,
 ) {
   const { command } = occurrence;
   const output = [];
-  for (const [operationIndex, operation] of operations.entries()) {
+  for (const [index, operation] of operations.entries()) {
+    const operationIndex = (extensionStartIndex ?? 0) + index;
     if (operation.operationName === 'command') {
       if (mode === 'replay') continue;
       const recordedCommand = yield* prepareCommandOperation({
         operation,
         sourceRelease: executionRelease,
-        declaration: { commandName: command.commandName },
+        declaration: {
+          commandName: command.commandName,
+          ...(extensionStartIndex === undefined
+            ? {}
+            : { extension: true as const }),
+        },
       });
       output.push({
         kind: 'command' as const,

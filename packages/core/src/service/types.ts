@@ -1,3 +1,4 @@
+import type { IServiceContractExtension } from '../contracts/makeServiceContractExtension.ts';
 import type { IServiceContracts } from '../contracts/types.ts';
 import type { IOwnerReleaseLayer } from '../execution/ownerReleaseLayer.ts';
 import type { IAnyModels } from '../models/types.ts';
@@ -15,6 +16,7 @@ export type IServiceRelease<
   SYSTEM extends IServiceContracts = IServiceContracts,
   EXTERNAL extends IServiceContracts = IServiceContracts,
 > = {
+  readonly extensions: Readonly<Record<string, IServiceContractExtension>>;
   readonly actors: Readonly<ACTORS>;
   readonly layer?: IOwnerReleaseLayer;
   readonly definition: Readonly<{ name: NAME }>;
@@ -26,6 +28,7 @@ export type IServiceRelease<
   readonly external: Readonly<EXTERNAL>;
 };
 export type IAnyServiceRelease = {
+  readonly extensions: Readonly<Record<string, IServiceContractExtension>>;
   readonly actors: Readonly<Record<string, IAnyServiceActorRelease>>;
   readonly layer?: IOwnerReleaseLayer;
   readonly definition: Readonly<{ name: string }>;

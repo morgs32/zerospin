@@ -49,7 +49,7 @@ const serviceChain = () =>
 
 async function admitWork(
   reservationId: string,
-  mode: 'success' | 'noop' | 'failure',
+  mode: 'success' | 'noop' | 'failure' | 'rejectExtension',
 ) {
   const { result } = await serviceChain().admitDirectSystemCommand({
     command: {
@@ -216,7 +216,7 @@ it('retains noop and failure outcomes without model changes', async () => {
     'svc_sys_servicePublication/reservations/1',
   );
   const noop = await admitWork('rsv_noop', 'noop');
-  const failure = await admitWork('rsv_failure', 'failure');
+  const failure = await admitWork('rsv_failure', 'rejectExtension');
   expect(
     (await source.executeCommandsThrough(failure.serviceIndex)).result,
   ).toEqual({ _tag: 'Success', success: undefined });

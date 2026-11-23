@@ -225,7 +225,7 @@ function getCommandOperationIdentity(
 
 export function getReleaseCommandOperations(release: {
   contracts: IAnyContracts;
-  extensions?: IAnyAggregateRelease['extensions'];
+  extensions?: Readonly<Record<string, { operations: IOperationDefinitions }>>;
 }) {
   const definitions = Object.values(release.contracts).map(
     contract => contract.operations,
@@ -247,8 +247,6 @@ export function getCommandOperationDeclarations(
   declaration: typeof CommandOperationDeclarationSchema.Type,
 ): IOperationDefinitions | undefined {
   return declaration.extension
-    ? 'extensions' in release
-      ? release.extensions[declaration.commandName]?.operations
-      : undefined
+    ? release.extensions[declaration.commandName]?.operations
     : release.contracts[declaration.commandName]?.operations;
 }

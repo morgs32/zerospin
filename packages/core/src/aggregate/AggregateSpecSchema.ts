@@ -1,7 +1,6 @@
 import * as Schema from 'effect/Schema';
 
-import { ContractOperationsSchema } from '../contracts/ContractOperationsSchema.ts';
-import { ContractSpecSchema } from '../contracts/ContractSpecSchema.ts';
+import { ContractExtensionsSpecSchema } from '../contracts/ContractSpecSchema.ts';
 import { VersionSchema } from '../declaration/VersionSchema.ts';
 
 /** Exact owner release bindings resolve through the enclosing SystemSpec registries. */
@@ -15,16 +14,7 @@ export const AggregateSpecSchema = Schema.Struct({
   system: Schema.Record(Schema.String, VersionSchema),
   external: Schema.Record(Schema.String, VersionSchema),
   actors: Schema.Record(Schema.String, VersionSchema),
-  extensions: Schema.optionalKey(
-    Schema.Record(
-      Schema.String,
-      Schema.Struct({
-        sourceVersion: VersionSchema,
-        models: ContractSpecSchema.fields.models,
-        operations: ContractOperationsSchema,
-      }),
-    ),
-  ),
+  extensions: Schema.optionalKey(ContractExtensionsSpecSchema),
 }).check(
   Schema.makeFilter(
     release =>

@@ -11,17 +11,16 @@ import {
   isAggregateContractExtension,
   type IAggregateContractExtension,
 } from '../../contracts/makeAggregateContractExtension.ts';
-import { getOperationLeaves } from '../../contracts/operationSchema.ts';
 import {
   OwnerGuardsSchema,
   type IOwnerGuards,
 } from '../../contracts/ownerGuards.ts';
-import { assertReadProjection } from '../../contracts/readProjection.ts';
 import type {
   IAggregateContracts,
   IGrantedContracts,
 } from '../../contracts/types.ts';
 import { assembleOwnerContracts } from '../../declaration/assembleOwnerContracts.ts';
+import { validateContractExtensions } from '../../declaration/validateContractExtensions.ts';
 import { validateReleaseContinuations } from '../../declaration/validateReleaseContinuations.ts';
 import { VersionSchema } from '../../declaration/VersionSchema.ts';
 import {
@@ -213,44 +212,7 @@ export function makeAggregateRelease(
     system,
     external,
   });
-  mapValues(extensions, (extension, commandName) => {
-    if (
-      commandName !== extension.source.commandName ||
-      contracts[commandName] !== extension.source
-    ) {
-      throw new Error(
-        `Extension ${commandName} must bind the owner's exact source contract`,
-      );
-    }
-    const projectedModels = new Set(Object.keys(extension.models));
-    mapValues(extension.models, (projection, modelName) =>
-      assertReadProjection({
-        projection,
-        projectedModels,
-        model: models[modelName],
-        context: `Extension ${commandName}`,
-      }),
-    );
-    for (const operation of getOperationLeaves(extension.operations)) {
-      if (
-        'model' in operation &&
-        models[operation.model.modelName] !== operation.model
-      ) {
-        throw new Error(
-          `Extension operation model ${operation.model.modelName} must belong to its aggregate release`,
-        );
-      }
-      if (
-        'family' in operation &&
-        !('destination' in operation) &&
-        operation.family !== 'aggregate'
-      ) {
-        throw new Error(
-          'External operations must belong to the Aggregate contract family',
-        );
-      }
-    }
-  });
+  validateContractExtensions(extensions, contracts, models);
   const systemGrants: IAggregateContracts = Object.assign(
     Object.create(null),
     system,

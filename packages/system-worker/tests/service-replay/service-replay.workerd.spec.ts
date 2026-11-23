@@ -2,6 +2,7 @@ import { ServiceChainedCommandSchema } from '@zerospin/core/contracts/CommandSch
 import { defineServiceContract } from '@zerospin/core/contracts/defineServiceContract';
 import { makeServiceContractRelease } from '@zerospin/core/contracts/make/makeServiceContractRelease';
 import { upgradeServiceContractRelease } from '@zerospin/core/contracts/make/upgradeServiceContractRelease';
+import { makeServiceContractExtension } from '@zerospin/core/contracts/makeServiceContractExtension';
 import { makeServiceRelease } from '@zerospin/core/service/make/makeServiceRelease';
 import { makeSystem } from '@zerospin/core/system/make/makeSystem/makeSystem';
 import { makeSystemSpec } from '@zerospin/core/system/make/makeSystemSpec';
@@ -18,6 +19,7 @@ import * as Schema from 'effect/Schema';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import type { IOwnerReleaseWorkerBinding } from '../../src/ownerOperations/ownerReleaseWorkerBindings.ts';
+import { prepareServiceReplaySource } from '../../src/serviceReplayAdapter/prepareServiceReplaySource.ts';
 import { decodeServiceEvaluatedCommandRow } from '../../src/ServiceVersionChain/evaluatedServiceCommand.ts';
 import type { IServiceVersionRepo } from '../../src/ServiceVersionRepo/types.ts';
 import {
@@ -111,7 +113,7 @@ it('restores remote retained output without evaluation and evaluates a parallel 
     payload: JSON.stringify({
       reservationId: 'rsv_rebuild',
       expiresAt: 60_000,
-      mode: 'success',
+      mode: 'extend',
     }),
     serviceName: 'reservations',
     serviceVersion: 1,
@@ -150,10 +152,11 @@ it('restores remote retained output without evaluation and evaluates a parallel 
     )(table).rows;
   }
   const external = await readExternalOperations();
-  expect(external).toHaveLength(1);
+  expect(external).toHaveLength(2);
+  expect(committed.resources).toMatchObject([{ expiresAt: 60_011 }]);
   expect(
     evaluated.operations.map(operation => operation.operationIndex),
-  ).toEqual([0, 1, 2]);
+  ).toEqual([0, 1, 2, 3, 4]);
   expect(reservationWorkEvaluations).toBe(evaluations + 1);
 
   const newCommandIds = vi.spyOn(shapeIds, 'makeIdFromAbbreviation');
@@ -217,8 +220,10 @@ it('restores remote retained output without evaluation and evaluates a parallel 
     parallelResult.result.success.operations.map(
       operation => operation.operationIndex,
     ),
-  ).toEqual([0, 2]);
-  expect(await readMaterialization(parallel)).toEqual(committed);
+  ).toEqual([0, 2, 4]);
+  expect((await readMaterialization(parallel)).resources).toMatchObject([
+    { expiresAt: 60_020 },
+  ]);
   expect(await readParallelEvaluations()).toBe(parallelEvaluations + 1);
 
   // Only this ephemeral materialization loses storage; both retained histories and ServiceChain remain.
@@ -384,5 +389,64 @@ it('materializes retained V1 through omitted V2 codecs into the execution releas
         { modelName: 'reservation', modelVersion: 1, operationName: 'create' },
       ],
     });
+    // A newly declared extension must not reinterpret pre-extension history.
+    const receiving = makeServiceRelease(
+      { name: 'reservations' },
+      {
+        version: 2,
+        models: { reservation },
+        system: { recordHistoricalReservation: v3 },
+        extensions: {
+          recordHistoricalReservation: makeServiceContractExtension(v3, {
+            models: {},
+            operations: {},
+            program: () => Effect.die('Pre-extension history ran an extension'),
+          }),
+        },
+      },
+    );
+    const originating = makeServiceRelease(
+      { name: 'reservations' },
+      {
+        version: 1,
+        models: { reservation },
+        system: { recordHistoricalReservation: v1 },
+      },
+    );
+    const next = {
+      ...retained,
+      id: 'cmd_before_extension' as const,
+      serviceIndex: 2,
+      dispositionChainHash: evaluated.dispositionChainHash,
+      payload: JSON.stringify({
+        reservationId: 'rsv_before_extension',
+        expiresAt: 10,
+      }),
+    };
+    const prepared = prepareServiceReplaySource(originating, {
+      command: next,
+      receivingContractVersion: v3.version,
+      finalizedAt: new Date(1_000),
+    });
+    if (prepared._tag === 'Failure') {
+      expect.fail('Source replay preparation failed');
+    }
+    expect(prepared.value).toMatchObject({ sourceHasExtension: false });
+    const replayed = await config.managedRuntime.runPromise(
+      materializeCommandTx(db, {
+        row: next,
+        key,
+        serviceRelease: receiving,
+        mode: 'replay',
+        retainedCommand: null,
+        preparedReplayInput: prepared.value,
+      }),
+    );
+    expect(replayed?.outcome.result._tag).toBe('Success');
+    expect(db.select().from(resources).all()).toMatchObject(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'rsv_before_extension', expiresAt: 15 }),
+      ]),
+    );
   });
 });

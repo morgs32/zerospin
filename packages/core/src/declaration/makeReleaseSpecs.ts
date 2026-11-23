@@ -35,7 +35,13 @@ type IAggregateSpecDeclaration = Pick<
 
 type IServiceSpecDeclaration = Pick<
   IAnyServiceRelease,
-  'name' | 'version' | 'models' | 'actors' | 'system' | 'external'
+  | 'name'
+  | 'version'
+  | 'models'
+  | 'actors'
+  | 'system'
+  | 'external'
+  | 'extensions'
 > & { readonly contracts: IAnyContracts };
 
 type IAgentSpecDeclaration = Pick<
@@ -73,26 +79,7 @@ export function makeAggregateSpec(
       contract => contract.version,
     ),
     actors: projectSortedRecord(release.actors, actor => actor.version),
-    ...(Object.keys(release.extensions).length === 0
-      ? {}
-      : {
-          extensions: projectSortedRecord(release.extensions, extension => {
-            const projectedModels = new Set(Object.keys(extension.models));
-            return {
-              sourceVersion: extension.source.version,
-              models: projectSortedRecord(extension.models, projection => {
-                const requirement = readProjectionRequirement(projection);
-                return {
-                  abbreviation: requirement.abbreviation,
-                  fields: mapValues(encodeShape(requirement.shape), field =>
-                    normalizeReadField(field, projectedModels),
-                  ),
-                };
-              }),
-              operations: projectOperationSpecs(extension.operations),
-            };
-          }),
-        }),
+    ...projectExtensions(release.extensions),
   };
 }
 
@@ -113,6 +100,7 @@ export function makeServiceSpec(
       contract => contract.version,
     ),
     actors: projectSortedRecord(release.actors, actor => actor.version),
+    ...projectExtensions(release.extensions),
   };
 }
 
@@ -144,4 +132,35 @@ export function makeAgentReleaseSpec(
   ownerReleaseVersion: number,
 ): IAgentReleaseSpec {
   return projectAgentFacts(agent, ownerReleaseVersion);
+}
+
+function projectExtensions(
+  extensions: Readonly<
+    Record<
+      string,
+      | IAnyServiceRelease['extensions'][string]
+      | IAnyAggregateRelease['extensions'][string]
+    >
+  >,
+) {
+  return Object.keys(extensions).length === 0
+    ? {}
+    : {
+        extensions: projectSortedRecord(extensions, extension => {
+          const projectedModels = new Set(Object.keys(extension.models));
+          return {
+            sourceVersion: extension.source.version,
+            models: projectSortedRecord(extension.models, projection => {
+              const requirement = readProjectionRequirement(projection);
+              return {
+                abbreviation: requirement.abbreviation,
+                fields: mapValues(encodeShape(requirement.shape), field =>
+                  normalizeReadField(field, projectedModels),
+                ),
+              };
+            }),
+            operations: projectOperationSpecs(extension.operations),
+          };
+        }),
+      };
 }

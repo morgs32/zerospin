@@ -1,6 +1,7 @@
 import { defineServiceContract } from '@zerospin/core/contracts/defineServiceContract';
 import { makeServiceContractRelease } from '@zerospin/core/contracts/make/makeServiceContractRelease';
 import { makeCommandOperation } from '@zerospin/core/contracts/makeCommandOperation';
+import { makeServiceContractExtension } from '@zerospin/core/contracts/makeServiceContractExtension';
 import { makeServiceRelease } from '@zerospin/core/service/make/makeServiceRelease';
 import { primitives } from '@zerospin/shapes';
 import { env } from 'cloudflare:workers';
@@ -90,16 +91,21 @@ const dispatchWithContinuation = makeServiceContractRelease(
       reservationId: primitives.id({ abbreviation: 'rsv' }),
       expiresAt: primitives.integer(),
     },
-    operations: { reserve, reserveWithOffset },
+    operations: { reserve },
     program: Effect.fn(function* ({ payload, operations }) {
-      if (payload.expiresAt > 0) {
-        yield* operations.reserveWithOffset({ payload });
-      } else {
-        yield* operations.reserve({ payload });
-      }
+      if (payload.expiresAt <= 0) yield* operations.reserve({ payload });
     }),
   },
 );
+const dispatchOffset = makeServiceContractExtension(dispatchWithContinuation, {
+  models: {},
+  operations: { reserveWithOffset },
+  program: Effect.fn(function* ({ payload, operations }) {
+    if (payload.expiresAt > 0) {
+      yield* operations.reserveWithOffset({ payload });
+    }
+  }),
+});
 
 export const dispatcherV1 = makeServiceRelease(
   { name: 'dispatcher' },
@@ -107,6 +113,7 @@ export const dispatcherV1 = makeServiceRelease(
     version: 1,
     models: {},
     actors: {},
+    extensions: { dispatchWithContinuation: dispatchOffset },
     system: { dispatchWork: dispatchServiceWorkV1, dispatchWithContinuation },
     external: {},
     contracts: { completeReservation, recordReservationRefusal },

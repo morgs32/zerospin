@@ -12,6 +12,7 @@ import { scopeContractReadDb } from '@zerospin/core/contracts/make/makeContractR
 import { makeServiceContractRelease } from '@zerospin/core/contracts/make/makeServiceContractRelease';
 import { upgradeServiceContractRelease } from '@zerospin/core/contracts/make/upgradeServiceContractRelease';
 import { makeCommandOperation } from '@zerospin/core/contracts/makeCommandOperation';
+import { makeServiceContractExtension } from '@zerospin/core/contracts/makeServiceContractExtension';
 import { operationCodecs } from '@zerospin/core/contracts/operationCodecs';
 import { prepareCommandOperation } from '@zerospin/core/contracts/prepareCommandOperation';
 import { prepareReplayAppliedOperation } from '@zerospin/core/contracts/prepareReplayAppliedOperation';
@@ -99,6 +100,38 @@ const entryV1 = makeModelVersion(
     ],
   },
 );
+it('binds Service extensions to the exact contract and owned mutation model', () => {
+  const source = makeServiceContractRelease(
+    defineServiceContract('changeFolder'),
+    { version: 1, payload: {} },
+  );
+  const other = makeServiceContractRelease(
+    defineServiceContract('changeFolder'),
+    { version: 1, payload: {} },
+  );
+  const extension = makeServiceContractExtension(source, {
+    models: {},
+    operations: { create: folderV1.operations.create },
+    program: () => Effect.void,
+  });
+  const props = { version: 1, extensions: { changeFolder: extension } };
+  expect(() =>
+    makeServiceRelease(
+      { name: 'files' },
+      {
+        ...props,
+        models: { folder: folderV1 },
+        system: { changeFolder: other },
+      },
+    ),
+  ).toThrow('exact source contract');
+  expect(() =>
+    makeServiceRelease(
+      { name: 'files' },
+      { ...props, models: {}, system: { changeFolder: source } },
+    ),
+  ).toThrow('must belong to its owner release');
+});
 it('projects the same Service facts before and after composing its successor and another Service', () => {
   const book = makeServiceContractRelease(defineServiceContract('Book'), {
     version: 1,
@@ -565,17 +598,23 @@ describe('Model rows, resource envelopes and query boundaries', () => {
           {
             version: 1,
             payload: { at: primitives.json({ schema: Schema.DateFromString }) },
-            operations: { update: folderV1.operations.update },
-            program: ({ command, payload, operations }) =>
-              Effect.gen(function* () {
+            program: ({ command }) =>
+              Effect.sync(() => {
                 if (command.kind === 'agent') evaluatedIds.push(command.id);
-                yield* operations.update({
-                  resourceId: folderRow.id,
-                  attributes: { label: payload.at.toISOString() },
-                });
               }),
           },
         );
+        const extendRecordDate = makeServiceContractExtension(recordDate, {
+          models: {},
+          operations: { update: folderV1.operations.update },
+          program: ({ payload, operations }) =>
+            Effect.gen(function* () {
+              yield* operations.update({
+                resourceId: folderRow.id,
+                attributes: { label: payload.at.toISOString() },
+              });
+            }),
+        });
         const db = makeQueryDbVersion({ models: { folder: folderV1 } });
         const granted = makeAgentCommandRef<typeof recordDate>('recordDate', 1);
         let failLaterWake = true;
@@ -612,6 +651,7 @@ describe('Model rows, resource envelopes and query boundaries', () => {
         const owner = makeServiceRelease(defineService({ name: 'files' }), {
           version: 1,
           models: { folder: folderV1 },
+          extensions: { recordDate: extendRecordDate },
           contracts: { recordDate },
           system: { openFolder },
         });

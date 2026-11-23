@@ -25,6 +25,7 @@ export const ServiceReplaySourceRequestSchema = Schema.Struct({
 export const PreparedServiceReplayInputSchema = Schema.Union([
   Schema.Struct({
     _tag: Schema.Literal('Prepared'),
+    sourceHasExtension: Schema.Boolean,
     sourcePayload: Schema.Record(Schema.String, Schema.Unknown),
     adaptedPayload: Schema.String,
     actorClaims: Schema.NullOr(Schema.Record(Schema.String, Schema.Unknown)),
@@ -86,6 +87,7 @@ export function prepareServiceReplaySource(
     }
     return {
       _tag: 'Prepared',
+      sourceHasExtension: release.extensions[command.commandName] !== undefined,
       sourcePayload,
       adaptedPayload,
       actorClaims: actorClaims ?? null,

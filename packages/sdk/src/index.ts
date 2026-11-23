@@ -13,6 +13,7 @@ export type {
 export { defineAggregate } from '@zerospin/core/aggregate/defineAggregate';
 export { makeAggregateRelease } from '@zerospin/core/aggregate/make/makeAggregateRelease';
 export { makeAggregateContractExtension } from '@zerospin/core/contracts/makeAggregateContractExtension';
+export { makeServiceContractExtension } from '@zerospin/core/contracts/makeServiceContractExtension';
 export { defineAggregateActor } from '@zerospin/core/aggregateActor/defineAggregateActor';
 export { makeAggregateActorRelease } from '@zerospin/core/aggregateActor/make/makeAggregateActorRelease/makeAggregateActorRelease';
 export type { IAggregateActorRelease } from '@zerospin/core/aggregateActor/make/makeAggregateActorRelease/makeAggregateActorRelease';

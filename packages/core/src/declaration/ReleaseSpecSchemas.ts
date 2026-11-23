@@ -97,6 +97,9 @@ export const ReleaseSpecSchema = Schema.Union([
   }),
   Schema.Struct({
     service: ServiceSpecSchema,
+    extensionCommandOperations: Schema.optionalKey(
+      Schema.Record(Schema.String, commandBindings),
+    ),
     ...releaseFacts,
     actors: Schema.Record(Schema.String, ServiceActorSpecSchema),
   }),

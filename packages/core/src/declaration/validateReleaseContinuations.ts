@@ -1,11 +1,13 @@
-import type { IAnyAggregateRelease } from '../aggregate/types.ts';
+import type { IOperationDefinitions } from '../contracts/operationDefinition.ts';
 import { getReleaseCommandOperations } from '../contracts/operationSchema.ts';
 import type { IAnyContracts, IContractRelease } from '../contracts/types.ts';
 
 type IReleaseContinuationDeclarations = {
   readonly contracts: IAnyContracts;
   readonly external: IAnyContracts;
-  readonly extensions?: IAnyAggregateRelease['extensions'];
+  readonly extensions?: Readonly<
+    Record<string, { operations: IOperationDefinitions }>
+  >;
 };
 
 export function getReleaseContinuationContracts(
