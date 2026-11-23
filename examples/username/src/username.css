@@ -1,0 +1,24 @@
+.username-page {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  font-family: 'Inter Variable', Inter, sans-serif;
+}
+
+.username-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.username-page h1 {
+  margin: 1.5rem 0 0;
+  font-size: clamp(2rem, 10vw, 6rem);
+  text-align: center;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}

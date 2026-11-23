@@ -1,4 +1,4 @@
-import { makeConfig } from '@zerospin/sdk';
+import { makeConfig } from '@zerospin/core/system/make/makeConfig';
 
 import { system } from './src/system';
 

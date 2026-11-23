@@ -1,12 +1,21 @@
-# Username example spike
+# Username example
 
-This example sketches a hosted user actor that creates `usr_user` with a null
-username and a standalone story that stages the same command once. The page
-stages `updateUsername` and renders a greeting for a string username. Submitting
-whitespace stores null.
+Each `user` aggregate stores a single row, `usr_user`. On a hosted release,
+`userActorV1.authorize` reads that row and executes `createUser` when it is
+missing. The hosted session exposes `updateUsername`. Its empty demo
+credentials grant access to the requested aggregate ID, so use a real identity
+provider before exposing it publicly.
 
-The shells are intentionally non-compiling. The planned Storybook host is
-`username.zerospin.localhost`.
+## Storybook
 
-<!-- TODO Use the scripts and Portless wiring in examples/list-system/package.json
-     and the host configuration in examples/list-system/.storybook/main.ts. -->
+From the workspace root, run:
+
+```sh
+pnpm nx run @zerospin/username-example:storybook
+```
+
+Open [Username Storybook](https://username.zerospin.localhost/) in Chromium.
+The standalone session uses a SharedWorker and local SQLite. Story setup
+stages `createUser` once for the new aggregate. Enter a name and select **Save**
+to see the greeting. Submit a blank or whitespace-only name to store null and
+clear the greeting.
