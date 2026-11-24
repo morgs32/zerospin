@@ -26,8 +26,8 @@ export const system = makeSystem({
     agentAccount: { releases: { 1: agentAccountV1 } },
   },
   services: {
-    reservations: { releases: { 1: reservationsV1 }, canonical: 1 },
-    agentReservations: { releases: { 1: agentReservationsV1 }, canonical: 1 },
+    reservations: { releases: { 1: reservationsV1 } },
+    agentReservations: { releases: { 1: agentReservationsV1 } },
   },
 });
 

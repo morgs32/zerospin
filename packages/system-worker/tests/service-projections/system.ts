@@ -14,7 +14,7 @@ export const system = makeSystem({
     },
   },
   aggregates: { account: { releases: { 1: accountV1 } } },
-  services: { reservations: { releases: { 1: reservationsV1 }, canonical: 1 } },
+  services: { reservations: { releases: { 1: reservationsV1 } } },
 });
 
 // oxlint-disable-next-line import/no-default-export -- The production config alias supplies this scenario's System.

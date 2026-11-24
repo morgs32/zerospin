@@ -100,7 +100,7 @@ function makeFinishCheckout() {
     },
   );
 }
-const reservations = { releases: { 2: reservationsV2 }, canonical: 2 } as const;
+const reservations = { releases: { 2: reservationsV2 } } as const;
 const systemId = 'sys_servicePublication';
 
 function makePinnedOlderRelease(

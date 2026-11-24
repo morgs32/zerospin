@@ -76,7 +76,6 @@ export const ZerospinConfigSchema = Schema.declare<ISystemConfig>(
               services: Schema.Record(
                 Schema.String,
                 Schema.Struct({
-                  canonical: VersionSchema,
                   releases: Schema.Record(Schema.String, ServiceReleaseSchema),
                 }),
               ),

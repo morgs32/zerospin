@@ -28,6 +28,7 @@ import { serviceActorVersionChainNameUtils } from '../../src/ServiceActorVersion
 import { serviceActorVersionRepoNameUtils } from '../../src/ServiceActorVersionRepo/serviceActorVersionRepoName.ts';
 import { ServiceApi } from '../../src/ServiceApi/ServiceApi.ts';
 import { genesisDispositionChainHash } from '../../src/serviceDispositionChainHash/serviceDispositionChainHash.ts';
+import * as workerConfiguration from '../../src/workerConfiguration/workerConfiguration.ts';
 import { reservationV1 as reservation } from '../declarations/models/reservationV1.ts';
 
 import type {
@@ -214,6 +215,10 @@ it('authenticates read-only Service claims before issuing and forwarding one exa
     models: { reservation },
     modelNames: ['reservation'],
   });
+  // This test invokes the System Worker API inside the owner release's test isolate.
+  using _servingSpec = vi
+    .spyOn(workerConfiguration, 'readExecutingSystemSpec')
+    .mockReturnValue(makeSystemSpec({ system }));
   const api = new ServiceApi({
     systemName: system.name,
     serviceName: key.serviceName,

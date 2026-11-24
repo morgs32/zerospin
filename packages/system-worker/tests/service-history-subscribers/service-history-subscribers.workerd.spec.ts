@@ -367,7 +367,6 @@ it('retains the original subscriber and checkpoint while receiving code or defin
             absent === 'release'
               ? {
                   releases: { 2: system.services.reservations.releases[2] },
-                  canonical: 2,
                 }
               : {
                   ...originalSystem.services.reservations,

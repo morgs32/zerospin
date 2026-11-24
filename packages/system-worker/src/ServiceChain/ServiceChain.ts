@@ -17,7 +17,6 @@ import { type IRpcEnvelope } from '@zerospin/logger';
 import { DurableObject, RpcTarget } from 'cloudflare:workers';
 import { asc, eq } from 'drizzle-orm';
 import * as Effect from 'effect/Effect';
-import * as References from 'effect/References';
 import * as Schema from 'effect/Schema';
 
 import { readActiveProducerPosition } from '../agentNodeProducer/agentNodeProducerPosition.js';
@@ -29,8 +28,8 @@ import { admitRecordedCommandFromServiceChain } from '../commandOperations/admit
 import { makeCommandDeliveryQueue } from '../commandOperations/makeCommandDeliveryQueue.js';
 import { makeExternalOperationQueue } from '../externalOperations/makeExternalOperationQueue.js';
 import {
-  runExternalContinuation,
   requestExternalObservation,
+  runExternalContinuation,
 } from '../externalOperations/runExternalOperation.js';
 import { getSystemSpec } from '../getSystemSpec/getSystemSpec.js';
 import {
@@ -54,6 +53,7 @@ import {
 import { getServiceVersionChain } from '../ownerOperations/releaseRepoNamespaces.js';
 import { runOwnerOperation } from '../ownerOperations/runOwnerOperation.js';
 import { validateReleaseAdmission } from '../ownerOperations/validateReleaseAdmission.js';
+import { ServiceVersionChains } from '../repoServices/ServiceVersionChains.js';
 import {
   makeWorkerRpcEnvelope,
   runWorkerInvocation,
@@ -63,7 +63,6 @@ import {
   type IServiceReplayRequest,
 } from '../serviceReplayAdapter/prepareServiceReplayInput.js';
 import type { IEvaluatedServiceCommand } from '../ServiceVersionChain/evaluatedServiceCommand.js';
-import type { ServiceVersionChain } from '../ServiceVersionChain/ServiceVersionChain.js';
 import { getServiceVersionRepo } from '../ServiceVersionRepo/getServiceVersionRepo.js';
 import { serviceVersionRepoNameUtils } from '../ServiceVersionRepo/serviceVersionRepoName.js';
 import type {
@@ -89,7 +88,7 @@ import {
   admitServiceAgentCommandTx,
 } from './admitServiceAgentCommandTx.js';
 import { admitServiceCommands } from './admitServiceCommands/admitServiceCommands.js';
-import { adoptCanonicalServiceHistory } from './adoptCanonicalServiceHistory.js';
+import { compactServiceHistory } from './compactServiceHistory.js';
 import { executeCommandsThrough } from './executeCommandsThrough/executeCommandsThrough.js';
 import {
   enrollRegisteredServiceReleases,
@@ -168,42 +167,6 @@ export class ServiceChain
       (bindingName, key) => env[bindingName]?.getServiceVersionRepo(key),
       key => env.ZEROSPIN_HOSTED_SERVICE_DISPATCH?.getServiceVersionRepo(key),
     );
-    this.recoveryRegistry.register(
-      'canonicalHistory',
-      Effect.gen({ self: this }, function* () {
-        const finalizedThrough =
-          this.db.select().from(this.schema.finalizedPosition).get()
-            ?.lastIndex ?? 0;
-        const serviceVersion = (yield* getSystemSpec(this.key.systemId))
-          .services[this.key.serviceName]?.canonical;
-        const adopted = this.db
-          .select()
-          .from(this.schema.canonicalHistory)
-          .get();
-        if (
-          serviceVersion === undefined ||
-          finalizedThrough === 0 ||
-          (adopted?.serviceVersion === serviceVersion &&
-            adopted.serviceIndex === finalizedThrough)
-        ) {
-          yield* this.recoveryRegistry.release('canonicalHistory');
-          return;
-        }
-        const history = yield* getServiceVersionChain({
-          key: { ...this.key, serviceVersion },
-        });
-        const { lastIndex: publishedThrough } = yield* Effect.promise(() =>
-          history.getEvaluatedCommandPage({ afterIndex: 0, maxIndex: 0 }),
-        ).pipe(Effect.flatMap(readRpcEnvelope));
-        const caughtUp = this.db.transaction(tx =>
-          adoptCanonicalServiceHistory(tx, {
-            serviceVersion,
-            publishedThrough,
-          }),
-        );
-        if (caughtUp) yield* this.recoveryRegistry.release('canonicalHistory');
-      }).pipe(Effect.provideService(References.PreventSchedulerYield, true)),
-    );
   }
 
   readonly #replayCommandsFanout: IFanoutQueue<
@@ -228,6 +191,16 @@ export class ServiceChain
     },
     subscriberIndexColumn:
       this.schema.replaySubscribers.acknowledgedServiceIndex,
+    subscriberPrefixColumn:
+      this.schema.replaySubscribers.initializationThroughIndex,
+    acknowledge: tx =>
+      compactServiceHistory(
+        tx,
+        Object.values(
+          readExecutingSystemSpec().services[this.key.serviceName]?.releases ??
+            {},
+        ).map(release => release.version),
+      ),
     subscriberIdentityFromKey: key =>
       Effect.gen({ self: this }, function* () {
         if (this.env.ZEROSPIN_HOSTED_SERVICE_DISPATCH) {
@@ -257,7 +230,12 @@ export class ServiceChain
       serviceName: Schema.String,
       serviceVersion: VersionSchema,
     }),
-    readPage: page => readReplayCommandsPage(this.db, this.key, page),
+    readPage: page =>
+      readReplayCommandsPage(this.db, this.key, page).pipe(
+        Effect.provideService(ServiceVersionChains, {
+          getRepo: getServiceVersionChain,
+        }),
+      ),
     getRepo: getServiceVersionRepo,
   });
 
@@ -336,7 +314,6 @@ export class ServiceChain
         if (this.env.ZEROSPIN_HOSTED_SERVICE_DISPATCH) {
           yield* enrollRegisteredServiceReleases(this.db, this.key);
         }
-        yield* this.recoveryRegistry.hold('canonicalHistory');
         yield* this.#replayCommandsFanout.producerLease;
         yield* this.#commandOperationQueue.producerLease;
         yield* this.#externalOperationQueue
@@ -546,7 +523,11 @@ export class ServiceChain
             prefix: 'Invalid admitted input cursor',
           }),
         );
-        return yield* readServiceCommand(this.db, this.key, serviceIndex);
+        return yield* readServiceCommand(this.db, this.key, serviceIndex).pipe(
+          Effect.provideService(ServiceVersionChains, {
+            getRepo: getServiceVersionChain,
+          }),
+        );
       }).pipe(effect => makeWorkerRpcEnvelope(effect)),
     );
   }
@@ -807,6 +788,68 @@ export class ServiceChain
           Effect.ensuring(this.#executeCommandOutbox.wake().pipe(Effect.exit)),
         );
       }).pipe(Effect.scoped, effect => makeWorkerRpcEnvelope(effect)),
+    );
+  }
+
+  /** Read the branch predecessor only within the enrolled initialization prefix. */
+  async readServiceBranchCommand(props: {
+    serviceVersion: number;
+    serviceIndex: number;
+  }): Promise<
+    IRpcEnvelope<IEvaluatedServiceCommand | null, IZerospinErrorJson>
+  > {
+    return runWorkerPromise(
+      Effect.gen({ self: this }, function* () {
+        const { serviceIndex, serviceVersion } =
+          yield* Schema.decodeUnknownEffect(
+            Schema.Struct({
+              serviceVersion: VersionSchema,
+              serviceIndex: VersionSchema,
+            }),
+          )(props, { onExcessProperty: 'error' }).pipe(
+            mapParseError({
+              code: 'service-input-cursor-invalid',
+              prefix: 'Invalid Service branch command position',
+            }),
+          );
+        const subscriber = this.db
+          .select()
+          .from(this.schema.replaySubscribers)
+          .where(
+            eq(this.schema.replaySubscribers.serviceVersion, serviceVersion),
+          )
+          .get();
+        if (subscriber === undefined) {
+          return yield* makeZerospinError({
+            code: 'service-replay-enrollment-missing',
+            extra: { retryable: true },
+          });
+        }
+        if (serviceIndex > subscriber.initializationThroughIndex) return null;
+        const spec = yield* getSystemSpec(this.key.systemId);
+        const predecessor =
+          spec.services[this.key.serviceName]?.releases[serviceVersion]
+            ?.branchFrom;
+        if (predecessor === undefined) return null;
+        const history = yield* getServiceVersionChain({
+          key: {
+            ...this.key,
+            serviceVersion: predecessor,
+          },
+        });
+        const published = yield* Effect.promise(() =>
+          history.getEvaluatedCommand({
+            serviceIndex,
+          }),
+        ).pipe(Effect.flatMap(readRpcEnvelope));
+        if (published === null) {
+          return yield* makeZerospinError({
+            code: 'service-predecessor-history-missing',
+            extra: { retryable: true },
+          });
+        }
+        return published;
+      }).pipe(effect => makeWorkerRpcEnvelope(effect)),
     );
   }
 

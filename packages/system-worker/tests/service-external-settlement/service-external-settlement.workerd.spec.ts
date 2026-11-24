@@ -15,10 +15,8 @@ import { beforeEach, expect, it } from 'vitest';
 
 import { prepareServiceExternalOperation } from '../../src/externalOperations/prepareExternalOperation.ts';
 import { ExternalContinuationResponseSchema } from '../../src/ownerOperations/ownerOperationSchema.ts';
-import { getServiceVersionChain } from '../../src/ownerOperations/releaseRepoNamespaces.ts';
 import { runOwnerOperation } from '../../src/ownerOperations/runOwnerOperation.ts';
 import { admitServiceCommands } from '../../src/ServiceChain/admitServiceCommands/admitServiceCommands.ts';
-import { adoptCanonicalServiceHistory } from '../../src/ServiceChain/adoptCanonicalServiceHistory.ts';
 import { readServiceCommandOccurrence } from '../../src/ServiceChain/readServiceCommandOccurrence.ts';
 import { recordExternalOutcomeAndAdmitCommandTx } from '../../src/ServiceChain/recordExternalOutcomeAndAdmitCommandTx.ts';
 import { recordOriginalCommandOutcomeTx } from '../../src/ServiceChain/recordOriginalCommandOutcomeTx.ts';
@@ -509,34 +507,17 @@ it('retains the first external observation while admission is full and consumes 
       ),
     );
     expect(retained.externalOutcome).toEqual(success);
-    const history = await Effect.runPromise(
-      getServiceVersionChain({ key: { ...key, serviceVersion: 1 } }),
-    );
-    expect(
-      (await history.appendEvaluatedCommands({ commands: [evaluatedCommand] }))
-        .result._tag,
-    ).toBe('Success');
-    db.transaction(tx =>
-      adoptCanonicalServiceHistory(tx, {
-        serviceVersion: 1,
-        publishedThrough: 1,
-      }),
-    );
     expect(
       await config.managedRuntime.runPromise(
         settleExternal(db, {
           key,
           externalCommandId: first.externalCommandId,
           externalOutcome: failure,
-        }),
+        }).pipe(Effect.flip),
       ),
-    ).toMatchObject({
-      serviceIndex: 65,
-      commandName: 'recordReservationObservation',
-      payload: expect.stringContaining('"observation":"Success"'),
-    });
+    ).toMatchObject({ code: 'service-admission-backlog-full' });
     expect(db.select().from(schema.externalOperationOutbox).all()).toHaveLength(
-      1,
+      2,
     );
     await storage.deleteAlarm();
   });

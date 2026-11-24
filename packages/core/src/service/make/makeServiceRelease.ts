@@ -31,7 +31,12 @@ import { isModel } from '../../models/make/makeModelVersion.ts';
 import type { IAnyModels, IModel } from '../../models/types.ts';
 import { ServiceActorReleaseSchema } from '../../serviceActor/make/makeServiceActorRelease.ts';
 import type { IAnyServiceActorRelease } from '../../serviceActor/types.ts';
-import type { IAnyServiceRelease, IServiceRelease } from '../types.ts';
+import type {
+  IAnyServiceRelease,
+  IServiceRelease,
+  IServiceReleaseHistory,
+  IServiceReleaseIdentity,
+} from '../types.ts';
 const CanonicalModelSchema = Schema.declare((input: unknown): input is IModel =>
   isModel(input),
 );
@@ -39,12 +44,19 @@ const CanonicalContractSchema = Schema.declare(
   (input: unknown): input is IServiceContracts[string] =>
     isServiceContract(input),
 );
+class ServiceRelease {}
+export const ServiceReleaseSchema = Schema.declare(
+  (input: unknown): input is IAnyServiceRelease =>
+    input instanceof ServiceRelease,
+);
 const ServiceReleasePropsSchema = Schema.Struct({
   layer: Schema.optionalKey(OwnerReleaseLayerSchema),
   contracts: Schema.optionalKey(
     Schema.Record(Schema.String, CanonicalContractSchema),
   ),
   version: VersionSchema,
+  branchFrom: Schema.optionalKey(ServiceReleaseSchema),
+  rebuildFrom: Schema.optionalKey(ServiceReleaseSchema),
   models: Schema.Record(Schema.String, CanonicalModelSchema),
   system: Schema.optionalKey(
     Schema.Record(Schema.String, CanonicalContractSchema),
@@ -58,11 +70,13 @@ const ServiceReleasePropsSchema = Schema.Struct({
   actors: Schema.optionalKey(
     Schema.Record(Schema.String, ServiceActorReleaseSchema),
   ),
-});
-class ServiceRelease {}
-export const ServiceReleaseSchema = Schema.declare(
-  (input: unknown): input is IAnyServiceRelease =>
-    input instanceof ServiceRelease,
+}).check(
+  Schema.makeFilter(
+    props =>
+      props.branchFrom === undefined ||
+      props.rebuildFrom === undefined ||
+      'A Service release can only name one predecessor',
+  ),
 );
 /** Construct one complete service release from canonical declarations. */
 export function makeServiceRelease<
@@ -75,6 +89,10 @@ export function makeServiceRelease<
   const CONTRACTS extends IServiceContracts = {},
   const EXTENSIONS extends Readonly<Record<string, IServiceContractExtension>> =
     {},
+  const BRANCH extends IAnyServiceRelease &
+    IServiceReleaseIdentity<NoInfer<NAME>> = never,
+  const REBUILD extends IAnyServiceRelease &
+    IServiceReleaseIdentity<NoInfer<NAME>> = never,
 >(
   definition: Readonly<{
     name: NAME;
@@ -93,20 +111,21 @@ export function makeServiceRelease<
         name: K;
       };
     };
-  } & IOwnerReleaseLayerProps<
-    | IRequiredOwnerServices<
-        Effect.Services<
-          ReturnType<NoInfer<EXTENSIONS>[keyof EXTENSIONS]['evaluate']>
+  } & IServiceReleaseHistory<BRANCH, REBUILD> &
+    IOwnerReleaseLayerProps<
+      | IRequiredOwnerServices<
+          Effect.Services<
+            ReturnType<NoInfer<EXTENSIONS>[keyof EXTENSIONS]['evaluate']>
+          >
         >
-      >
-    | IOwnerOperationRequirements<
-        NoInfer<EXTENSIONS>[keyof EXTENSIONS]['operations']
-      >
-    | IOwnerContractRequirements<NoInfer<SYSTEM>>
-    | IOwnerContractRequirements<NoInfer<EXTERNAL>>
-    | IOwnerContractRequirements<NoInfer<CONTRACTS>>
-    | IOwnerActorRequirements<NoInfer<ACTORS>>
-  >,
+      | IOwnerOperationRequirements<
+          NoInfer<EXTENSIONS>[keyof EXTENSIONS]['operations']
+        >
+      | IOwnerContractRequirements<NoInfer<SYSTEM>>
+      | IOwnerContractRequirements<NoInfer<EXTERNAL>>
+      | IOwnerContractRequirements<NoInfer<CONTRACTS>>
+      | IOwnerActorRequirements<NoInfer<ACTORS>>
+    >,
 ): IServiceRelease<
   NAME,
   MODELS,
@@ -116,7 +135,8 @@ export function makeServiceRelease<
   ACTORS,
   VERSION,
   SYSTEM,
-  EXTERNAL
+  EXTERNAL,
+  IServiceReleaseHistory<NoInfer<BRANCH>, NoInfer<REBUILD>>
 >;
 export function makeServiceRelease(
   definition: Readonly<{
@@ -141,6 +161,8 @@ export function makeServiceRelease(
   const {
     version,
     layer,
+    branchFrom,
+    rebuildFrom,
     models,
     system = {},
     external = {},
@@ -171,6 +193,8 @@ export function makeServiceRelease(
     name,
     version,
     ...(layer === undefined ? {} : { layer }),
+    ...(branchFrom === undefined ? {} : { branchFrom }),
+    ...(rebuildFrom === undefined ? {} : { rebuildFrom }),
     models: { ...models },
     contracts,
     system: systemGrants,

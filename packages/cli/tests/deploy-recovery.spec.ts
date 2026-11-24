@@ -4,6 +4,8 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { makeReleaseSpec } from '@zerospin/core/declaration/makeReleaseSpec';
+import { defineModel } from '@zerospin/core/models/defineModel';
+import { makeModelVersion } from '@zerospin/core/models/make/makeModelVersion';
 import { defineService } from '@zerospin/core/service/defineService';
 import { makeServiceRelease } from '@zerospin/core/service/make/makeServiceRelease';
 import { makeConfig } from '@zerospin/core/system/make/makeConfig';
@@ -15,7 +17,7 @@ import {
 } from '@zerospin/core/system/ownerReleaseDeployment';
 import { makeWranglerConfig } from '@zerospin/dev-worker/makeWranglerConfig';
 import { makeZerospinError } from '@zerospin/error';
-import { defineModel, makeModelVersion, primitives } from '@zerospin/sdk';
+import { primitives } from '@zerospin/shapes';
 import * as Effect from 'effect/Effect';
 import {
   ChildProcessSpawner,
@@ -410,7 +412,7 @@ it.each([
     const system = makeSystem({
       name: 'recovery-test',
       aggregates: {},
-      services: { orders: { releases: { 1: orders }, canonical: 1 } },
+      services: { orders: { releases: { 1: orders } } },
     });
     const olderSpec = makeSystemSpec({ system });
     const customer = makeModelVersion(
@@ -437,8 +439,8 @@ it.each([
         ...system,
         services: {
           ...system.services,
-          orders: { releases: { 1: updated }, canonical: 1 },
-          audit: { releases: { 1: audit }, canonical: 1 },
+          orders: { releases: { 1: updated } },
+          audit: { releases: { 1: audit } },
         },
       }),
     });

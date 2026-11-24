@@ -5,9 +5,11 @@ import { reservationService } from '../declarations/services/reservationService.
 
 import { createTimedReservationV1 } from './createTimedReservationV1.ts';
 import { observeTimeV2 } from './observeTimeV2.ts';
+import { reservationsV1 } from './reservationsV1.ts';
 
 export const reservationsV2 = makeServiceRelease(reservationService, {
   version: 2,
+  rebuildFrom: reservationsV1,
   models: { reservation: reservationV1 },
   actors: {},
   system: {

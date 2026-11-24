@@ -37,6 +37,8 @@ type IServiceSpecDeclaration = Pick<
   IAnyServiceRelease,
   | 'name'
   | 'version'
+  | 'branchFrom'
+  | 'rebuildFrom'
   | 'models'
   | 'actors'
   | 'system'
@@ -89,6 +91,12 @@ export function makeServiceSpec(
   return {
     name: release.name,
     version: release.version,
+    ...(release.branchFrom === undefined
+      ? {}
+      : { branchFrom: release.branchFrom.version }),
+    ...(release.rebuildFrom === undefined
+      ? {}
+      : { rebuildFrom: release.rebuildFrom.version }),
     models: projectSortedRecord(release.models, model => model.version),
     contracts: projectSortedRecord(
       release.contracts,

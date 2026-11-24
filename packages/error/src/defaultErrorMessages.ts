@@ -943,6 +943,14 @@ export const defaultErrorMessages = new Map<string, string>([
     'The service replay subscriber could not be enrolled durably.',
   ],
   [
+    'service-replay-enrollment-missing',
+    'The service release has no saved initialization watermark.',
+  ],
+  [
+    'service-predecessor-history-missing',
+    'The predecessor has not published the enrolled Service prefix.',
+  ],
+  [
     'service-result-checkpoint-invalid',
     'The service result checkpoint does not contain a valid position and command identity.',
   ],

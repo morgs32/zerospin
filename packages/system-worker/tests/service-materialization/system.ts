@@ -7,7 +7,7 @@ export const system = makeSystem({
   name: 'servicePublication',
   aggregates: {},
   services: {
-    reservations: { releases: { 1: reservationWorkV1 }, canonical: 1 },
+    reservations: { releases: { 1: reservationWorkV1 } },
   },
 });
 

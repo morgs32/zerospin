@@ -2,8 +2,8 @@ import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   mkdtemp,
-  readFile,
   readdir,
+  readFile,
   realpath,
   rm,
   writeFile,
@@ -62,8 +62,9 @@ async function bundle(
           );
           builder.onLoad({ filter: /.*/, namespace: 'release-input' }, args => {
             const contents = modules[args.path];
-            if (contents === undefined)
+            if (contents === undefined) {
               throw new Error('Missing artifact ' + args.path);
+            }
             return { contents, loader: 'js', resolveDir };
           });
         },
@@ -112,7 +113,7 @@ it('compares the registered Node export with the declaration loaded by each pack
       };
       export default sdk.makeConfig({ systemId: 'sys_comparison', system: sdk.makeSystem({
         name: 'comparison', aggregates: { checkout: { releases: { 1: checkout } } },
-        services: { reservations: { releases: { 1: reservations }, canonical: 1 } },
+        services: { reservations: { releases: { 1: reservations }} },
       }) });
     `,
     );
@@ -251,7 +252,7 @@ it('retains a live Service build for in-flight work while queued work starts on 
         format: 'esm',
         target: 'es2022',
         minifySyntax: true,
-        define: { PATCHED: String(patched) },
+        define: { 'globalThis.PATCHED': String(patched) },
         external: ['cloudflare:*'],
       });
       const code = outputFiles[0]!.text;
@@ -268,8 +269,8 @@ it('retains a live Service build for in-flight work while queued work starts on 
     import { inventory, reservations, reservation, hold } from 'original-artifact';
     const spec = sdk.makeSystemSpec({ system: sdk.makeSystem({
       name: 'compatiblePatch', aggregates: {}, services: {
-        reservations: { releases: { 1: reservations }, canonical: 1 },
-        inventory: { releases: { 1: inventory }, canonical: 1 },
+        reservations: { releases: { 1: reservations }},
+        inventory: { releases: { 1: inventory }},
       },
     }) });
     export default { fetch() { return Response.json({ spec,
@@ -337,8 +338,9 @@ it('retains a live Service build for in-flight work while queued work starts on 
       heldReplies++;
       return new Response(null, { status: 503 });
     }
-    if (path.startsWith('/start/') && Number(path.slice(7)) > startThrough)
+    if (path.startsWith('/start/') && Number(path.slice(7)) > startThrough) {
       return new Response(null, { status: 503 });
+    }
     return new Response(null, { status: 204 });
   };
   const stable = {

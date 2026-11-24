@@ -228,6 +228,19 @@ export class ServiceVersionRepo
         ) =>
           Effect.gen({ self: this }, function* () {
             yield* this.#serviceVersionChainOutbox.producerLease;
+            const first = rows[0];
+            if (
+              source === 'push' &&
+              first !== undefined &&
+              readServiceMaterializationHead(this.db).serviceIndex <
+                first.serviceIndex - 1
+            ) {
+              yield* Effect.promise(() =>
+                this.replayCommandsFanoutSubscriber(sourceKey).catchup(
+                  first.serviceIndex - 1,
+                ),
+              ).pipe(Effect.flatMap(readRpcEnvelope));
+            }
             yield* replayCommands({
               source,
               db: this.db,
@@ -245,6 +258,10 @@ export class ServiceVersionRepo
                 this.#serviceVersionChainOutbox.wake().pipe(Effect.exit),
               ),
             );
+            const throughIndex = rows.at(-1)?.serviceIndex;
+            if (source === 'push' && throughIndex !== undefined) {
+              yield* this.#serviceVersionChainOutbox.drain(throughIndex);
+            }
           }).pipe(Effect.scoped),
       }).pipe(
         Effect.provideService(ServiceChains, {

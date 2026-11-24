@@ -13,8 +13,8 @@ export const system = makeSystem({
     account: { releases: { 1: accountV1, 2: accountV2 } },
   },
   services: {
-    dispatcher: { releases: { 1: dispatcherV1 }, canonical: 1 },
-    reservations: { releases: { 2: reservationsV2 }, canonical: 2 },
+    dispatcher: { releases: { 1: dispatcherV1 } },
+    reservations: { releases: { 2: reservationsV2 } },
   },
 });
 

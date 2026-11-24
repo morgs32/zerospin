@@ -70,9 +70,8 @@ export const system = makeSystem({
 
 For each Aggregate release after the first, declare `branchFrom` or
 `rebuildFrom` and keep the named predecessor registered. Add a Service through
-`services: { marketplace: { releases: { 1: serviceRelease }, canonical: 1 } }`.
-Each Service explicitly selects a registered `canonical` release to supply its
-adopted history. Registry keys must match release names and versions.
+`services: { marketplace: { releases: { 1: serviceRelease } } }`.
+A later Service release names `branchFrom` or `rebuildFrom`. Registry keys must match release names and versions.
 [Owner Chain reuse and handoff](/handbook/versioning-and-deployment#reuse-the-owner-chain-across-releases)
 
 `makeSystem` validates registry consistency, contract wiring, actor declarations,

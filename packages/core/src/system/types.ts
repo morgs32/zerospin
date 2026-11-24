@@ -63,7 +63,6 @@ export type IServiceRegistryEntry<
   RELEASES extends IServiceRegistry = IServiceRegistry,
 > = Readonly<{
   releases: RELEASES;
-  canonical: keyof RELEASES & number;
 }>;
 
 export type ISystem<

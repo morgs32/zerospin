@@ -107,7 +107,11 @@ export function recordOriginalCommandOutcomeTx(
       .where(eq(commands.serviceIndex, command.serviceIndex))
       .run();
     tx.insert(serviceChainDbConfig.schema.finalizedPosition)
-      .values({ singleton: 1, lastIndex: command.serviceIndex })
+      .values({
+        singleton: 1,
+        lastIndex: command.serviceIndex,
+        compactedThroughIndex: 0,
+      })
       .onConflictDoUpdate({
         target: serviceChainDbConfig.schema.finalizedPosition.singleton,
         set: { lastIndex: command.serviceIndex },

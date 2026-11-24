@@ -309,7 +309,7 @@ it('materializes retained V1 through omitted V2 codecs into the execution releas
     name: 'historicalReplayDomain',
     aggregates: {},
     services: {
-      reservations: { releases: { 2: executionRelease }, canonical: 2 },
+      reservations: { releases: { 2: executionRelease } },
     },
   });
   expect(

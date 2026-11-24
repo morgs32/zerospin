@@ -13,9 +13,11 @@ import {
 } from '../declarations/contracts/recordReservationWorkV1.ts';
 import { reservationV1 } from '../declarations/models/reservationV1.ts';
 import { reservationService } from '../declarations/services/reservationService.ts';
+import { reservationWorkV1 } from '../declarations/services/reservationWorkV1.ts';
 
 export const reservationsV2 = makeServiceRelease(reservationService, {
   version: 2,
+  rebuildFrom: reservationWorkV1,
   models: { reservation: reservationV1 },
   actors: {},
   extensions: {

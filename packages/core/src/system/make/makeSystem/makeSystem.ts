@@ -54,8 +54,7 @@ export function makeSystem<
           version: V extends number ? V : never;
         };
       };
-      canonical: keyof NoInfer<SERVICES[N]['releases']> & number;
-    };
+    } & Record<Exclude<keyof SERVICES[N], 'releases'>, never>;
   };
   aggregateAgents?: AGGREGATE_AGENT_NODES &
     ICheckedAgentGrants<

@@ -10,9 +10,11 @@ import { reservationV1 } from '../declarations/models/reservationV1.ts';
 import { reservationService } from '../declarations/services/reservationService.ts';
 
 import { capabilityViewerV2 } from './capabilityViewerV2.ts';
+import { reservationsV1 } from './reservationsV1.ts';
 
 export const reservationsV2 = makeServiceRelease(reservationService, {
   version: 2,
+  rebuildFrom: reservationsV1,
   models: { reservation: reservationV1 },
   actors: {
     capabilityViewer: capabilityViewerV2,

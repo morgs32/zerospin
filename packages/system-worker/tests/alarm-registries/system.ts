@@ -7,7 +7,7 @@ export const system = makeSystem({
   name: 'servicePublication',
 
   aggregates: {},
-  services: { dispatcher: { releases: { 1: dispatcherV1 }, canonical: 1 } },
+  services: { dispatcher: { releases: { 1: dispatcherV1 } } },
 });
 
 // oxlint-disable-next-line import/no-default-export -- The production config alias supplies this scenario's System.

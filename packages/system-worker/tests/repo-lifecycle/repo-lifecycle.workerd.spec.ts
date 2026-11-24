@@ -368,7 +368,6 @@ it('dispatches the native ServiceChain alarm once after schema and activation', 
         tableNames: [
           'admissionPosition',
           'finalizedPosition',
-          'canonicalHistory',
           'agentNodeProducers',
           'nodeProducers',
           'commands',
@@ -1021,22 +1020,6 @@ it('retains complete SystemSpecs and reaccepts an equal hash without writes', as
     storage.sql.exec('DROP TRIGGER spec_no_update');
     storage.sql.exec('DROP TRIGGER spec_no_delete');
   });
-  const repinned = makeSystemSpec({
-    system: makeSystem({
-      ...system,
-      services: {
-        ...system.services,
-        reservations: { ...system.services.reservations, canonical: 2 },
-      },
-    }),
-  });
-  expect(repinned.hash).not.toBe(spec.hash);
-  expect(repinned.services.reservations?.releases).toEqual(
-    spec.services.reservations?.releases,
-  );
-  expect(
-    (await systemRepo.registerSystemSpec({ spec: repinned })).result._tag,
-  ).toBe('Success');
   const omitted = makeSystemSpec({
     system: makeSystem({ name: system.name, aggregates: {} }),
   });
@@ -1062,7 +1045,7 @@ it('retains complete SystemSpecs and reaccepts an equal hash without writes', as
         serviceVersion: 1,
       })
     ).result,
-  ).toEqual({ _tag: 'Success', success: repinned });
+  ).toEqual({ _tag: 'Success', success: spec });
   // A newer accepted snapshot does not revoke code using the earlier one.
   expect(
     (
@@ -1080,7 +1063,7 @@ it('retains complete SystemSpecs and reaccepts an equal hash without writes', as
         .all()
         .map(row => row.hash)
         .toSorted(),
-    ).toEqual([spec.hash, repinned.hash, omitted.hash].toSorted());
+    ).toEqual([spec.hash, omitted.hash].toSorted());
   });
 });
 
@@ -1111,41 +1094,27 @@ it('accepts and rereads normalized metadata whose repeated Actor bodies would ex
       selections: { largeNote: queries.query.largeNote.findMany({}) },
     },
   );
-  const makeRelease = <const VERSION extends number>(version: VERSION) =>
-    makeServiceRelease(
-      { name: 'largeDeclarations' },
-      { version, models: { largeNote: note }, actors: { viewer } },
-    );
-  const releases = {
-    1: makeRelease(1),
-    2: makeRelease(2),
-    3: makeRelease(3),
-    4: makeRelease(4),
-    5: makeRelease(5),
-    6: makeRelease(6),
-    7: makeRelease(7),
-    8: makeRelease(8),
-    9: makeRelease(9),
-    10: makeRelease(10),
-    11: makeRelease(11),
-    12: makeRelease(12),
-    13: makeRelease(13),
-    14: makeRelease(14),
-    15: makeRelease(15),
-    16: makeRelease(16),
-    17: makeRelease(17),
-    18: makeRelease(18),
-    19: makeRelease(19),
-    20: makeRelease(20),
-    21: makeRelease(21),
-    22: makeRelease(22),
-    23: makeRelease(23),
-    24: makeRelease(24),
+  const definition = { name: 'largeDeclarations' } as const;
+  const models = { largeNote: note };
+  const actors = { viewer };
+  const first = makeServiceRelease(definition, { version: 1, models, actors });
+  const child = (version: number) =>
+    makeServiceRelease(definition, {
+      version,
+      models,
+      actors,
+      rebuildFrom: first,
+    });
+  const releases: Record<number, typeof first | ReturnType<typeof child>> = {
+    1: first,
   };
+  for (let version = 2; version <= 24; version++) {
+    releases[version] = child(version);
+  }
   const authored = makeSystem({
     name: system.name,
     aggregates: {},
-    services: { largeDeclarations: { releases, canonical: 1 } },
+    services: { largeDeclarations: { releases } },
   });
   const spec = makeSystemSpec({ system: authored });
   const owner = spec.services.largeDeclarations;
@@ -1395,7 +1364,6 @@ it('compares historical model, contract, Actor and release-binding facts against
       ...spec.services,
       reservations: {
         ...owner,
-        canonical: 3,
         releases: { 3: { ...service, version: 3 } },
         contractVersions: {
           ...owner.contractVersions,
@@ -1413,7 +1381,6 @@ it('compares historical model, contract, Actor and release-binding facts against
       ...spec.services,
       reservations: {
         ...owner,
-        canonical: 3,
         releases: { 3: { ...service, version: 3 } },
         actorVersions: {
           ...owner.actorVersions,
@@ -1434,7 +1401,6 @@ it('compares historical model, contract, Actor and release-binding facts against
       ...spec.services,
       reservations: {
         ...owner,
-        canonical: 3,
         releases: { 3: { ...service, version: 3, actors: {} } },
         modelVersions: {
           ...owner.modelVersions,
@@ -1514,7 +1480,6 @@ it('compares historical model, contract, Actor and release-binding facts against
       ...spec.services,
       reservations: {
         ...owner,
-        canonical: 3,
         releases: {
           3: { ...service, version: 3, system: remainingSystemGrants },
         },

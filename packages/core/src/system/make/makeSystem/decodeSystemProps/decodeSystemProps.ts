@@ -45,7 +45,6 @@ const SystemPropsSchema = Schema.Struct({
       Schema.String,
       Schema.Struct({
         releases: Schema.Record(Schema.String, ServiceReleaseSchema),
-        canonical: VersionSchema,
       }),
     ),
   ),

@@ -35,6 +35,7 @@ declare global {
       EXTERNAL_DELIVERY_V1_CONTROL: Service<ExternalDeliveryControls>;
       EXTERNAL_DELIVERY_V2_CONTROL: Service<ExternalDeliveryControls>;
       EXTERNAL_DELIVERY_V1_REPO: DurableObjectNamespace<ExternalDeliveryRepo>;
+      PINNED_NEWER_SERVICE_REPO: IDORepoNamespaces['SERVICE_VERSION_REPO'];
       PINNED_OLDER_SERVICE_REPO: IDORepoNamespaces['SERVICE_VERSION_REPO'];
       PINNED_OLDER_SERVICE_VERSION_CHAIN: IDORepoNamespaces['SERVICE_VERSION_CHAIN'];
       PINNED_NEWER_SERVICE_VERSION_CHAIN: IDORepoNamespaces['SERVICE_VERSION_CHAIN'];
@@ -1115,7 +1116,8 @@ test.skipIf(env.PINNED_OLDER_SERVICE_REPO === undefined)(
       await runInDurableObject(source, instance => instance.onAlarm());
       await expect
         .poll(
-          async () => (await source.getServiceCommand({ serviceIndex })).result,
+          async () =>
+            (await newerHistory.getEvaluatedCommand({ serviceIndex })).result,
         )
         .toMatchObject({
           _tag: 'Success',

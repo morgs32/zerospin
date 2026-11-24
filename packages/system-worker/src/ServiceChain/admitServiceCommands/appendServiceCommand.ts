@@ -17,13 +17,12 @@ export const appendServiceCommand = Effect.fn(function* <
   if ((command.payload === null) !== (payloadFailure !== null)) {
     return yield* makeZerospinError('service-command-payload-failure-invalid');
   }
-  const { admissionPosition } = serviceChainDbConfig.schema;
+  const { admissionPosition, finalizedPosition } = serviceChainDbConfig.schema;
   const admittedThrough =
     tx.select().from(admissionPosition).get()?.lastIndex ?? 0;
-  const handedOffThrough =
-    tx.select().from(serviceChainDbConfig.schema.canonicalHistory).get()
-      ?.serviceIndex ?? 0;
-  if (admittedThrough - handedOffThrough >= 64) {
+  const compactedThrough =
+    tx.select().from(finalizedPosition).get()?.compactedThroughIndex ?? 0;
+  if (admittedThrough - compactedThrough >= 64) {
     return yield* makeZerospinError({
       code: 'service-admission-backlog-full',
       extra: { retryable: true },

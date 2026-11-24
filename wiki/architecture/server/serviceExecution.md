@@ -98,9 +98,6 @@ sources:
   - path: packages/system-worker/src/externalOperations/resolveWorkContract.ts
     sha: 5746d5b653948378f462a85501e7f2c3619059cb
     lines: 1-30
-  - path: packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts
-    sha: 5910e93d8c907aef7b548c04a844aaf8420915ec
-    lines: 1-40
   - path: packages/system-worker/src/executeDirectServiceCommand/executeDirectServiceCommand.ts
     sha: 74293521842cec50537072d64460bd2873922b9b
     lines: 1-46
@@ -131,7 +128,7 @@ ServiceVersionRepo evaluates admitted commands and commits current resources,
 `materializationHead` and one complete pending evaluated command together.
 ServiceVersionChain retains that immutable evaluated history across local command rows and ServiceVersionArchive ranges. ServiceChain owns
 the local admitted-input suffix, original finalization, complete pending command
-deliveries and external requests. It reads its adopted canonical prefix through the saved ServiceVersionChain. In a split deployment the stable System Worker hosts ServiceChain, and each registered `ServiceReleaseWorker` hosts its ServiceVersionRepo, ServiceVersionChain and ServiceVersionArchive.
+deliveries and external requests. It reads compacted commands from a ServiceVersionChain with acknowledged publication coverage. In a split deployment the stable System Worker hosts ServiceChain, and each registered `ServiceReleaseWorker` hosts its ServiceVersionRepo, ServiceVersionChain and ServiceVersionArchive.
 Only ServiceChain invokes external request code. Its original-command outbox is the sole sender to `ServiceVersionRepo.executeCommandSubscriber`. A continuation uses the shared Repo handle to call `awaitCommandResult`.
 
 - [`types.ts:15-33`](../../../packages/system-worker/src/ServiceVersionRepo/types.ts#L15-L33) — declares the subscriber’s retry contract and the ordinary Repo interface separately.
@@ -259,20 +256,12 @@ cannot recreate settled requests.
 - [`makeOutboxQueue.ts:225-237`](../../../packages/system-worker/src/makeOutboxQueue/makeOutboxQueue.ts#L225-L237) — deletes exactly the acknowledged publication page in one synchronous transaction.
 - [`recordOriginalCommandOutcomeTx.ts:49-64`](../../../packages/system-worker/src/ServiceChain/recordOriginalCommandOutcomeTx.ts#L49-L64) — compares complete admitted input and exact retained outcome before any repeated work insertion.
 
-## Canonical input handoff
+## Service history compaction
 
-ServiceChain reads the published head of the ServiceVersionChain selected by the
-stable System's canonical configuration. A synchronous transaction records
-covered replay progress, stores the adopted release and boundary, and deletes
-covered local input. The previously adopted prefix remains readable until the
-new selection publishes through it. Activation and original finalization arm
-recovery until publication covers the finalized position.
-[Canonical History Handoff](./CanonicalHistoryHandoff.md) owns replacement,
-logical reads and producer checkpoint details.
+ServiceChain deletes finalized command rows once every listed release covers the prefix and at least one ServiceVersionChain has acknowledged publication through it.
 
-- [`ServiceChain.ts`](../../../packages/system-worker/src/ServiceChain/ServiceChain.ts) — observes actual ServiceVersionChain publication without involving the pinned ServiceVersionRepo in canonical selection.
-- [`adoptCanonicalServiceHistory.ts:17-40`](../../../packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts#L17-L40) — replaces the readable prefix only at nondecreasing publication-proving progress and deletes covered local input.
-- [`executeDirectServiceCommand.ts:34-46`](../../../packages/system-worker/src/executeDirectServiceCommand/executeDirectServiceCommand.ts#L34-L46) — returns the originating ServiceVersionRepo's own outcome, independently of the selected canonical historical result.
+- [`compactServiceHistory.ts`](../../../packages/system-worker/src/ServiceChain/compactServiceHistory.ts) — advances the compaction boundary and deletes covered rows in one transaction.
+- [`executeDirectServiceCommand.ts:34-46`](../../../packages/system-worker/src/executeDirectServiceCommand/executeDirectServiceCommand.ts#L34-L46) — returns the originating ServiceVersionRepo's own outcome.
 
 ## Recovery and failure boundaries
 

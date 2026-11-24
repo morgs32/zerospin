@@ -4,6 +4,19 @@ import type { IOwnerReleaseLayer } from '../execution/ownerReleaseLayer.ts';
 import type { IAnyModels } from '../models/types.ts';
 import type { IAnyServiceActorRelease } from '../serviceActor/types.ts';
 
+export type IServiceReleaseIdentity<
+  NAME extends string = string,
+  VERSION extends number = number,
+> = Readonly<{
+  name: NAME;
+  version: VERSION;
+}>;
+
+export type IServiceReleaseHistory<BRANCH, REBUILD = BRANCH> =
+  | { readonly branchFrom?: never; readonly rebuildFrom?: never }
+  | { readonly branchFrom: BRANCH; readonly rebuildFrom?: never }
+  | { readonly branchFrom?: never; readonly rebuildFrom: REBUILD };
+
 export type IServiceRelease<
   NAME extends string = string,
   MODELS extends IAnyModels = IAnyModels,
@@ -15,6 +28,8 @@ export type IServiceRelease<
   VERSION extends number = number,
   SYSTEM extends IServiceContracts = IServiceContracts,
   EXTERNAL extends IServiceContracts = IServiceContracts,
+  HISTORY extends IServiceReleaseHistory<IServiceReleaseIdentity<NAME>> =
+    IServiceReleaseHistory<IServiceReleaseIdentity<NAME>>,
 > = {
   readonly extensions: Readonly<Record<string, IServiceContractExtension>>;
   readonly actors: Readonly<ACTORS>;
@@ -26,7 +41,7 @@ export type IServiceRelease<
   readonly contracts: Readonly<CONTRACTS>;
   readonly system: Readonly<SYSTEM>;
   readonly external: Readonly<EXTERNAL>;
-};
+} & HISTORY;
 export type IAnyServiceRelease = {
   readonly extensions: Readonly<Record<string, IServiceContractExtension>>;
   readonly actors: Readonly<Record<string, IAnyServiceActorRelease>>;
@@ -38,6 +53,6 @@ export type IAnyServiceRelease = {
   readonly contracts: IServiceContracts;
   readonly system: IServiceContracts;
   readonly external: IServiceContracts;
-};
+} & IServiceReleaseHistory<IServiceReleaseIdentity>;
 
 export type IServiceRegistry = Readonly<Record<number, IAnyServiceRelease>>;

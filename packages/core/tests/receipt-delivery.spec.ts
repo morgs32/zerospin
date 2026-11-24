@@ -95,7 +95,7 @@ describe('Receipt delivery', () => {
       const system = makeSystem({
         name: 'nativeCodecs',
         aggregates: {},
-        services: { nativeCodecs: { releases: { 1: release }, canonical: 1 } },
+        services: { nativeCodecs: { releases: { 1: release } } },
       });
       const { readDb } = yield* openTestDb({});
       expect(
@@ -229,7 +229,6 @@ describe('Receipt delivery', () => {
           services: {
             receipts: {
               releases: { 1: receiptsServiceReleaseV1 },
-              canonical: 1,
             },
           },
         }),
@@ -373,7 +372,6 @@ describe('Receipt delivery', () => {
           services: {
             receipts: {
               releases: { 1: receiptsServiceReleaseV1 },
-              canonical: 1,
             },
           },
         }),
@@ -885,7 +883,7 @@ describe('Exact command destination registration', () => {
         name: 'receipts',
         aggregates: {},
         services: {
-          receiptBindings: { releases: { 1: release }, canonical: 1 },
+          receiptBindings: { releases: { 1: release } },
         },
       }),
     ).not.toThrow();
@@ -898,7 +896,7 @@ describe('Exact command destination registration', () => {
         name: 'receipts',
         aggregates: {},
         services: {
-          receiptBindings: { releases: { 1: lookalikeOwner }, canonical: 1 },
+          receiptBindings: { releases: { 1: lookalikeOwner } },
         },
       }),
     ).toThrow(/exact claims-free ordinary contract/i);
@@ -917,7 +915,7 @@ describe('Exact command destination registration', () => {
         name: 'receipts',
         aggregates: {},
         services: {
-          receiptBindings: { releases: { 1: conflictingGrant }, canonical: 1 },
+          receiptBindings: { releases: { 1: conflictingGrant } },
         },
       }),
     ).toThrow(/conflicting canonical contract child/i);
@@ -931,7 +929,7 @@ describe('Exact command destination registration', () => {
         name: 'receipts',
         aggregates: {},
         services: {
-          receiptBindings: { releases: { 1: lookalikeContract }, canonical: 1 },
+          receiptBindings: { releases: { 1: lookalikeContract } },
         },
       }),
     ).toThrow(/exact claims-free ordinary contract/i);
@@ -945,7 +943,7 @@ describe('Exact command destination registration', () => {
         name: 'receipts',
         aggregates: {},
         services: {
-          receiptBindings: { releases: { 2: wrongVersion }, canonical: 2 },
+          receiptBindings: { releases: { 2: wrongVersion } },
         },
       }),
     ).toThrow();
@@ -1051,7 +1049,7 @@ describe('Ordinary continuation payloads', () => {
         const system = makeSystem({
           name: 'receipts',
           aggregates: {},
-          services: { receipts: { releases: { 1: release }, canonical: 1 } },
+          services: { receipts: { releases: { 1: release } } },
         });
         const stores = yield* makeHarnessStores(system);
         const store = yield* stores.get({ release });

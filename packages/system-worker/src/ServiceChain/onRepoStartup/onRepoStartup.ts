@@ -4,6 +4,7 @@ import * as Effect from 'effect/Effect';
 
 import { getSystemSpec } from '../../getSystemSpec/getSystemSpec.js';
 import type { IRecoveryRegistry } from '../../makeRecoveryRegistry/makeRecoveryRegistry.js';
+import { compactServiceHistory } from '../compactServiceHistory.js';
 import { serviceChainDbConfig } from '../serviceChainDbConfig.js';
 
 /** Newly registered executors subscribe from the retained beginning; existing cursors keep their position. */
@@ -18,15 +19,26 @@ export const enrollRegisteredServiceReleases = Effect.fn(
   yield* Effect.try({
     try: () =>
       db.transaction(tx => {
+        const { admissionPosition, replaySubscribers } =
+          serviceChainDbConfig.schema;
+        const admittedThroughIndex =
+          tx.select().from(admissionPosition).get()?.lastIndex ?? 0;
         for (const release of releases) {
-          tx.insert(serviceChainDbConfig.schema.replaySubscribers)
+          const predecessor = release.branchFrom ?? release.rebuildFrom;
+          tx.insert(replaySubscribers)
             .values({
               serviceVersion: release.version,
               acknowledgedServiceIndex: 0,
+              initializationThroughIndex:
+                predecessor === undefined ? 0 : admittedThroughIndex,
             })
             .onConflictDoNothing()
             .run();
         }
+        compactServiceHistory(
+          tx,
+          releases.map(release => release.version),
+        );
       }),
     catch: error =>
       ensureZerospinError({ code: 'service-replay-enrollment-failed', error }),
@@ -40,11 +52,10 @@ export const onRepoStartup = Effect.fn('ServiceChain.onRepoStartup')(
     recoveryRegistry: IRecoveryRegistry;
   }) {
     const { key, recoveryRegistry, db } = props;
-    yield* recoveryRegistry.hold('canonicalHistory');
     yield* recoveryRegistry.hold('executeCommandOutbox');
     yield* recoveryRegistry.hold('replayCommandsFanout');
     db.insert(serviceChainDbConfig.schema.finalizedPosition)
-      .values({ singleton: 1, lastIndex: 0 })
+      .values({ singleton: 1, lastIndex: 0, compactedThroughIndex: 0 })
       .onConflictDoNothing()
       .run();
     yield* enrollRegisteredServiceReleases(db, key);

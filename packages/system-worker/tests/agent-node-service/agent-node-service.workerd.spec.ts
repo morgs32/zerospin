@@ -333,7 +333,7 @@ it('retains one hosted admission receipt across concurrent calls and Chain resta
     ).result,
   ).toMatchObject({
     _tag: 'Failure',
-    failure: { code: 'command-admission-grant-invalid' },
+    failure: { code: 'admission-contract-not-found' },
   });
   const receipt = {
     _tag: 'Success',
@@ -354,7 +354,7 @@ it('retains one hosted admission receipt across concurrent calls and Chain resta
           return runInDurableObject(
             source(),
             ({ db, schema }) =>
-              db.select().from(schema.canonicalHistory).get()?.serviceIndex,
+              db.select().from(schema.finalizedPosition).get()?.lastIndex,
           );
         },
         { timeout: 10000 },

@@ -42,6 +42,11 @@ declare namespace Cloudflare {
           ): ReturnType<
             import('./src/ServiceChain/ServiceChain.js').ServiceChain['prepareServiceReplayInput']
           >;
+          readServiceBranchCommand(
+            serviceIndex: number,
+          ): ReturnType<
+            import('./src/ServiceChain/ServiceChain.js').ServiceChain['readServiceBranchCommand']
+          >;
           readReplayPage(
             afterIndex: number,
             maxIndex?: number,

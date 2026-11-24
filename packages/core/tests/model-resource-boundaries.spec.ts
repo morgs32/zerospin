@@ -147,6 +147,7 @@ it('projects the same Service facts before and after composing its successor and
   const successor = upgradeServiceContractRelease(book, { version: 2 });
   const upgraded = makeServiceRelease(reservations, {
     version: 2,
+    rebuildFrom: original,
     models: { folder: folderV1 },
     system: { Book: successor },
   });
@@ -158,8 +159,8 @@ it('projects the same Service facts before and after composing its successor and
     name: 'booking',
     aggregates: {},
     services: {
-      reservations: { releases: { 1: original, 2: upgraded }, canonical: 1 },
-      inventory: { releases: { 1: inventory }, canonical: 1 },
+      reservations: { releases: { 1: original, 2: upgraded } },
+      inventory: { releases: { 1: inventory } },
     },
   });
   expect(book.next).toBe(successor);
@@ -277,8 +278,8 @@ it.effect(
           name: 'booking',
           aggregates: {},
           services: {
-            reservations: { releases: { 1: reservations }, canonical: 1 },
-            inventory: { releases: { 1: ungranted }, canonical: 1 },
+            reservations: { releases: { 1: reservations } },
+            inventory: { releases: { 1: ungranted } },
           },
         }),
       ).toThrow(
@@ -658,7 +659,7 @@ describe('Model rows, resource envelopes and query boundaries', () => {
         const system = makeSystem({
           name: 'datedAgent',
           aggregates: {},
-          services: { files: { releases: { 1: owner }, canonical: 1 } },
+          services: { files: { releases: { 1: owner } } },
           serviceAgents: {
             files: { clock: { releases: { 1: agent }, active: 1 } },
           },
@@ -760,7 +761,7 @@ describe('Model rows, resource envelopes and query boundaries', () => {
         const system = makeSystem({
           name: 'confirmInOrder',
           aggregates: {},
-          services: { files: { releases: { 1: owner }, canonical: 1 } },
+          services: { files: { releases: { 1: owner } } },
           serviceAgents: {
             files: {
               firstObserver: {
@@ -1118,7 +1119,7 @@ describe('Model rows, resource envelopes and query boundaries', () => {
       return makeSystem({
         name: 'grantModels',
         aggregates: {},
-        services: { files: { releases: { 1: owner }, canonical: 1 } },
+        services: { files: { releases: { 1: owner } } },
         serviceAgents: {
           files: { observer: { releases: { 1: agent }, active: 1 } },
         },

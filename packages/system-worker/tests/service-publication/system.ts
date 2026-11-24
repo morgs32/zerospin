@@ -10,7 +10,6 @@ export const system = makeSystem({
   services: {
     reservations: {
       releases: { 1: reservationsV1, 2: reservationsV2 },
-      canonical: 1,
     },
   },
 });
@@ -25,7 +24,7 @@ export function pinnedOlderConfig() {
     system: makeSystem({
       ...system,
       services: {
-        reservations: { releases: { 1: reservationsV1 }, canonical: 1 },
+        reservations: { releases: { 1: reservationsV1 } },
       },
     }),
   });

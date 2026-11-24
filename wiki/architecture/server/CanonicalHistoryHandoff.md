@@ -1,22 +1,34 @@
 ---
 title: Canonical History Handoff
-updated: 2026-11-19
+updated: 2026-11-24
 sources:
+  - path: packages/owner-release-worker/src/ServiceVersionRepo/replayCommands/replayCommand.ts
+    sha: f316f968dc6f5541684dce8c8cbf1507620e3433
+    lines: 1-177
+  - path: packages/system-worker/src/ServiceChain/onRepoStartup/onRepoStartup.ts
+    sha: 1b3fc7afe2353e6b79bb40f0eb45e7d701ac4314
+    lines: 1-63
+  - path: packages/system-worker/src/ServiceChain/getPublishedServiceHistory.ts
+    sha: 917e34116ca388e33de2246362dc949bbcb10880
+    lines: 1-31
+  - path: packages/system-worker/src/ServiceChain/compactServiceHistory.ts
+    sha: 69976143d515f7ba796723066a45ab988d0dc885
+    lines: 1-48
   - path: packages/core/src/system/make/makeSystem/validateReleaseRegistries.ts
-    sha: 8acaead5ebf953ebb7bf01576920f0e4bcc8209d
-    lines: 1-76
+    sha: 3d39e8d294ba27a905cf029a18db3ea003df7057
+    lines: 1-101
   - path: packages/system-worker/src/AggregateChain/AggregateChain.ts
     sha: e3be6a3db18883b650dbfa98b6f5dd8ac3397e79
     lines: 1-1021
   - path: packages/system-worker/src/ServiceChain/ServiceChain.ts
-    sha: 9635933d4607abf98ef7b6a19c5bb33a521b7e1b
-    lines: 1-695
+    sha: ceab16e7e444aabd641c230377c698950b606b90
+    lines: 1-889
   - path: packages/system-worker/src/makeFanoutQueue/makeFanoutQueue.ts
     sha: 8d3fdd39975c954bf3348e5859e16c31c175e9aa
     lines: 1-507
   - path: packages/owner-release-worker/src/ServiceVersionRepo/ServiceVersionRepo.ts
-    sha: 94fae8bb23bc72ed993391e27b9772832184bd62
-    lines: 1-326
+    sha: 85ce210a1080d9f36e058f4e789eff176f7368cf
+    lines: 1-356
   - path: packages/system-worker/src/makeFanoutSubscriber/makeFanoutSubscriber.ts
     sha: da73e81eede9e189506c48ea6ad3d0a313254d25
     lines: 1-213
@@ -26,9 +38,6 @@ sources:
   - path: packages/system-worker/src/makeFanoutQueue/makeFanoutQueueStorage.ts
     sha: 10dbb9657ace5e9f2a0590ddcadff203ea4cbd7c
     lines: 1-238
-  - path: packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts
-    sha: c15081fd73a8455f6a2b0d284cd677535348881f
-    lines: 1-43
   - path: packages/system-worker/src/AggregateChain/compactAggregateHistory.ts
     sha: 9d203ded826484272ba110e074fc096b760866e6
     lines: 1-55
@@ -36,8 +45,8 @@ sources:
     sha: 352bbfda0262d653d2d326bcdc4f25381c699a3c
     lines: 1-491
   - path: packages/system-worker/src/ServiceChain/readServiceCommand.ts
-    sha: e0ade8077c58fbb4b95f9f38e43389aedcce42e1
-    lines: 1-61
+    sha: 414a07edf9cdd2ebe81dd10eb3f11c2216de67a6
+    lines: 1-60
   - path: packages/system-worker/src/AggregateChain/readAggregateCommand.ts
     sha: c2a8585536d2bffc02f68ae59e08513c29150359
     lines: 1-59
@@ -51,8 +60,8 @@ sources:
     sha: 885ac75cc0a513f0e5acc9d11d20877931a48c89
     lines: 1-57
   - path: packages/system-worker/src/ServiceChain/admitServiceCommands/appendServiceCommand.ts
-    sha: 3c180e805ab58fe245bd26d1317e074efa01b025
-    lines: 1-50
+    sha: 2ee0be17ec5872cf9643b733b4a54d3cc45f9dc2
+    lines: 1-53
   - path: packages/browser/src/Node/isNodeAdmissionBackpressure.ts
     sha: 7f9e5ed77c9ffa4aeb8dd90bc033451bc4a76cd1
     lines: 1-12
@@ -99,16 +108,16 @@ sources:
 
 `AggregateChain` and `ServiceChain` retain their local admitted-command suffixes.
 Aggregate release enrollment fixes the predecessor prefix and the start of ongoing
-replay. Service history adoption follows the configured canonical release.
+replay. Service release enrollment records the same boundary. ServiceChain compacts finalized commands after release coverage and publication are durable.
 
 ## Trigger
 
-1. `makeSystem` validates Aggregate predecessors and Service canonical selection.
-   - [`validateReleaseRegistries.ts:21-74`](../../../packages/core/src/system/make/makeSystem/validateReleaseRegistries.ts#L21-L74) — requires a registered earlier predecessor for each Aggregate child and a registered canonical release for each Service.
+1. `makeSystem` validates Aggregate and Service predecessors.
+   - [`validateReleaseRegistries.ts:21-74`](../../../packages/core/src/system/make/makeSystem/validateReleaseRegistries.ts#L21-L74) — requires a registered earlier predecessor for each child release of either owner.
 2. `AggregateChain` enrolls newly listed releases when it activates for the deployment.
    - [`onRepoStartup.ts:18-56`](../../../packages/system-worker/src/AggregateChain/onRepoStartup/onRepoStartup.ts#L18-L56) — captures the admitted position and inserts new replay subscribers in one transaction.
-3. `ServiceChain` reads the configured canonical release's publication under recovery.
-   - [`ServiceChain.ts`](../../../packages/system-worker/src/ServiceChain/ServiceChain.ts) — reads the ServiceVersionChain publication head for the stable System's current selection.
+3. `ServiceChain` enrolls each listed Service release.
+   - [`onRepoStartup.ts:15-42`](../../../packages/system-worker/src/ServiceChain/onRepoStartup/onRepoStartup.ts#L15-L42) — saves the current admitted position for each new release with a predecessor.
 
 ## Aggregate predecessor and replay
 
@@ -144,37 +153,36 @@ sequenceDiagram
 7. The queue advances the actual replay acknowledgement and `AggregateChain` compacts in the same transaction.
    - [`compactAggregateHistory.ts:8-53`](../../../packages/system-worker/src/AggregateChain/compactAggregateHistory.ts#L8-L53) — bounds deletion by finalization, the releases owed each command, and actual publication coverage.
 
-## Service canonical history adoption
+## Service publication and compaction
 
 ```mermaid
 sequenceDiagram
   participant ServiceChain
-  participant replayCommandsFanout
   participant ServiceVersionRepo
   participant ServiceVersionChain
-  replayCommandsFanout->>ServiceVersionRepo: replayCommandsFanoutSubscriber(...).receive(...)
-  Note over ServiceVersionRepo: Replay commits resources, checkpoint and complete pending publication
-  ServiceVersionRepo-->>replayCommandsFanout: Materialization acknowledgement
+  ServiceChain->>ServiceVersionRepo: replayCommandsFanoutSubscriber(...).receive(...)
   ServiceVersionRepo->>ServiceVersionChain: appendEvaluatedCommands(...)
-  ServiceVersionChain-->>ServiceVersionRepo: Durable local append acknowledgement
-  ServiceChain->>ServiceVersionChain: getEvaluatedCommandPage({ afterIndex: 0, maxIndex: 0 })
-  ServiceVersionChain-->>ServiceChain: Durable publication head
-  Note over ServiceChain: Atomically adopt covered history, record covered progress and prune local input copies
+  ServiceVersionChain-->>ServiceVersionRepo: Durable append acknowledgement
+  ServiceVersionRepo-->>ServiceChain: Published through delivered serviceIndex
+  ServiceChain->>ServiceChain: Advance replay acknowledgement and compact covered rows
 ```
 
 ## Annotated workflow steps
 
-1. The source queue acquires the pinned ServiceVersionRepo's source-bound capability and delivers the admitted commands.
-   - [`makeFanoutQueue.ts:307-319`](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueue.ts#L307-L319) — acquires the Repo, calls its subscriber accessor and decodes the receive acknowledgement.
-2. Each ServiceVersionRepo acknowledges its materialization and delivers complete pending publication to its ServiceVersionChain.
-   - [`ServiceVersionRepo.ts`](../../../packages/owner-release-worker/src/ServiceVersionRepo/ServiceVersionRepo.ts) — provides the materialization cursor and independently drains the publication outbox to the matching ServiceVersionChain.
-3. ServiceVersionChain acknowledges its durable local append before asynchronous Archive delivery completes.
-   - [`ServiceVersionChain.ts:544-611`](../../../packages/system-worker/src/ServiceVersionChain/ServiceVersionChain.ts#L544-L611) — validates old publications, commits the new suffix and wakes Archive/projection delivery.
-4. ServiceChain reads the actual publication head for the canonical release selected in the stable System configuration.
-   - [`ServiceChain.ts`](../../../packages/system-worker/src/ServiceChain/ServiceChain.ts) — polls the selected ServiceVersionChain until publication covers the finalized position.
-   - [`ServiceVersionChain.ts:495-506`](../../../packages/system-worker/src/ServiceVersionChain/ServiceVersionChain.ts#L495-L506) — reads the published head without fetching rows when the caller requests a zero-length page.
-5. ServiceChain records the selected release, published boundary and covered acknowledgement together with pruning in a synchronous transaction.
-   - [`adoptCanonicalServiceHistory.ts`](../../../packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts) — keeps the previous adopted prefix until the candidate covers it, clamps adoption to finalized progress and deletes covered local rows.
+1. ServiceChain delivers finalized commands to the enrolled release.
+   - [`makeFanoutQueue.ts:307-319`](../../../packages/system-worker/src/makeFanoutQueue/makeFanoutQueue.ts#L307-L319) — opens the release subscriber and calls its receive method.
+2. ServiceVersionRepo drains its evaluated-command outbox through the delivered position.
+   - [`ServiceVersionRepo.ts:147-160`](../../../packages/owner-release-worker/src/ServiceVersionRepo/ServiceVersionRepo.ts#L147-L160) — publishes complete evaluated commands with `appendEvaluatedCommands`.
+3. ServiceVersionChain commits the evaluated commands and acknowledges the append.
+   - [`ServiceVersionChain.ts:544-611`](../../../packages/system-worker/src/ServiceVersionChain/ServiceVersionChain.ts#L544-L611) — validates duplicates and stores fresh publications before Archive delivery.
+4. ServiceVersionRepo returns the replay acknowledgement after publication. A pull during startup advances local materialization without advancing the ServiceChain acknowledgement.
+   - [`ServiceVersionRepo.ts`](../../../packages/owner-release-worker/src/ServiceVersionRepo/ServiceVersionRepo.ts) — drains publication before returning from a pushed delivery, including a retry of materialized commands.
+5. ServiceChain advances the acknowledgement and deletes the covered finalized prefix in one transaction. Every listed release must cover the prefix through its initialization boundary or acknowledgement, and at least one acknowledgement must prove publication through it.
+   - [`compactServiceHistory.ts`](../../../packages/system-worker/src/ServiceChain/compactServiceHistory.ts) — computes the common boundary, records it and deletes local command rows through it.
+
+A child Service release pulls finalized commands through its enrollment position. For `branchFrom`, `ServiceChain.readServiceBranchCommand` reads the declared predecessor’s evaluated command. For `rebuildFrom`, the child evaluates the admitted command with its own release. After the enrollment position both evaluate new commands on the child.
+
+- [`replayCommand.ts`](../../../packages/owner-release-worker/src/ServiceVersionRepo/replayCommands/replayCommand.ts) — restores the predecessor’s evaluated command within the branch prefix and uses ordinary replay after it.
 
 ## Publication proof and configuration changes
 
@@ -188,13 +196,9 @@ initialization history through the deployment watermark.
 - [`readAggregateCommand.ts:24-55`](../../../packages/system-worker/src/AggregateChain/readAggregateCommand.ts#L24-L55) — resolves a compacted position through a VersionChain with durable acknowledgement coverage and reads newer positions locally.
 - [`executeDirectSystemAggregateCommand.ts:37-50`](../../../packages/system-worker/src/executeDirectSystemAggregateCommand/executeDirectSystemAggregateCommand.ts#L37-L50) — awaits the addressed AggregateVersionRepo's evaluated result.
 
-`ServiceChain` retains the previously adopted canonical prefix while a newly
-selected canonical release publishes through the old boundary. The complete
-Service publication can be read after the local append and before Archive
-relocation.
+ServiceChain reads compacted positions from a ServiceVersionChain whose publication acknowledgement covers the requested index. It reads later commands from its local rows.
 
-- [`adoptCanonicalServiceHistory.ts:16-43`](../../../packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts#L16-L43) — refuses a lower replacement boundary and stores the adopted release and position.
-- [`readServiceCommand.ts:14-61`](../../../packages/system-worker/src/ServiceChain/readServiceCommand.ts#L14-L61) — reads the adopted prefix through its saved release and the newer suffix locally.
+- [`readServiceCommand.ts`](../../../packages/system-worker/src/ServiceChain/readServiceCommand.ts) — selects published history or a local admitted command using the compaction boundary.
 - [`executeDirectServiceCommand.ts:34-46`](../../../packages/system-worker/src/executeDirectServiceCommand/executeDirectServiceCommand.ts#L34-L46) — returns the addressed ServiceVersionRepo's evaluated outcome.
 
 ## Admission capacity and browser retries
@@ -210,7 +214,7 @@ capacity failure only when it came from the actual delegated direct command;
 authored authorization refusals retain their normal classification.
 
 - [`appendAggregateCommand.ts:16-30`](../../../packages/system-worker/src/AggregateChain/admitAggregateCommands/appendAggregateCommand.ts#L16-L30) — checks new Aggregate suffix capacity before advancing admission position.
-- [`appendServiceCommand.ts:16-30`](../../../packages/system-worker/src/ServiceChain/admitServiceCommands/appendServiceCommand.ts#L16-L30) — refuses new Service commands at the unadopted-suffix bound.
+- [`appendServiceCommand.ts:16-30`](../../../packages/system-worker/src/ServiceChain/admitServiceCommands/appendServiceCommand.ts#L16-L30) — refuses new Service commands at the uncompacted-suffix bound.
 - [`isNodeAdmissionBackpressure.ts:3-12`](../../../packages/browser/src/Node/isNodeAdmissionBackpressure.ts#L3-L12) — recognizes only the two admission-capacity codes with explicit retryable metadata.
 - [`AggregateNodeSynchronization.ts:545-556`](../../../packages/browser/src/AggregateNode/AggregateNodeSynchronization.ts#L545-L556) — routes capacity failure through existing uncertain-admission recovery.
 - [`ServiceNodeSynchronization.ts:444-453`](../../../packages/browser/src/ServiceNode/ServiceNodeSynchronization.ts#L444-L453) — preserves the equivalent Service Node retry path.
@@ -245,8 +249,7 @@ row and cannot reconstruct or overwrite settled work.
 No storage reset or deployed cutover follows from these source changes. Fixed-schema
 rollout requires separately authorized empty affected storage, including
 SystemRepo's `acceptedSystemSpecs`. Its complete stored `spec` JSON is decoded by
-SystemSpecSchema. Aggregate entries use `releases` and Service entries retain
-their canonical selector. Previously accepted Aggregate specs with `canonical`
+SystemSpecSchema. Aggregate and Service entries use `releases` with predecessor declarations. Previously accepted Aggregate specs with `canonical`
 are incompatible. Acceptance still compares and retains whole SystemSpecs, without a
 legacy decoder or metadata translation.
 

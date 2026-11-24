@@ -49,7 +49,6 @@ export function configureOwnerReleaseRuntime(
           services: {
             [release.name]: {
               releases: { [release.version]: release },
-              canonical: release.version,
             },
           },
         }),

@@ -20,6 +20,7 @@ import { ServiceActorVersionRepo } from '../../src/ServiceActorVersionRepo/Servi
 import { serviceActorVersionRepoNameUtils } from '../../src/ServiceActorVersionRepo/serviceActorVersionRepoName.ts';
 import { ServiceAgentVersionChain } from '../../src/ServiceAgentVersionChain/ServiceAgentVersionChain.ts';
 import type { ServiceAgentVersionRepo } from '../../src/ServiceAgentVersionRepo/ServiceAgentVersionRepo.ts';
+import * as workerConfiguration from '../../src/workerConfiguration/workerConfiguration.ts';
 import {
   recordReservationWorkRequests,
   resetRecordReservationWork,
@@ -161,6 +162,10 @@ it.each(['actor', 'agent'] as const)(
     const query = makeQueryDbVersion({
       models: { reservation },
     }).query.reservation.findMany();
+    // This test invokes the System Worker API inside the owner release's test isolate.
+    using _servingSpec = vi
+      .spyOn(workerConfiguration, 'readExecutingSystemSpec')
+      .mockReturnValue(makeSystemSpec({ system }));
     const canonicalResources = await Effect.runPromise(
       getNativeSystemApi(owner.systemId).executeServiceQuery({
         serviceName: owner.serviceName,

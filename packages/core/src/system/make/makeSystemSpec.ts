@@ -236,7 +236,6 @@ export function makeSystemSpec(props: { system: ISystem }): ISystemSpec {
         ),
       );
       return {
-        canonical: owner.canonical,
         releases: projectSortedRecord(owner.releases, makeServiceSpec),
         ...compileOwnerFacts(
           owner.releases,

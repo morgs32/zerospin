@@ -7,6 +7,7 @@ import { reservationV1 } from '../declarations/models/reservationV1.ts';
 import { reservationService } from '../declarations/services/reservationService.ts';
 
 import { createReservationV1 } from './createReservationV1.ts';
+import { reservationsV1 } from './reservationsV1.ts';
 
 const createReservationV2 = upgradeServiceContractRelease(createReservationV1, {
   version: 2,
@@ -19,12 +20,13 @@ const createReservationV2 = upgradeServiceContractRelease(createReservationV1, {
         resourceId: payload.reservationId,
         attributes: { expiresAt: payload.expiresAt },
       });
-      return 'canonical';
+      return 'evaluated-by-v2';
     }),
 });
 
 export const reservationsV2 = makeServiceRelease(reservationService, {
   version: 2,
+  branchFrom: reservationsV1,
   models: { reservation: reservationV1 },
   actors: {},
   system: { createReservation: createReservationV2 },

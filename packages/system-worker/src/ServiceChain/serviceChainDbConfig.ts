@@ -24,14 +24,7 @@ export const serviceChainBaseline = makeDbConfig({
       shape: {
         singleton: primitives.integer({ primaryKey: true }),
         lastIndex: primitives.integer(),
-      },
-    }),
-    canonicalHistory: makeTable({
-      name: 'canonicalHistory',
-      shape: {
-        singleton: primitives.integer({ primaryKey: true }),
-        serviceVersion: primitives.integer(),
-        serviceIndex: primitives.integer(),
+        compactedThroughIndex: primitives.integer(),
       },
     }),
     ...agentNodeProducerDbConfig.tables,
@@ -155,6 +148,7 @@ export const serviceChainBaseline = makeDbConfig({
       shape: {
         serviceVersion: primitives.integer({ primaryKey: true }),
         acknowledgedServiceIndex: primitives.integer(),
+        initializationThroughIndex: primitives.integer(),
       },
     }),
   },

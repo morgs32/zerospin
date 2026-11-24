@@ -16,7 +16,6 @@ import { sql } from 'drizzle-orm';
 import * as Cause from 'effect/Cause';
 import * as Effect from 'effect/Effect';
 import * as Exit from 'effect/Exit';
-import * as Schema from 'effect/Schema';
 import { afterEach, expect, it } from 'vitest';
 
 import type { IServiceCommandOccurrence } from '../../src/ServiceChain/types.ts';
@@ -125,6 +124,7 @@ it.each([
       { name: 'reservations' },
       {
         version: 2,
+        rebuildFrom: sourceRelease,
         models: { reservation },
         actors: actorCommand ? { operator: localActor } : {},
         system: missingCommand
@@ -138,7 +138,6 @@ it.each([
       services: {
         reservations: {
           releases: { 1: sourceRelease, 2: serviceRelease },
-          canonical: 1,
         },
       },
     });
@@ -323,6 +322,7 @@ it.each(['guard', 'program'] as const)(
       { name: 'reservations' },
       {
         version: 2,
+        rebuildFrom: sourceRelease,
         models: { reservation },
         actors: {},
         system: { refuseReplay: localContract },
@@ -335,7 +335,6 @@ it.each(['guard', 'program'] as const)(
       services: {
         reservations: {
           releases: { 1: sourceRelease, 2: serviceRelease },
-          canonical: 1,
         },
       },
     });
@@ -450,7 +449,7 @@ for (const failure of [
         name: 'adapterFailures',
         aggregates: {},
         services: {
-          reservations: { releases: { 1: serviceRelease }, canonical: 1 },
+          reservations: { releases: { 1: serviceRelease } },
         },
       });
       const command: IServiceCommandOccurrence = {

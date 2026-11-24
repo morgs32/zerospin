@@ -230,7 +230,6 @@ it('requires exact operation branches and accepts replay-only contract inventory
               system: { receive },
             }),
           },
-          canonical: 1,
         },
       },
     }),
@@ -1324,6 +1323,7 @@ describe('Fresh harness commands', () => {
       });
       const second = makeServiceRelease(service, {
         version: 2,
+        rebuildFrom: first,
         models: {},
         system: { greet },
         layer: Layer.succeed(StagingGreeting, 'second'),
@@ -1333,7 +1333,7 @@ describe('Fresh harness commands', () => {
           name: 'greetings',
           aggregates: {},
           services: {
-            greeting: { releases: { 1: first, 2: second }, canonical: 1 },
+            greeting: { releases: { 1: first, 2: second } },
           },
         }),
       });
@@ -1426,7 +1426,7 @@ describe('Fresh harness commands', () => {
           name: 'staging',
           aggregates: { staging: { releases: { 1: aggregate } } },
           services: {
-            stagingService: { releases: { 1: service }, canonical: 1 },
+            stagingService: { releases: { 1: service } },
           },
         });
         const harness = yield* makeSystemHarness({ system });

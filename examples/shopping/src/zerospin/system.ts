@@ -35,10 +35,9 @@ export const system = sdk.makeSystem({
     },
   },
   services: {
-    marketplace: { releases: { 1: marketplaceServiceReleaseV1 }, canonical: 1 },
+    marketplace: { releases: { 1: marketplaceServiceReleaseV1 } },
     promotion: {
       releases: { 1: promotionServiceReleaseV1 },
-      canonical: 1,
     },
   },
 });

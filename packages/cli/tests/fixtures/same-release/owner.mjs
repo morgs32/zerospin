@@ -1,7 +1,7 @@
 import { RUN_OWNER_OPERATION_PATH } from '@zerospin/core/system/ownerReleaseDeployment';
 import { makeServiceReleaseWorker } from '@zerospin/owner-release-worker/ServiceReleaseWorker';
 import { env, RpcTarget } from 'cloudflare:workers';
-import { reservations, inventory } from 'original-artifact';
+import { inventory, reservations } from 'original-artifact';
 import { retained } from 'retained-builds';
 
 const release =
@@ -24,6 +24,7 @@ const {
 );
 
 export { ServiceVersionChain, ServiceVersionArchive };
+// oxlint-disable-next-line import/no-default-export -- Workerd loads the default entrypoint for fetch requests.
 export default class extends ServiceReleaseWorker {
   async fetch(request) {
     if (new URL(request.url).pathname === RUN_OWNER_OPERATION_PATH) {

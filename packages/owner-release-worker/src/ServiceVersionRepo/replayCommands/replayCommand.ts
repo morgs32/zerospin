@@ -56,7 +56,7 @@ export const replayCommand = Effect.fn('ServiceVersionRepo.replayCommand')(
       });
       return;
     }
-    const retainedCommand = yield* findEvaluatedCommand({
+    let retainedCommand = yield* findEvaluatedCommand({
       db,
       key,
       serviceIndex: command.serviceIndex,
@@ -79,6 +79,23 @@ export const replayCommand = Effect.fn('ServiceVersionRepo.replayCommand')(
       key: key.serviceVersion,
       recordKind: 'listed versions',
     });
+    if (serviceRelease.branchFrom !== undefined && retainedCommand === null) {
+      const issuer = env.ZEROSPIN_HOSTED_RELEASE_RPC;
+      if (issuer === undefined) {
+        const chain = yield* (yield* ServiceChains).getRepo({ key });
+        retainedCommand = yield* Effect.promise(() =>
+          chain.readServiceBranchCommand({
+            serviceVersion: key.serviceVersion,
+            serviceIndex: command.serviceIndex,
+          }),
+        ).pipe(Effect.flatMap(readRpcEnvelope));
+      } else {
+        retainedCommand = yield* Effect.promise(async () => {
+          using rpc = await issuer.getReleaseRpc();
+          return await rpc.readServiceBranchCommand(command.serviceIndex);
+        }).pipe(Effect.flatMap(readRpcEnvelope));
+      }
+    }
     let preparedReplayInput: IPreparedServiceReplayInput | undefined;
     const sourceRelease = registry.releases[command.serviceVersion];
     if (

@@ -427,13 +427,12 @@ export function integerVersionExamples() {
     },
   });
   makeSystem({
-    name: 'unregistered-service-canonical',
+    name: 'unsupported-service-canonical',
     aggregates: {},
     services: {
       receipts: {
-        // @ts-expect-error This release map has no canonical key 2.
         releases: { 1: receiptsServiceReleaseV1 },
-        // @ts-expect-error Service canonical must also be a registered key.
+        // @ts-expect-error Service registries contain only releases.
         canonical: 2,
       },
     },

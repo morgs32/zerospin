@@ -5,9 +5,10 @@ import { makeDrizzleSchemaFromTable } from '@zerospin/shapes';
 import { runInDurableObject } from 'cloudflare:test';
 import { env } from 'cloudflare:workers';
 import * as Effect from 'effect/Effect';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import { getNativeSystemApi } from '../../src/getNativeSystemApi/getNativeSystemApi.ts';
+import * as workerConfiguration from '../../src/workerConfiguration/workerConfiguration.ts';
 import { reservationV1 as reservation } from '../declarations/models/reservationV1.ts';
 
 import { system } from './system.ts';
@@ -61,6 +62,10 @@ it('reads declared ServiceVersionRepo rows through native queries and rejects an
   const selection = queries.query.reservation.findMany({
     columns: { id: true, expiresAt: true, createdAt: true },
   });
+  // This test invokes the System Worker API inside the owner release's test isolate.
+  using _servingSpec = vi
+    .spyOn(workerConfiguration, 'readExecutingSystemSpec')
+    .mockReturnValue(makeSystemSpec({ system }));
   const api = getNativeSystemApi('sys_servicePublication');
   // Publication uses these same physical Repo names with two releases in its own project.
   expect(

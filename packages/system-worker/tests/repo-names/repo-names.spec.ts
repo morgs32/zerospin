@@ -756,7 +756,6 @@ describe('Actor Release specs', () => {
           services: {
             reservations: {
               releases: { [version]: release },
-              canonical: version,
             },
           },
         }),
@@ -856,7 +855,7 @@ describe('Actor Release specs', () => {
     const system = makeSystem({
       name: 'metadataFailure',
       aggregates: {},
-      services: { reservations: { releases: { 2: release }, canonical: 2 } },
+      services: { reservations: { releases: { 2: release } } },
     });
     expect(() => makeSystemSpec({ system })).toThrow(projectionError);
   });
@@ -924,6 +923,7 @@ describe('Complete SystemSpec', () => {
       { name: 'projected' },
       {
         version: 2,
+        rebuildFrom: release,
         models: { reservation: reservationV1 },
         actors: {},
         system: { readReservation: read },
@@ -934,7 +934,7 @@ describe('Complete SystemSpec', () => {
       name: 'projected',
       aggregates: {},
       services: {
-        projected: { releases: { 1: release, 2: olderRelease }, canonical: 1 },
+        projected: { releases: { 1: release, 2: olderRelease } },
       },
     });
     const spec = makeSystemSpec({ system });
@@ -975,7 +975,7 @@ describe('Complete SystemSpec', () => {
       makeSystem({
         name: 'incompatible',
         aggregates: {},
-        services: { projected: { releases: { 2: badRelease }, canonical: 2 } },
+        services: { projected: { releases: { 2: badRelease } } },
       }),
     ).toThrow('reservation.expiresAt');
   });
@@ -1039,7 +1039,7 @@ describe('Complete SystemSpec', () => {
         name: 'relations',
         aggregates: {},
         services: {
-          relations: { releases: { 1: incompatible }, canonical: 1 },
+          relations: { releases: { 1: incompatible } },
         },
       }),
     ).toThrow('projectionChild.parentId');
@@ -1068,7 +1068,7 @@ describe('Complete SystemSpec', () => {
       system: makeSystem({
         name: 'relations',
         aggregates: {},
-        services: { relations: { releases: { 1: release }, canonical: 1 } },
+        services: { relations: { releases: { 1: release } } },
       }),
     });
     expect(Schema.is(SystemSpecSchema)(spec)).toBe(true);
@@ -1085,7 +1085,7 @@ describe('Complete SystemSpec', () => {
       name: 'actorMetadata',
       aggregates: { account: { releases: { 1: accountV1 } } },
       services: {
-        reservations: { releases: { 1: reservationsV1 }, canonical: 1 },
+        reservations: { releases: { 1: reservationsV1 } },
       },
     });
     const spec = makeSystemSpec({ system });
@@ -1107,7 +1107,7 @@ describe('Complete SystemSpec', () => {
     expect(reservations?.releases[1]?.system.createReservation).toBe(1);
     expect(reservations?.releases[1]?.external.recordReservationWork).toBe(1);
     expect(spec.aggregates.account).not.toHaveProperty('canonical');
-    expect(reservations?.canonical).toBe(1);
+    expect(reservations).not.toHaveProperty('canonical');
     expect(reservations?.releases[1]?.models.reservation).toBe(1);
     expect(reservations?.releases[1]?.actors.operator).toBe(1);
     expect(reservations?.modelVersions.reservation?.[1]).toMatchObject({
@@ -1190,20 +1190,12 @@ describe('Complete SystemSpec', () => {
         onExcessProperty: 'error',
       })._tag,
     ).toBe('Failure');
-    expect(() =>
-      Reflect.apply(makeSystem, null, [
-        {
-          name: 'missingCanonical',
-          aggregates: {},
-          services: { reservations: { releases: { 1: reservationsV1 } } },
-        },
-      ]),
-    ).toThrow();
-    const missingCanonical = {
-      ...spec,
-      services: { reservations: { ...reservations, canonical: 2 } },
-    };
-    expect(Schema.is(SystemSpecSchema)(missingCanonical)).toBe(false);
+    const missingPredecessor = structuredClone(spec);
+    const releases = missingPredecessor.services.reservations?.releases;
+    const first = releases?.[1];
+    if (!releases || !first) expect.fail('Missing first Service release');
+    Reflect.set(releases, 2, { ...first, version: 2 });
+    expect(Schema.is(SystemSpecSchema)(missingPredecessor)).toBe(false);
   });
 
   it('validates contract references in unbound Actor and Agent definitions', () => {
@@ -1212,7 +1204,7 @@ describe('Complete SystemSpec', () => {
         name: 'unboundDefinitions',
         aggregates: {},
         services: {
-          reservations: { releases: { 1: reservationsV1 }, canonical: 1 },
+          reservations: { releases: { 1: reservationsV1 } },
         },
       }),
     });
@@ -1310,7 +1302,7 @@ describe('Complete SystemSpec', () => {
         name: 'invalidGrant',
         aggregates: {},
         services: {
-          receiptHistory: { releases: { 1: invalidSystemGrant }, canonical: 1 },
+          receiptHistory: { releases: { 1: invalidSystemGrant } },
         },
       }),
     ).toThrow(/claims-free/);
@@ -1340,7 +1332,7 @@ describe('Complete SystemSpec', () => {
         name: 'invalidAgentGrant',
         aggregates: {},
         services: {
-          receiptHistory: { releases: { 2: oldRelease }, canonical: 2 },
+          receiptHistory: { releases: { 2: oldRelease } },
         },
         serviceAgents: {
           receiptHistory: {
@@ -1366,7 +1358,7 @@ describe('Complete SystemSpec', () => {
     const system = makeSystem({
       name: 'history',
       aggregates: {},
-      services: { receiptHistory: { releases: { 3: release }, canonical: 3 } },
+      services: { receiptHistory: { releases: { 3: release } } },
     });
     const spec = makeSystemSpec({ system });
     const owner = spec.services.receiptHistory;
@@ -1402,7 +1394,7 @@ describe('Complete SystemSpec', () => {
         name: 'history',
         aggregates: {},
         services: {
-          receiptHistory: { releases: { 2: oldRelease }, canonical: 2 },
+          receiptHistory: { releases: { 2: oldRelease } },
         },
       }),
     });
@@ -1434,7 +1426,7 @@ describe('Complete SystemSpec', () => {
         name: 'prototypeNames',
         aggregates: {},
         services: {
-          prototypeNames: { releases: { 1: release }, canonical: 1 },
+          prototypeNames: { releases: { 1: release } },
         },
       }),
     });
@@ -1462,7 +1454,7 @@ describe('Complete SystemSpec', () => {
         name: 'receiptMetadata',
         aggregates: {},
         services: {
-          receipts: { releases: { 1: receiptsServiceReleaseV1 }, canonical: 1 },
+          receipts: { releases: { 1: receiptsServiceReleaseV1 } },
         },
       }),
     });
@@ -1549,7 +1541,7 @@ describe('Complete SystemSpec', () => {
     const unfinalized = {
       name: 'history',
       aggregates: {},
-      services: { receiptHistory: { releases: { 1: release }, canonical: 1 } },
+      services: { receiptHistory: { releases: { 1: release } } },
       aggregateAgents: {},
       serviceAgents: {},
     };
@@ -1559,7 +1551,7 @@ describe('Complete SystemSpec', () => {
         name: 'history',
         aggregates: {},
         // @ts-expect-error The runtime also rejects the wrong owner registry key.
-        services: { different: { releases: { 1: release }, canonical: 1 } },
+        services: { different: { releases: { 1: release } } },
       }),
     ).toThrow();
     expect(() =>

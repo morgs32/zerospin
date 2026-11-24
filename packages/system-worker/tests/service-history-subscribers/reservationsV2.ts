@@ -10,8 +10,11 @@ import { reservationV1 } from '../declarations/models/reservationV1.ts';
 import { operatorV2 } from '../declarations/serviceActors/operatorV2.ts';
 import { reservationService } from '../declarations/services/reservationService.ts';
 
+import { reservationsV1 } from './reservationsV1.ts';
+
 export const reservationsV2 = makeServiceRelease(reservationService, {
   version: 2,
+  rebuildFrom: reservationsV1,
   models: { reservation: reservationV1 },
   actors: {
     operator: operatorV2,

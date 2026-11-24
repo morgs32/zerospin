@@ -568,7 +568,6 @@ it('requires exact fresh versions while replay adapts omitted historical version
             },
           ),
         },
-        canonical: 2,
       },
     },
   });

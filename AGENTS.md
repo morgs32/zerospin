@@ -40,7 +40,7 @@ originally executes on its addressed owner release. Each release materializes
 its own models from the shared command history and can record a different replay
 outcome. Each Aggregate release after the first reads its initialization prefix
 from its declared predecessor and receives later commands from AggregateChain.
-The Service `canonical` release supplies ServiceChain's adopted published history.
+A Service release declares its predecessor. ServiceChain retains admitted commands until publication-backed compaction.
 Authored queries, authentication, external requests, and helpers must not
 directly populate, backfill, synchronize, or repair model rows.
 See the central [parallel-models skill](packages/sdk/skills/zerospin-parallel-models/SKILL.md).

@@ -5,12 +5,15 @@ export { ServiceChain } from '@zerospin/system-worker/ServiceChain/ServiceChain'
 
 configureServingSystemSpec(JSON.stringify(env.SNAPSHOT));
 
+// oxlint-disable-next-line import/no-default-export -- Workerd loads the default entrypoint for fetch requests.
 export default class extends WorkerEntrypoint {
   async fetch(request) {
-    if (new URL(request.url).pathname !== '/systems/sys_patch/ins_patch')
+    if (new URL(request.url).pathname !== '/systems/sys_patch/ins_patch') {
       return new Response(null, { status: 404 });
-    if (request.headers.get('Authorization') !== 'Bearer customer-fixture')
+    }
+    if (request.headers.get('Authorization') !== 'Bearer customer-fixture') {
       return new Response(null, { status: 401 });
+    }
     if (request.method === 'POST') {
       const payload = await request.json();
       const chain = this.env.SERVICE_CHAIN.getByName(
@@ -46,8 +49,9 @@ export class ReservationExecution extends WorkerEntrypoint {
     const allowed = await this.env.FAULTS.fetch(
       'https://faults.invalid/start/' + serviceIndex,
     );
-    if (!allowed.ok)
+    if (!allowed.ok) {
       throw new Error('Delivery is paused before first execution');
+    }
     const { result } = await this.env.SYSTEM_REPO.getByName(
       'sys_patch',
     ).startServiceExecution({
@@ -152,6 +156,17 @@ export class ReservationReplay extends WorkerEntrypoint {
           commandId,
           receivingServiceVersion: serviceVersion,
         });
+      }
+
+      async readServiceBranchCommand(serviceIndex) {
+        if (
+          !Number.isSafeInteger(serviceIndex) ||
+          serviceIndex < 1 ||
+          serviceIndex > replayBoundary
+        ) {
+          throw new Error('Command outside release replay boundary');
+        }
+        return chain.readServiceBranchCommand({ serviceVersion, serviceIndex });
       }
 
       async readReplayPage(afterIndex, maxIndex) {

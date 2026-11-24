@@ -5,11 +5,11 @@ import type { ISystem } from '../../types.ts';
 /** Validate owner registry keys against the authored release identities. */
 export function validateReleaseRegistries(system: ISystem): void {
   mapValues(system.services, (serviceRegistry, serviceName) => {
-    if (!Object.hasOwn(serviceRegistry.releases, serviceRegistry.canonical)) {
-      throw new Error(
-        `Service ${serviceName} canonical release ${serviceRegistry.canonical} is not registered`,
-      );
-    }
+    const serviceVersions = Object.values(serviceRegistry.releases).map(
+      release => release.version,
+    );
+    const firstServiceVersion =
+      serviceVersions.length === 0 ? undefined : Math.min(...serviceVersions);
     mapValues(serviceRegistry.releases, (serviceRelease, serviceVersion) => {
       if (serviceRelease.name !== serviceName) {
         throw new Error(
@@ -19,6 +19,31 @@ export function validateReleaseRegistries(system: ISystem): void {
       if (String(serviceRelease.version) !== String(serviceVersion)) {
         throw new Error(
           `Service version key ${serviceVersion} does not match ${serviceName} version ${serviceRelease.version}`,
+        );
+      }
+      const { branchFrom, rebuildFrom } = serviceRelease;
+      if (branchFrom !== undefined && rebuildFrom !== undefined) {
+        throw new Error(
+          `Service ${serviceName}@${serviceVersion} can only name one predecessor`,
+        );
+      }
+      const predecessor = branchFrom ?? rebuildFrom;
+      if (
+        predecessor === undefined &&
+        serviceRelease.version !== firstServiceVersion
+      ) {
+        throw new Error(
+          `Service ${serviceName}@${serviceVersion} must name a predecessor`,
+        );
+      }
+      if (
+        predecessor !== undefined &&
+        (predecessor.version >= serviceRelease.version ||
+          predecessor.name !== serviceName ||
+          serviceRegistry.releases[predecessor.version] !== predecessor)
+      ) {
+        throw new Error(
+          `Service ${serviceName}@${serviceVersion} must name a registered earlier release of the same Service as its predecessor`,
         );
       }
     });

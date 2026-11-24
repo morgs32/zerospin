@@ -84,8 +84,8 @@ pending work or continuation history in application models.
    Actor, Agent and session exposure and runtime lineage do not grant
    support independently. New commands use the exact contract version registered
    on their addressed release; replay may adapt historical payloads. A session
-   bound to a registered noncanonical release can invoke the contracts granted
-   by that release without promoting it. An older release that lacks the new
+   bound to a registered release can invoke the contracts granted
+   by that release. An older release that lacks the new
    command retains a local unsupported outcome without applying its operations,
    so do not assume its view includes the newer command's effects. Only
    session-invoked contracts also require registration
@@ -157,7 +157,7 @@ Register independently of the owner's immutable composition:
 const system = sdk.makeSystem({
   name: 'shopping',
   aggregates: {},
-  services: { promotion: { releases: { 1: promotionV1 }, canonical: 1 } },
+  services: { promotion: { releases: { 1: promotionV1 } } },
   serviceAgents: {
     promotion: {
       reservations: { releases: { 1: reservationsAgentV1 }, active: 1 },

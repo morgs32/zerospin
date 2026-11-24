@@ -23,6 +23,7 @@ export class ServiceChains extends Context.Service<
         | 'registerNode'
         | 'getServiceCommand'
         | 'prepareServiceReplayInput'
+        | 'readServiceBranchCommand'
       > & {
         readonly replayCommandsFanout: PromiseLike<
           Disposable &

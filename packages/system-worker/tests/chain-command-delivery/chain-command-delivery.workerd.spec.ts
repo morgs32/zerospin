@@ -301,13 +301,13 @@ it.each([
     await expect
       .poll(async () => {
         await runDurableObjectAlarm(source);
-        return runInDurableObject(source, ({ db, schema }) => ({
-          adoptedThrough: db.select().from(schema.canonicalHistory).get()
-            ?.serviceIndex,
-          localCommands: db.select().from(schema.commands).all().length,
-        }));
+        return runInDurableObject(
+          source,
+          ({ db, schema }) =>
+            db.select().from(schema.admissionPosition).get()?.lastIndex,
+        );
       })
-      .toEqual({ adoptedThrough: 1, localCommands: 0 });
+      .toBe(1);
 
     // Fail after child insertion to verify that the entire admission rolls back.
     await runInDurableObject(source, ({ db }) => {

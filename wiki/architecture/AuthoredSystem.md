@@ -1186,9 +1186,6 @@ sources:
   - path: packages/system-worker/src/SystemRepo/preflightAcceptedSystemSpec.ts
     sha: d5cc12a73640f68079d9387532f115e4c0d9c26e
     lines: 20-71
-  - path: packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts
-    sha: 5910e93d8c907aef7b548c04a844aaf8420915ec
-    lines: 1-40
   - path: packages/system-worker/src/AggregateActorVersionChain/aggregateActorVersionChainMigratableDORepoConfig.ts
     sha: 7ba6015c936c24c6a993eb7f31d859c07ae11bcc
     lines: 7-12
@@ -1275,8 +1272,7 @@ backend Wrangler files, or generated backend type declarations.
 facts and canonical models into owner-local version registries. Each owner stores
 `modelVersions`, `contractVersions`, `actorVersions` and `agentVersions` once per
 name/version identity. `releases` binds exact versions and preserves declared
-Aggregate predecessors. Service metadata also carries its authored `canonical`
-selection. Contract and Agent reads bind model versions. Mutation
+Aggregate and Service predecessors. Contract and Agent reads bind model versions. Mutation
 metadata references `{ modelName, version }`. Actor exposed-model projections stay
 inline inside the Actor version. Conflicting identities are refused. The returned
 JSON includes its SHA-256 hash without freezing the snapshot. Node selections
@@ -1409,13 +1405,7 @@ the compacted prefix. A branch applies the predecessor’s retained output. A re
 - [`onRepoStartup.ts:26-55`](../../packages/system-worker/src/AggregateChain/onRepoStartup/onRepoStartup.ts#L26-L55) — captures the admitted position in the enrollment transaction and preserves prior enrollment records on conflict.
 - [`compactAggregateHistory.ts:23-53`](../../packages/system-worker/src/AggregateChain/compactAggregateHistory.ts#L23-L53) — bounds deletion by finalized progress, durable publication, and release delivery obligations.
 
-A Service registry entry selects a registered `canonical` release. SystemSpec
-includes that selection in its hash. `ServiceChain` keeps the old adopted prefix
-readable until the replacement publishes through the adopted position. Recorded
-System and Agent producer checkpoints preserve retry progress after local input
-deletion.
-
-- [`adoptCanonicalServiceHistory.ts:17-40`](../../packages/system-worker/src/ServiceChain/adoptCanonicalServiceHistory.ts#L17-L40) — preserves the old Service boundary until its replacement covers it.
+A Service registry entry contains its releases. `ServiceChain` retains admitted commands. Recorded System and Agent producer checkpoints preserve retry progress.
 
 The cutover requires empty affected storage, including `acceptedSystemSpecs` with
 incompatible retained Aggregate metadata. See [Canonical History Handoff](./server/CanonicalHistoryHandoff.md)
@@ -1437,8 +1427,7 @@ Static `getRepo({ key })` constructs an exact physical name and resolves its
 native capability when the Effect runs. The configured systemId is retained at
 acquisition and rechecked during physical activation. `AggregateChain` reads
 compacted command inputs from a VersionChain whose acknowledgement covers the
-requested position. `ServiceChain` reads its adopted prefix from the saved
-VersionChain. Both read the newer local suffix directly. VersionRepos and Actor
+requested position. `ServiceChain` reads its compacted prefix from a ServiceVersionChain with acknowledged publication coverage. Both read the newer local suffix directly. VersionRepos and Actor
 projection Repos and Chains require their enclosing release. AggregateVersionChain
 and ServiceVersionChain can open retained history without that declaration.
 
@@ -1799,13 +1788,13 @@ sequenceDiagram
    - [`makeSystem.ts:79-82`](../../packages/core/src/system/make/makeSystem/makeSystem.ts#L79-L82) — decodes the supplied System registries before composition checks.
 
 2. Strictly decode the System boundary.
-   - [`decodeSystemProps.ts:36-57`](../../packages/core/src/system/make/makeSystem/decodeSystemProps/decodeSystemProps.ts#L36-L57) — decodes Aggregate release maps and Service canonical selections, and rejects excess fields.
+   - [`decodeSystemProps.ts:36-57`](../../packages/core/src/system/make/makeSystem/decodeSystemProps/decodeSystemProps.ts#L36-L57) — decodes Aggregate and Service release maps, and rejects excess fields.
 
 3. Detach registry containers.
    - [`decodeSystemProps.ts:58-74`](../../packages/core/src/system/make/makeSystem/decodeSystemProps/decodeSystemProps.ts#L58-L74) — copies owner and release containers and owner-scoped Node maps while retaining declaration objects.
 
 4. Validate exact release identities, Aggregate predecessor references and the Service history selector.
-   - [`validateReleaseRegistries.ts:6-25`](../../packages/core/src/system/make/makeSystem/validateReleaseRegistries.ts#L6-L25) — requires Service registry keys and the selected canonical release to match registered releases.
+   - [`validateReleaseRegistries.ts:6-25`](../../packages/core/src/system/make/makeSystem/validateReleaseRegistries.ts#L6-L25) — requires Service registry keys and declared predecessors to match registered releases.
    - [`validateReleaseRegistries.ts:26-71`](../../packages/core/src/system/make/makeSystem/validateReleaseRegistries.ts#L26-L71) — compares Aggregate registry keys and requires a registered predecessor for every release after the first.
 
 5. Reject conflicting actor declarations across registered releases.

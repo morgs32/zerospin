@@ -30,10 +30,9 @@ export const system = makeSystem({
   services: {
     reservations: {
       releases: { 1: reservationsV1, 2: reservationsV2 },
-      canonical: 1,
     },
-    agentReservations: { releases: { 1: agentReservationsV1 }, canonical: 1 },
-    dispatcher: { releases: { 1: dispatcherV1 }, canonical: 1 },
+    agentReservations: { releases: { 1: agentReservationsV1 } },
+    dispatcher: { releases: { 1: dispatcherV1 } },
   },
 });
 

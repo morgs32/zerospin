@@ -18,6 +18,7 @@ import {
   probeReservationWorkV2,
   recordPinnedProbe,
 } from './probeReservationWorkV2.ts';
+import { reservationsV1 } from './reservationsV1.ts';
 
 const recordFailedProbeV2 = makeServiceContractRelease(
   defineServiceContract('recordFailedProbe'),
@@ -30,6 +31,7 @@ const failingProbeV2 = makeServiceContractRelease(
 
 export const reservationsV2 = makeServiceRelease(reservationService, {
   version: 2,
+  rebuildFrom: reservationsV1,
   layer: externalProbeLayer(2),
   models: { reservation: reservationV1 },
   actors: {

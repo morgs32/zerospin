@@ -39,7 +39,6 @@ const aggregateOwner = Schema.Struct({
   agentVersions,
 });
 const serviceOwner = Schema.Struct({
-  canonical: VersionSchema,
   releases: Schema.Record(Schema.String, ServiceSpecSchema),
   modelVersions,
   contractVersions,
@@ -541,9 +540,27 @@ function validateReferences(spec: typeof bodySchema.Type) {
     });
   });
   mapValues(spec.services, (owner, ownerName) => {
-    if (!Object.hasOwn(owner.releases, owner.canonical)) {
-      failure ??= `Service ${ownerName} canonical release ${owner.canonical} is not registered`;
-    }
+    const serviceVersions = Object.values(owner.releases).map(
+      release => release.version,
+    );
+    const firstServiceVersion =
+      serviceVersions.length === 0 ? undefined : Math.min(...serviceVersions);
+    mapValues(owner.releases, release => {
+      const predecessor = release.branchFrom ?? release.rebuildFrom;
+      if (
+        predecessor === undefined &&
+        release.version !== firstServiceVersion
+      ) {
+        failure ??= `Service ${ownerName}@${release.version} must name a predecessor`;
+      }
+      if (
+        predecessor !== undefined &&
+        (predecessor >= release.version ||
+          !Object.hasOwn(owner.releases, predecessor))
+      ) {
+        failure ??= `Service ${ownerName}@${release.version} must name a registered earlier release of the same Service as its predecessor`;
+      }
+    });
     failure ??= validateOwner(owner, ownerName);
   });
   mapValues(spec.aggregateAgents, (nodes, aggregateName) =>
