@@ -55,7 +55,7 @@ export function SessionPushControls() {
         padding: '4px 12px',
         fontFamily: 'ui-monospace, monospace',
         fontSize: 10,
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: '1px solid var(--zs-devtools-border)',
       }}
     >
       <label
@@ -70,7 +70,12 @@ export function SessionPushControls() {
         <input
           type="checkbox"
           checked={pushPaused}
-          style={{ margin: 0, width: 12, height: 12, accentColor: '#2563eb' }}
+          style={{
+            margin: 0,
+            width: 12,
+            height: 12,
+            accentColor: 'var(--zs-devtools-accent)',
+          }}
           onChange={event => {
             const paused = event.currentTarget.checked;
             void setPushPausedRpc({ pushPaused: paused }).then(result => {
@@ -92,7 +97,7 @@ export function SessionPushControls() {
             border: 'none',
             padding: 0,
             background: 'transparent',
-            color: '#2563eb',
+            color: 'var(--zs-devtools-accent)',
             font: 'inherit',
             textDecoration: 'underline',
             cursor: 'pointer',

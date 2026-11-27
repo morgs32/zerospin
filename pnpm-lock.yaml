@@ -941,6 +941,51 @@ importers:
         specifier: ^8.0.11
         version: 8.0.11(@types/node@25.9.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0)
 
+  packages/devtools-storybook:
+    devDependencies:
+      '@remix-run/route-pattern':
+        specifier: ^0.22.1
+        version: 0.22.1
+      '@storybook/react-vite':
+        specifier: 10.6.1
+        version: 10.6.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(rollup@4.60.3)(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.7))(typescript@7.0.2)(vite@8.3.4(@types/node@25.9.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0))
+      '@types/node':
+        specifier: ^25.9.4
+        version: 25.9.4
+      '@types/react':
+        specifier: ^19.2.17
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
+      '@zerospin/browser':
+        specifier: workspace:*
+        version: link:../browser
+      '@zerospin/devtools':
+        specifier: workspace:*
+        version: link:../devtools
+      '@zerospin/react':
+        specifier: workspace:*
+        version: link:../react
+      '@zerospin/sdk':
+        specifier: workspace:*
+        version: link:../sdk
+      effect:
+        specifier: 4.0.2
+        version: 4.0.2
+      react:
+        specifier: 19.2.7
+        version: 19.2.7
+      react-dom:
+        specifier: 19.2.7
+        version: 19.2.7(react@19.2.7)
+      storybook:
+        specifier: 10.6.1
+        version: 10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.7)
+      vite:
+        specifier: ^8.0.11
+        version: 8.3.4(@types/node@25.9.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.0)
+
   packages/error:
     devDependencies:
       '@effect/language-service':

@@ -40,10 +40,12 @@ export function SessionsLogsSpanNode(props: {
           minHeight: 30,
           padding: 0,
           border: 'none',
-          borderBottom: '1px solid #f3f4f6',
+          borderBottom: '1px solid var(--zs-devtools-border)',
           backgroundColor:
-            selectedSpanId === node.span.spanId ? '#eff6ff' : '#ffffff',
-          color: '#111827',
+            selectedSpanId === node.span.spanId
+              ? 'var(--zs-devtools-selected)'
+              : 'var(--zs-devtools-surface)',
+          color: 'var(--zs-devtools-text)',
           cursor: 'pointer',
           fontFamily: 'inherit',
           textAlign: 'left',
@@ -69,7 +71,13 @@ export function SessionsLogsSpanNode(props: {
           >
             {node.span.name}
           </strong>
-          <span style={{ flexShrink: 0, color: '#6b7280', fontSize: 10 }}>
+          <span
+            style={{
+              flexShrink: 0,
+              color: 'var(--zs-devtools-muted)',
+              fontSize: 10,
+            }}
+          >
             {spanDuration} ms
           </span>
         </span>
@@ -82,9 +90,9 @@ export function SessionsLogsSpanNode(props: {
             position: 'relative',
             height: 20,
             overflow: 'hidden',
-            borderLeft: '1px solid #e5e7eb',
+            borderLeft: '1px solid var(--zs-devtools-border)',
             backgroundImage:
-              'linear-gradient(to right, #f3f4f6 1px, transparent 1px)',
+              'linear-gradient(to right, var(--zs-devtools-border) 1px, transparent 1px)',
             backgroundSize: '10% 100%',
           }}
         >
@@ -100,10 +108,10 @@ export function SessionsLogsSpanNode(props: {
               borderRadius: 2,
               backgroundColor:
                 node.span.status === 'error'
-                  ? '#ef4444'
+                  ? 'var(--zs-devtools-danger)'
                   : node.span.status === 'lost'
-                    ? '#f59e0b'
-                    : '#3b82f6',
+                    ? 'var(--zs-devtools-warning)'
+                    : 'var(--zs-devtools-accent)',
             }}
           />
         </span>

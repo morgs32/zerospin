@@ -20,10 +20,13 @@ export function TraceDiagnosticRecords({
             margin: '6px 0 0',
             padding: 8,
             overflow: 'auto',
-            border: '1px solid #e5e7eb',
+            border: '1px solid var(--zs-devtools-border)',
             borderRadius: 4,
-            backgroundColor: placement === 'unattached' ? '#fff7ed' : '#ffffff',
-            color: '#374151',
+            backgroundColor:
+              placement === 'unattached'
+                ? 'var(--zs-devtools-warning-surface)'
+                : 'var(--zs-devtools-surface)',
+            color: 'var(--zs-devtools-text)',
             fontSize: 10,
           }}
         >
@@ -37,9 +40,12 @@ export function TraceDiagnosticRecords({
           style={{
             marginTop: 12,
             padding: 8,
-            border: '1px solid #bfdbfe',
+            border: '1px solid var(--zs-devtools-accent)',
             borderRadius: 4,
-            backgroundColor: placement === 'unattached' ? '#fff7ed' : '#eff6ff',
+            backgroundColor:
+              placement === 'unattached'
+                ? 'var(--zs-devtools-warning-surface)'
+                : 'var(--zs-devtools-selected)',
           }}
         >
           <div
@@ -50,7 +56,9 @@ export function TraceDiagnosticRecords({
               gap: 8,
             }}
           >
-            <strong style={{ color: '#1e3a8a', fontSize: 11 }}>
+            <strong
+              style={{ color: 'var(--zs-devtools-accent)', fontSize: 11 }}
+            >
               {placement === 'unattached'
                 ? 'Server link without browser span'
                 : 'Server link'}
@@ -69,7 +77,7 @@ export function TraceDiagnosticRecords({
             style={{
               margin: '6px 0 0',
               overflow: 'auto',
-              color: '#1e3a8a',
+              color: 'var(--zs-devtools-accent)',
               fontSize: 10,
             }}
           >

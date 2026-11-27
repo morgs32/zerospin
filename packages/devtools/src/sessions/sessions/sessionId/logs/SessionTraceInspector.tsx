@@ -24,7 +24,7 @@ export function SessionTraceInspector({
         display: 'flex',
         flex: 1,
         minHeight: 0,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--zs-devtools-surface)',
       }}
     >
       <TraceList
@@ -55,18 +55,24 @@ export function SessionTraceInspector({
             }}
           >
             {view === null ? (
-              <div style={{ color: '#6b7280', fontSize: 12 }}>
+              <div style={{ color: 'var(--zs-devtools-muted)', fontSize: 12 }}>
                 No scoped trace selected.
               </div>
             ) : (
               <>
                 <h2
-                  style={{ margin: '0 0 10px', color: '#111827', fontSize: 13 }}
+                  style={{
+                    margin: '0 0 10px',
+                    color: 'var(--zs-devtools-text)',
+                    fontSize: 13,
+                  }}
                 >
                   {view.traceId}
                 </h2>
                 {view.roots.length === 0 ? (
-                  <div style={{ color: '#6b7280', fontSize: 11 }}>
+                  <div
+                    style={{ color: 'var(--zs-devtools-muted)', fontSize: 11 }}
+                  >
                     No local spans.
                   </div>
                 ) : (
@@ -75,7 +81,7 @@ export function SessionTraceInspector({
                     style={{
                       minWidth: 560,
                       overflow: 'hidden',
-                      border: '1px solid #e5e7eb',
+                      border: '1px solid var(--zs-devtools-border)',
                       borderRadius: 4,
                     }}
                   >
@@ -87,9 +93,9 @@ export function SessionTraceInspector({
                           'minmax(180px, 320px) minmax(260px, 1fr)',
                         alignItems: 'center',
                         minHeight: 25,
-                        borderBottom: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb',
-                        color: '#6b7280',
+                        borderBottom: '1px solid var(--zs-devtools-border)',
+                        backgroundColor: 'var(--zs-devtools-surface-muted)',
+                        color: 'var(--zs-devtools-muted)',
                         fontSize: 9,
                       }}
                     >
@@ -99,7 +105,7 @@ export function SessionTraceInspector({
                           display: 'flex',
                           justifyContent: 'space-between',
                           padding: '5px 8px',
-                          borderLeft: '1px solid #e5e7eb',
+                          borderLeft: '1px solid var(--zs-devtools-border)',
                         }}
                       >
                         <span>0 ms</span>

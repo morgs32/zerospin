@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { MemoryRouter } from 'react-router';
 
 import triggerLogo from '../components/triggerLogo.js';
-import { tokens } from '../styles/tokens.js';
+import { devtoolsColors, devtoolsStyles } from '../styles/theme.js';
 import type { IDevtoolsStore, IZerospinDevtoolsConfig } from '../types.js';
 import { ZEROSPIN_DEVTOOLS } from '../utils/storage.js';
 
@@ -32,7 +32,6 @@ export function DevtoolsFrame({
   const { isOpen, toggle: toggleOpen } = visibility;
   const { isResizing, panelRef, start: handleDragStart } = resize;
   const { popup: pipWindow, open: requestPipWindow } = detached;
-  const isDark = settings.theme === 'dark';
   const portalTarget = pipWindow?.document.body ?? document.body;
 
   const triggerPositionStyle: CSSProperties = {};
@@ -77,7 +76,12 @@ export function DevtoolsFrame({
   return (
     <MemoryRouter initialEntries={['/sessions']}>
       {createPortal(
-        <div data-testid={ZEROSPIN_DEVTOOLS}>
+        <div
+          className="zerospin-devtools"
+          data-testid={ZEROSPIN_DEVTOOLS}
+          style={{ ...devtoolsColors, colorScheme: settings.theme }}
+        >
+          <style>{devtoolsStyles}</style>
           {!settings.triggerHidden && !isOpen && pipWindow === null ? (
             <button
               type="button"
@@ -128,17 +132,15 @@ export function DevtoolsFrame({
               maxHeight: pipWindow === null ? '90vh' : '100vh',
               boxSizing: 'border-box',
               overflow: 'hidden',
-              color: isDark ? tokens.colors.gray[100] : tokens.colors.gray[900],
-              backgroundColor: isDark
-                ? tokens.colors.darkGray[800]
-                : tokens.colors.white,
+              color: 'var(--zs-devtools-text)',
+              backgroundColor: 'var(--zs-devtools-surface)',
               borderTop:
                 settings.panelLocation === 'bottom'
-                  ? `1px solid ${isDark ? tokens.colors.gray[800] : tokens.colors.gray[200]}`
+                  ? '1px solid var(--zs-devtools-border)'
                   : 'none',
               borderBottom:
                 settings.panelLocation === 'top'
-                  ? `1px solid ${isDark ? tokens.colors.gray[800] : tokens.colors.gray[200]}`
+                  ? '1px solid var(--zs-devtools-border)'
                   : 'none',
               transform:
                 isOpen || pipWindow !== null

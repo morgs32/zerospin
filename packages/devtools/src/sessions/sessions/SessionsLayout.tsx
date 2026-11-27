@@ -31,7 +31,7 @@ const styles = {
     minHeight: 0,
     display: 'flex',
     flexDirection: 'column',
-    borderRight: '1px solid #e5e7eb',
+    borderRight: '1px solid var(--zs-devtools-border)',
   } satisfies CSSProperties,
   tableScroll: {
     flex: 1,
@@ -48,13 +48,13 @@ const styles = {
   } satisfies CSSProperties,
   tableHeader: {
     whiteSpace: 'nowrap',
-    backgroundColor: '#f3f4f6',
+    backgroundColor: 'var(--zs-devtools-surface-muted)',
     position: 'sticky',
     top: 0,
     zIndex: 1,
   } satisfies CSSProperties,
   tr: {
-    borderBottom: '1px solid #f3f4f6',
+    borderBottom: '1px solid var(--zs-devtools-border)',
     cursor: 'pointer',
   } satisfies CSSProperties,
   td: {
@@ -64,33 +64,33 @@ const styles = {
     padding: '4px 12px',
     fontWeight: 500,
     textAlign: 'left',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
     width: 100,
   } satisfies CSSProperties,
   thKind: {
     padding: '4px 12px',
     fontWeight: 500,
     textAlign: 'left',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
     width: 70,
   } satisfies CSSProperties,
   thSessionName: {
     padding: '4px 12px',
     fontWeight: 500,
     textAlign: 'left',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
     width: 220,
   } satisfies CSSProperties,
   thActor: {
     padding: '4px 12px',
     fontWeight: 500,
     textAlign: 'left',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
     width: 220,
   } satisfies CSSProperties,
   tdSession: {
     padding: '4px 12px',
-    color: '#9333ea',
+    color: 'var(--zs-devtools-identity)',
     fontFamily: 'ui-monospace, monospace',
     width: 100,
     overflow: 'hidden',
@@ -100,14 +100,14 @@ const styles = {
   } satisfies CSSProperties,
   tdKind: {
     padding: '4px 12px',
-    color: '#4b5563',
+    color: 'var(--zs-devtools-text)',
     fontFamily: 'ui-monospace, monospace',
     width: 70,
     verticalAlign: 'middle',
   } satisfies CSSProperties,
   tdCopyCell: {
     padding: '4px 12px',
-    color: '#374151',
+    color: 'var(--zs-devtools-text)',
     fontFamily: 'ui-monospace, monospace',
     width: 220,
     overflow: 'hidden',
@@ -116,7 +116,7 @@ const styles = {
   } satisfies CSSProperties,
   tdActorCell: {
     padding: '4px 12px',
-    color: '#374151',
+    color: 'var(--zs-devtools-text)',
     fontFamily: 'ui-monospace, monospace',
     width: 220,
     overflow: 'hidden',
@@ -230,7 +230,10 @@ export function SessionsLayout() {
               {aggregateSessions.length === 0 &&
               serviceSessions.length === 0 ? (
                 <tr style={styles.tr}>
-                  <td colSpan={5} style={{ ...styles.td, color: '#6b7280' }}>
+                  <td
+                    colSpan={5}
+                    style={{ ...styles.td, color: 'var(--zs-devtools-muted)' }}
+                  >
                     No sessions
                   </td>
                 </tr>
@@ -258,9 +261,9 @@ export function SessionsLayout() {
                         style={{
                           ...styles.tr,
                           backgroundColor: isSelected
-                            ? '#eff6ff'
+                            ? 'var(--zs-devtools-selected)'
                             : isRowHovered
-                              ? '#f3f4f6'
+                              ? 'var(--zs-devtools-hover)'
                               : 'transparent',
                         }}
                       >
@@ -311,9 +314,9 @@ export function SessionsLayout() {
                         style={{
                           ...styles.tr,
                           backgroundColor: isSelected
-                            ? '#eff6ff'
+                            ? 'var(--zs-devtools-selected)'
                             : isRowHovered
-                              ? '#f3f4f6'
+                              ? 'var(--zs-devtools-hover)'
                               : 'transparent',
                         }}
                       >
