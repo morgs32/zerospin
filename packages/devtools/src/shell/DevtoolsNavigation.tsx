@@ -1,10 +1,48 @@
 import type { CSSProperties } from 'react';
 
 import { NavLink, Outlet } from 'react-router';
-import { useStore } from 'zustand/react';
 
-import { devtoolsStore } from '../store.js';
-import { tokens } from '../styles/tokens.js';
+const textNavigationStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  height: 32,
+  padding: '0 12px',
+  boxSizing: 'border-box',
+  borderBottomWidth: 2,
+  borderBottomStyle: 'solid',
+  borderBottomColor: 'transparent',
+  color: 'var(--zs-devtools-muted)',
+  backgroundColor: 'transparent',
+  fontFamily: 'system-ui, sans-serif',
+  fontSize: 11,
+  fontWeight: 600,
+  textDecoration: 'none',
+};
+
+const iconControlStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 32,
+  height: 32,
+  flexShrink: 0,
+  padding: 0,
+  borderTopWidth: 0,
+  borderRightWidth: 0,
+  borderBottomWidth: 2,
+  borderLeftWidth: 0,
+  borderBottomStyle: 'solid',
+  borderBottomColor: 'transparent',
+  color: 'var(--zs-devtools-muted)',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+};
+
+const activeNavigationStyle: CSSProperties = {
+  color: 'var(--zs-devtools-text)',
+  backgroundColor: 'var(--zs-devtools-selected)',
+  borderBottomColor: 'var(--zs-devtools-accent)',
+};
 
 export function DevtoolsNavigation(props: {
   isDetached: boolean;
@@ -12,55 +50,6 @@ export function DevtoolsNavigation(props: {
   onDetach: () => void;
 }) {
   const { isDetached, onClose, onDetach } = props;
-  const settings = useStore(devtoolsStore, state => state.settings);
-  const isDark = settings.theme === 'dark';
-  const foreground = isDark ? tokens.colors.gray[300] : tokens.colors.gray[600];
-  const activeForeground = isDark
-    ? tokens.colors.gray[100]
-    : tokens.colors.gray[900];
-  const activeBackground = isDark
-    ? tokens.colors.gray[800]
-    : tokens.colors.gray[100];
-  const borderColor = isDark
-    ? tokens.colors.gray[800]
-    : tokens.colors.gray[200];
-
-  const textNavigationStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    height: 32,
-    padding: '0 12px',
-    boxSizing: 'border-box',
-    borderBottomWidth: 2,
-    borderBottomStyle: 'solid',
-    borderBottomColor: 'transparent',
-    color: foreground,
-    backgroundColor: 'transparent',
-    fontFamily: 'system-ui, sans-serif',
-    fontSize: 11,
-    fontWeight: 600,
-    textDecoration: 'none',
-  };
-
-  const iconControlStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 32,
-    height: 32,
-    flexShrink: 0,
-    padding: 0,
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomWidth: 2,
-    borderLeftWidth: 0,
-    borderBottomStyle: 'solid',
-    borderBottomColor: 'transparent',
-    color: foreground,
-    backgroundColor: 'transparent',
-    cursor: 'pointer',
-  };
-
   return (
     <div
       style={{
@@ -81,10 +70,8 @@ export function DevtoolsNavigation(props: {
           flexShrink: 0,
           borderBottomWidth: 1,
           borderBottomStyle: 'solid',
-          borderBottomColor: borderColor,
-          backgroundColor: isDark
-            ? tokens.colors.darkGray[900]
-            : tokens.colors.gray[50],
+          borderBottomColor: 'var(--zs-devtools-border)',
+          backgroundColor: 'var(--zs-devtools-surface-muted)',
         }}
       >
         <nav aria-label="Zerospin DevTools" style={{ display: 'flex' }}>
@@ -92,13 +79,7 @@ export function DevtoolsNavigation(props: {
             to="/sessions"
             style={({ isActive }) => ({
               ...textNavigationStyle,
-              ...(isActive
-                ? {
-                    color: activeForeground,
-                    backgroundColor: activeBackground,
-                    borderBottomColor: activeForeground,
-                  }
-                : {}),
+              ...(isActive && activeNavigationStyle),
             })}
           >
             Sessions
@@ -115,13 +96,7 @@ export function DevtoolsNavigation(props: {
             data-testid="zerospin-devtools-settings"
             style={({ isActive }) => ({
               ...iconControlStyle,
-              ...(isActive
-                ? {
-                    color: activeForeground,
-                    backgroundColor: activeBackground,
-                    borderBottomColor: activeForeground,
-                  }
-                : {}),
+              ...(isActive && activeNavigationStyle),
             })}
           >
             <svg

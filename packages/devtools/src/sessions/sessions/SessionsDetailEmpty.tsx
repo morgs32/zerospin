@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 const styles = {
   detailEmpty: {
     margin: 0,
-    opacity: 0.7,
+    color: 'var(--zs-devtools-muted)',
     padding: 8,
   } satisfies CSSProperties,
 } as const;

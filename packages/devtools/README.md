@@ -18,3 +18,11 @@ Missing, cross-trace, ambiguous and cyclic relationships remain visible as
 detached spans and graph diagnostics. Exact duplicates coalesce; conflicting
 records remain visible. Server links stay external and missing-span records stay
 Unattached. Session stores remain the original clearable capture owners.
+
+## Preview the panel in Storybook
+
+Run `pnpm nx run @zerospin/devtools-storybook:storybook` and open
+[Devtools Storybook](https://devtools.zerospin.localhost). The **Devtools / Populated Database**
+story opens a standalone Aggregate session and displays its list items. Use the
+Storybook theme control to compare the same rows in light and dark. Open Commands
+to inspect the commands that produced them.

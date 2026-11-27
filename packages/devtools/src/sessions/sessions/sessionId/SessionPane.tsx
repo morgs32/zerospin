@@ -21,8 +21,8 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     flexShrink: 0,
-    backgroundColor: '#f3f4f6',
-    borderBottom: '1px solid #e5e7eb',
+    backgroundColor: 'var(--zs-devtools-surface-muted)',
+    borderBottom: '1px solid var(--zs-devtools-border)',
   } satisfies CSSProperties,
   tab: {
     display: 'flex',
@@ -38,13 +38,13 @@ const styles = {
     marginBottom: -1,
     backgroundColor: 'transparent',
     cursor: 'pointer',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
     fontFamily: 'inherit',
     textDecoration: 'none',
   } satisfies CSSProperties,
   tabActive: {
-    borderBottomColor: '#3b82f6',
-    color: '#111827',
+    borderBottomColor: 'var(--zs-devtools-accent)',
+    color: 'var(--zs-devtools-text)',
   } satisfies CSSProperties,
   tabContent: {
     flex: 1,
@@ -102,13 +102,13 @@ export function SessionStateRoute() {
 function SessionStateTable({ rows }: { readonly rows: ISessionStateRows }) {
   const cellStyle = {
     padding: '8px 12px',
-    borderBottom: '1px solid #e5e7eb',
+    borderBottom: '1px solid var(--zs-devtools-border)',
     textAlign: 'left',
   } satisfies CSSProperties;
   const codeStyle = {
     fontFamily: 'ui-monospace, monospace',
     fontSize: 11,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: 'var(--zs-devtools-surface-muted)',
     borderRadius: 3,
     padding: '2px 4px',
     whiteSpace: 'pre-wrap',
@@ -210,7 +210,7 @@ function AggregateSessionPane(props: {
             ...(isActive ? styles.tabActive : {}),
           })}
         >
-          <FileJsonIcon color="#3b82f6" />
+          <FileJsonIcon color="var(--zs-devtools-accent)" />
           Commands
         </NavLink>
         <NavLink
@@ -220,7 +220,7 @@ function AggregateSessionPane(props: {
             ...(isActive ? styles.tabActive : {}),
           })}
         >
-          <FileJsonIcon color="#22c55e" />
+          <FileJsonIcon color="var(--zs-devtools-success)" />
           Database
         </NavLink>
         <NavLink
@@ -298,7 +298,7 @@ function ServiceSessionPane(props: {
             ...(isActive ? styles.tabActive : {}),
           })}
         >
-          <FileJsonIcon color="#22c55e" />
+          <FileJsonIcon color="var(--zs-devtools-success)" />
           Database
         </NavLink>
         <NavLink

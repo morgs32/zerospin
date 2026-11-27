@@ -19,8 +19,8 @@ export function TraceList({
         flexDirection: 'column',
         width: 300,
         minWidth: 220,
-        borderRight: '1px solid #e5e7eb',
-        backgroundColor: '#f9fafb',
+        borderRight: '1px solid var(--zs-devtools-border)',
+        backgroundColor: 'var(--zs-devtools-surface-muted)',
       }}
     >
       <div
@@ -30,10 +30,10 @@ export function TraceList({
           justifyContent: 'space-between',
           gap: 8,
           padding: '8px 10px',
-          borderBottom: '1px solid #e5e7eb',
+          borderBottom: '1px solid var(--zs-devtools-border)',
         }}
       >
-        <strong style={{ color: '#111827', fontSize: 12 }}>
+        <strong style={{ color: 'var(--zs-devtools-text)', fontSize: 12 }}>
           Traces ({presentation.traces.length})
         </strong>
         <button
@@ -46,7 +46,13 @@ export function TraceList({
       </div>
       <div style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
         {presentation.traces.length === 0 ? (
-          <div style={{ padding: 12, color: '#6b7280', fontSize: 11 }}>
+          <div
+            style={{
+              padding: 12,
+              color: 'var(--zs-devtools-muted)',
+              fontSize: 11,
+            }}
+          >
             No scoped traces.
           </div>
         ) : (
@@ -64,19 +70,19 @@ export function TraceList({
                 width: '100%',
                 padding: '8px 10px',
                 border: 'none',
-                borderBottom: '1px solid #e5e7eb',
+                borderBottom: '1px solid var(--zs-devtools-border)',
                 backgroundColor:
                   presentation.view?.traceId === row.traceId
-                    ? '#dbeafe'
+                    ? 'var(--zs-devtools-selected)'
                     : 'transparent',
-                color: '#111827',
+                color: 'var(--zs-devtools-text)',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
                 textAlign: 'left',
               }}
             >
               <code style={{ fontSize: 10 }}>{row.traceId}</code>
-              <span style={{ color: '#6b7280', fontSize: 10 }}>
+              <span style={{ color: 'var(--zs-devtools-muted)', fontSize: 10 }}>
                 {row.timestamp === null
                   ? 'No local timing'
                   : new Date(row.timestamp).toISOString()}

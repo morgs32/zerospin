@@ -65,9 +65,9 @@ export function SessionsDatabaseLayout() {
                 style={{
                   ...sessionsDatabaseTabStyles.dbRow,
                   backgroundColor: isSelected
-                    ? '#f3f4f6'
+                    ? 'var(--zs-devtools-selected)'
                     : isHovered
-                      ? '#f9fafb'
+                      ? 'var(--zs-devtools-hover)'
                       : 'transparent',
                 }}
               >

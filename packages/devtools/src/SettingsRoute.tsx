@@ -20,7 +20,7 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 720,
     marginBottom: 24,
     paddingBottom: 20,
-    borderBottom: '1px solid #e5e7eb',
+    borderBottom: '1px solid var(--zs-devtools-border)',
   },
   title: {
     margin: '0 0 4px',
@@ -30,7 +30,7 @@ const styles: Record<string, CSSProperties> = {
   description: {
     margin: '0 0 12px',
     fontSize: 12,
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
   },
   field: {
     display: 'flex',
@@ -49,16 +49,16 @@ const styles: Record<string, CSSProperties> = {
   },
   fieldDescription: {
     display: 'block',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
     fontSize: 11,
   },
   control: {
     minWidth: 220,
     minHeight: 30,
     padding: '4px 8px',
-    border: '1px solid #d1d5db',
+    border: '1px solid var(--zs-devtools-control-border)',
     borderRadius: 4,
-    backgroundColor: 'transparent',
+    backgroundColor: 'var(--zs-devtools-surface)',
     color: 'inherit',
     fontFamily: 'inherit',
     fontSize: 12,
@@ -71,7 +71,7 @@ const styles: Record<string, CSSProperties> = {
   modifier: {
     minHeight: 28,
     padding: '3px 8px',
-    border: '1px solid #9ca3af',
+    border: '1px solid var(--zs-devtools-control-border)',
     borderRadius: 4,
     backgroundColor: 'transparent',
     color: 'inherit',
@@ -96,7 +96,7 @@ export function SettingsRoute({
   const settings = useStore(devtoolsStore, state => state.settings);
   const modifiers: Array<IKeyboardKey> = ['CtrlOrMeta', 'Alt', 'Shift'];
 
-  // 3 — this policy is reused by the three explicit modifier buttons below.
+  // 3 — Keep modifier keys ahead of the other keys in the shortcut.
   const toggleModifier = (modifier: IKeyboardKey) => {
     if (settings.openHotkey.includes(modifier)) {
       devtoolsStore.setState(state => ({
@@ -262,42 +262,25 @@ export function SettingsRoute({
         <p style={styles.description}>Customize the open/close shortcut.</p>
 
         <div style={styles.modifierRow}>
-          <button
-            type="button"
-            style={{
-              ...styles.modifier,
-              backgroundColor: settings.openHotkey.includes('CtrlOrMeta')
-                ? '#dcfce7'
-                : 'transparent',
-            }}
-            onClick={() => toggleModifier('CtrlOrMeta')}
-          >
-            Ctrl Or Meta
-          </button>
-          <button
-            type="button"
-            style={{
-              ...styles.modifier,
-              backgroundColor: settings.openHotkey.includes('Alt')
-                ? '#dcfce7'
-                : 'transparent',
-            }}
-            onClick={() => toggleModifier('Alt')}
-          >
-            Alt
-          </button>
-          <button
-            type="button"
-            style={{
-              ...styles.modifier,
-              backgroundColor: settings.openHotkey.includes('Shift')
-                ? '#dcfce7'
-                : 'transparent',
-            }}
-            onClick={() => toggleModifier('Shift')}
-          >
-            Shift
-          </button>
+          {modifiers.map(modifier => {
+            const pressed = settings.openHotkey.includes(modifier);
+            return (
+              <button
+                key={modifier}
+                type="button"
+                aria-pressed={pressed}
+                style={{
+                  ...styles.modifier,
+                  backgroundColor: pressed
+                    ? 'var(--zs-devtools-selected)'
+                    : 'transparent',
+                }}
+                onClick={() => toggleModifier(modifier)}
+              >
+                {modifier === 'CtrlOrMeta' ? 'Ctrl Or Meta' : modifier}
+              </button>
+            );
+          })}
         </div>
 
         <label style={styles.field}>

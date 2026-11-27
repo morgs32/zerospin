@@ -31,7 +31,7 @@ const styles = {
     borderRadius: 4,
     backgroundColor: 'transparent',
     cursor: 'pointer',
-    color: '#6b7280',
+    color: 'var(--zs-devtools-muted)',
   } satisfies CSSProperties,
   copyIconSlot: {
     width: 22,
@@ -71,7 +71,7 @@ function CheckmarkIcon() {
       height={14}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#16a34a"
+      stroke="var(--zs-devtools-success)"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"

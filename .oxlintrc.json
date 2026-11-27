@@ -69,6 +69,15 @@
     },
     {
       "files": [
+        "packages/devtools-storybook/.storybook/**/*.ts",
+        "packages/devtools-storybook/src/**/*.stories.tsx"
+      ],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": [
         "packages/studio/.storybook/**/*.ts",
         "packages/studio/stories/**/*.ts",
         "packages/studio/stories/**/*.tsx"
